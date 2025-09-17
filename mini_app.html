@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Генератор кнопок</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Генератор кнопок</h1>
+
+      <div class="input-group">
+        <input
+          type="number"
+          id="buttonCount"
+          placeholder="Введите количество кнопок"
+          min="1"
+        />
+        <button onclick="generateButtons()">Создать</button>
+      </div>
+
+      <div id="buttonsContainer" class="buttons-container">
+        <!-- Сгенерированные кнопки -->
+      </div>
+    </div>
+
+    <script>
+      function generateButtons() {
+        // Получаем значение из поля ввода
+        const countInput = document.getElementById("buttonCount");
+        const count = parseInt(countInput.value);
+
+        // Проверяем, что введено корректное число
+        if (isNaN(count) || count < 1) {
+          alert("Пожалуйста, введите корректное число (больше 0)");
+          return;
+        }
+
+        // Получаем контейнер для кнопок
+        const container = document.getElementById("buttonsContainer");
+
+        // Очищаем контейнер перед созданием новых кнопок
+        container.innerHTML = "";
+
+        // Создаем указанное количество кнопок
+        for (let i = 1; i <= count; i++) {
+          // Создаем новую кнопку
+          const button = document.createElement("button");
+
+          // Устанавливаем текст кнопки
+          button.textContent = `Кнопка ${i}`;
+
+          // Добавляем класс для стилизации
+          button.classList.add("generated-button");
+
+          // Добавляем обработчик события для кнопки
+          button.addEventListener("click", function () {
+            alert(`Вы нажали на кнопку ${i}`);
+          });
+
+          // Добавляем кнопку в контейнер
+          container.appendChild(button);
+        }
+      }
+    </script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .input-group {
+        display: flex;
+        margin-bottom: 20px;
+      }
+      input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px 0 0 4px;
+        font-size: 16px;
+      }
+      button {
+        padding: 10px 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .buttons-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .generated-button {
+        padding: 10px 15px;
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .generated-button:hover {
+        background-color: #0b7dda;
+      }
+    </style>
+  </body>
+</html>
