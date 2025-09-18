@@ -8,16 +8,10 @@
   </head>
   <body>
     <div class="container">
-      <h1>Генератор кнопок</h1>
+      <h1>21 сентября</h1>
 
       <div class="input-group">
-        <input
-          type="number"
-          id="buttonCount"
-          placeholder="Введите количество кнопок"
-          min="1"
-        />
-        <button onclick="generateButtons()">Создать</button>
+        <button onclick="generateButtons()">Записать</button>
       </div>
 
       <div id="buttonsContainer" class="buttons-container">
@@ -25,17 +19,111 @@
       </div>
     </div>
 
+    <div class="container">
+      <h1>22 сентября</h1>
+      <div class="input-group">
+        <button onclick="generateButtons()">Записать</button>
+      </div>
+      <div id="buttonsContainer1" class="buttons-container">
+        <!-- Сгенерированные кнопки -->
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>23 сентября</h1>
+      <div class="input-group">
+        <button onclick="generateButtons()">Записать</button>
+      </div>
+      <div id="buttonsContainer2" class="buttons-container">
+        <!-- Сгенерированные кнопки -->
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>24 сентября</h1>
+      <div class="input-group">
+        <button onclick="generateButtons()">Записать</button>
+      </div>
+      <div id="buttonsContainer3" class="buttons-container">
+        <!-- Сгенерированные кнопки -->
+      </div>
+    </div>
+
     <script>
+      // Получаем контейнер для кнопок
+      const container = document.getElementById("buttonsContainer");
+
+      // Очищаем контейнер перед созданием новых кнопок
+      container.innerHTML = "";
+
+      // Создаем указанное количество кнопок
+      for (let i = 1; i <= 5; i++) {
+        // i <= count
+        // Создаем новую кнопку
+        const button = document.createElement("button");
+
+        // Устанавливаем текст кнопки
+        button.textContent = `${i}. Иванов Иван Иванович  •  ${i + 8} : 00`;
+
+        // Добавляем класс для стилизации
+        button.classList.add("generated-button");
+
+        // Добавляем обработчик события для кнопки
+        button.addEventListener("click", function () {
+          alert(`Выписать Иванов Иван Иванович?`);
+        });
+
+        // Добавляем кнопку в контейнер
+        container.appendChild(button);
+
+        //********************************************************************************************************************************************
+        const container1 = document.getElementById("buttonsContainer1");
+        const button1 = document.createElement("button");
+        button1.textContent = `${i}. Петров Петр Петрович  •  ${i + 8} : 00`;
+        button1.classList.add("generated-button");
+        button1.addEventListener("click", function () {
+          alert(`Выписать Петров Петр Петрович?`);
+        });
+        container1.appendChild(button1);
+        //********************************************************************************************************************************************
+
+        //********************************************************************************************************************************************
+        const container2 = document.getElementById("buttonsContainer2");
+        const button2 = document.createElement("button");
+        button2.textContent = `${i}. Сидоров Сидор Сидорович  •  ${i + 8} : 00`;
+        button2.classList.add("generated-button");
+        button2.addEventListener("click", function () {
+          alert(`Выписать Сидоров Сидор Сидорович?`);
+        });
+        container2.appendChild(button2);
+        //********************************************************************************************************************************************
+
+        //********************************************************************************************************************************************
+        const container3 = document.getElementById("buttonsContainer3");
+        const button3 = document.createElement("button");
+        button3.textContent = `${i}. Андреев Вандрей Анреевич  •  ${
+          i + 8
+        } : 00`;
+        button3.classList.add("generated-button");
+        button3.addEventListener("click", function () {
+          alert(`Выписать Андреев Вандрей Анреевич?`);
+        });
+        container3.appendChild(button3);
+        //********************************************************************************************************************************************
+      }
+
       function generateButtons() {
         // Получаем значение из поля ввода
-        const countInput = document.getElementById("buttonCount");
-        const count = parseInt(countInput.value);
 
+        const count = 1; // parseInt(countInput.value);
+
+        /*
         // Проверяем, что введено корректное число
         if (isNaN(count) || count < 1) {
           alert("Пожалуйста, введите корректное число (больше 0)");
           return;
         }
+        
 
         // Получаем контейнер для кнопок
         const container = document.getElementById("buttonsContainer");
@@ -44,12 +132,13 @@
         container.innerHTML = "";
 
         // Создаем указанное количество кнопок
-        for (let i = 1; i <= count; i++) {
+        for (let i = 1; i <= 6; i++) {
+          // i <= count
           // Создаем новую кнопку
           const button = document.createElement("button");
 
           // Устанавливаем текст кнопки
-          button.textContent = `Кнопка ${i}`;
+          button.textContent = `${i}. Иванов Иван Иванович  •  ${i + 8} : 00`;
 
           // Добавляем класс для стилизации
           button.classList.add("generated-button");
@@ -62,18 +151,67 @@
           // Добавляем кнопку в контейнер
           container.appendChild(button);
         }
+
+*/
+
+        const button = document.createElement("button");
+
+        // Устанавливаем текст кнопки
+        button.textContent = `6. Иванов Иван Иванович  •  15 : 00`;
+
+        // Добавляем класс для стилизации
+        button.classList.add("generated-button");
+
+        // Добавляем обработчик события для кнопки
+        button.addEventListener("click", function () {
+          alert(`Выписать Иванов Иван Иванович?`);
+        });
+
+        // Добавляем кнопку в контейнер
+        container.appendChild(button);
       }
+
+      //********************************************************************************************************************************************
+
+      /*
+      for (let i = 1; i <= 5; i++) {
+        const button = document.createElement("button");
+        button.textContent = `${i}. Петров Петр Петрович  •  ${i + 8} : 00`;
+        button.classList.add("generated-button");
+        button.addEventListener("click", function () {
+          alert(`Выписать Иванов Иван Иванович?`);
+        });
+        container.appendChild(button);
+      }
+   
+      function generateButtons1() {
+        const count = 1; // parseInt(countInput.value);
+        const button = document.createElement("button");
+        button.textContent = `6. Иванов Иван Иванович  •  15 : 00`;
+        button.classList.add("generated-button");
+        button.addEventListener("click", function () {
+          alert(`Выписать Иванов Иван Иванович?`);
+        });
+        container.appendChild(button);
+      }
+      */
+      //********************************************************************************************************************************************
+
+      // max-width: 600px;
     </script>
 
     <style>
       body {
         font-family: Arial, sans-serif;
-        max-width: 600px;
+        width: 700px;
         margin: 0 auto;
         padding: 20px;
         background-color: var(--tg-color-scheme);
       }
       .container {
+        width: 300px;
+        height: 1000;
+        display: inline-block;
         background-color: white;
         padding: 20px;
         border-radius: 8px;
@@ -95,16 +233,16 @@
         font-size: 16px;
       }
       button {
+        width: 270px;
         padding: 10px 15px;
-        background-color: #4caf50;
+        background-color: #ffa723;
         color: white;
         border: none;
-        border-radius: 0 4px 4px 0;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 20px;
       }
       button:hover {
-        background-color: #45a049;
+        background-color: #db8400;
       }
       .buttons-container {
         display: flex;
@@ -113,15 +251,17 @@
         margin-top: 20px;
       }
       .generated-button {
+        height: 100px;
         padding: 10px 15px;
-        background-color: #2196f3;
-        color: white;
+        background-color: #f4fcaf;
+        color: black;
         border: none;
         border-radius: 4px;
+        font-size: 15px;
         cursor: pointer;
       }
       .generated-button:hover {
-        background-color: #0b7dda;
+        background-color: #e0da79;
       }
     </style>
   </body>
