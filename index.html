@@ -19,16 +19,23 @@
 </html>
 
 <script>
-  let tg = window.Telegram.Webapp;
+  let tg = window.Telegram.WebApp;
 
   const button = document.getElementById("push");
   const output = document.getElementById("text");
 
   function action() {
     output.append(" Test 1 ");
-    const data = tg.initDataUnsafe.user.first_name;
-    output.append(data);
+    output.append(tg.version);
     output.append(" Test 2 ");
+    let data1 = tg.initDataUnsafe.user.first_name;
+    output.append(" Test 3 ");
+    output.append(data1);
+    output.append(" Test 4 ");
+    let data0 = tg.initDataUnsafe.user.id;
+    output.append(" Test 5 ");
+    output.append(data0);
+    output.append(" Test 6 ");
   }
 
   /*
