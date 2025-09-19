@@ -26,16 +26,14 @@
 
   function action() {
     output.append(" Test 1 ");
-    output.append(tg.version);
-    output.append(" Test 2 ");
     let data1 = tg.initDataUnsafe.user.first_name;
-    output.append(" Test 3 ");
+    output.append(" Test 2 ");
     output.append(data1);
+    output.append(" Test 3 ");
+    let keys = tg.getKeys("err");
     output.append(" Test 4 ");
-    let data0 = tg.initDataUnsafe.user.id;
+    output.append(keys);
     output.append(" Test 5 ");
-    output.append(data0);
-    output.append(" Test 6 ");
   }
 
   /*
