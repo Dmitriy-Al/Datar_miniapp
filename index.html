@@ -44,12 +44,14 @@
   const key = "key";
 
   set.addEventListener("click", () => {
+    output.innerHTML = "";
     output.append(" Test 6 ");
     cloudStorage.setItem(key, "Тестовый текст");
     output.append(" Test 7 ");
   });
 
   get.addEventListener("click", () => {
+    output.innerHTML = "";
     output.append(" Test 8 ");
     cloudStorage.getItem(key, (error, data) => {
       const i = !error && data ? data : error;
@@ -59,6 +61,7 @@
   });
 
   del.addEventListener("click", () => {
+    output.innerHTML = "";
     output.append(" Test 10 ");
     cloudStorage.removeItem(key, (error, result) => {
       const x = !error && result ? result : error;
@@ -68,6 +71,7 @@
   });
 
   function action() {
+    output.innerHTML = "";
     output.append(" Test 1 ");
     let data1 = tg.initDataUnsafe.user.first_name;
     output.append(" Test 2 ");
