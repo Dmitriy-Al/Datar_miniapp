@@ -46,6 +46,11 @@
   set.addEventListener("click", () => {
     output.innerHTML = "";
     cloudStorage.setItem(key, " Тестовый текст ");
+    output.append(" <1> ");
+
+    tg.WebApp.sendData(JSON.stringify({ storageData: "value" }));
+
+    output.append(" <2> ");
   });
 
   get.addEventListener("click", () => {
