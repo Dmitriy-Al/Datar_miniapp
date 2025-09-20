@@ -13,16 +13,59 @@
     </div>
 
     <div>
-      <button class="but" id="push" onclick="action()">Push</button>
+      <button class="but" id="test" onclick="action()">Test</button>
+    </div>
+
+    <div>
+      <button class="but" id="setItem" onclick="action()">set Item(</button>
+    </div>
+
+    <div>
+      <button class="but" id="getItem" onclick="action()">get Item</button>
+    </div>
+
+    <div>
+      <button class="but" id="delItem" onclick="action()">del Items</button>
     </div>
   </body>
 </html>
 
 <script>
   let tg = window.Telegram.WebApp;
+  const cloudStorage = tg.CloudStorage;
 
-  const button = document.getElementById("push");
+  const button = document.getElementById("test");
   const output = document.getElementById("text");
+
+  const set = document.getElementById("setItem");
+  const get = document.getElementById("getItem");
+  const del = document.getElementById("delItem");
+
+  const key = "key";
+
+  set.addEventListener("click", () => {
+    output.append(" Test 6 ");
+    cloudStorage.setItem(key, "Тестовый текст");
+    output.append(" Test 7 ");
+  });
+
+  get.addEventListener("click", () => {
+    output.append(" Test 8 ");
+    cloudStorage.getItem(key, (error, data) => {
+      const i = !error && data ? data : error;
+      output.append(i);
+      output.append(" Test 9 ");
+    });
+  });
+
+  del.addEventListener("click", () => {
+    output.append(" Test 10 ");
+    cloudStorage.removeItem(key, (error, result) => {
+      const x = !error && result ? result : error;
+      output.append(i);
+      output.append(" Test 11 ");
+    });
+  });
 
   function action() {
     output.append(" Test 1 ");
@@ -48,14 +91,14 @@
 
 <style>
   .output-container {
-    width: 600px;
-    height: 600px;
+    width: 300px;
+    height: 200px;
     background-color: rgb(86, 152, 228);
     padding: 20px;
   }
   .output {
-    width: 500px;
-    height: 500px;
+    width: 280px;
+    height: 190px;
     background-color: rgb(178, 247, 230);
     margin: 10px;
     padding: 20px;
