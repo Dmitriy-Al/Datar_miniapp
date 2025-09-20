@@ -45,42 +45,31 @@
 
   set.addEventListener("click", () => {
     output.innerHTML = "";
-    output.append(" Test 6 ");
-    cloudStorage.setItem(key, "Тестовый текст");
-    output.append(" Test 7 ");
+    cloudStorage.setItem(key, " Тестовый текст ");
   });
 
   get.addEventListener("click", () => {
     output.innerHTML = "";
-    output.append(" Test 8 ");
     cloudStorage.getItem(key, (error, data) => {
       const i = !error && data ? data : error;
       output.append(i);
-      output.append(" Test 9 ");
     });
   });
 
   del.addEventListener("click", () => {
     output.innerHTML = "";
-    output.append(" Test 10 ");
+
     cloudStorage.removeItem(key, (error, result) => {
       const x = !error && result ? result : error;
       output.append(i);
-      output.append(" Test 11 ");
+      output.append(" <Deleted> ");
     });
   });
 
   function action() {
     output.innerHTML = "";
-    output.append(" Test 1 ");
     let data1 = tg.initDataUnsafe.user.first_name;
-    output.append(" Test 2 ");
-    output.append(data1);
-    output.append(" Test 3 ");
-    let keys = tg.getKeys("err");
-    output.append(" Test 4 ");
-    output.append(keys);
-    output.append(" Test 5 ");
+    output.append(" " + data1 + " ");
   }
 
   /*
@@ -95,13 +84,13 @@
 
 <style>
   .output-container {
-    width: 300px;
+    width: 500px;
     height: 200px;
     background-color: rgb(86, 152, 228);
     padding: 20px;
   }
   .output {
-    width: 280px;
+    width: 450px;
     height: 190px;
     background-color: rgb(178, 247, 230);
     margin: 10px;
