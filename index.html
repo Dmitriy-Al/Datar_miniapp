@@ -17,15 +17,15 @@
     </div>
 
     <div>
-      <button class="but" id="setItem" onclick="action()">set Item(</button>
+      <button class="but" id="setItem">set Item(</button>
     </div>
 
     <div>
-      <button class="but" id="getItem" onclick="action()">get Item</button>
+      <button class="but" id="getItem">get Item</button>
     </div>
 
     <div>
-      <button class="but" id="delItem" onclick="action()">del Items</button>
+      <button class="but" id="delItem">del Items</button>
     </div>
   </body>
 </html>
@@ -63,7 +63,6 @@
 
   del.addEventListener("click", () => {
     output.innerHTML = "";
-
     cloudStorage.removeItem(key, (error, result) => {
       const x = !error && result ? result : error;
       output.append(i);
@@ -75,6 +74,8 @@
     output.innerHTML = "";
     let data1 = tg.initDataUnsafe.user.first_name;
     output.append(" " + data1 + " ");
+
+    tg.WebApp.sendData("Test data from web app");
   }
 
   /*
