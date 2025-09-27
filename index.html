@@ -1,148 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
-    <title>Contact Form</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      label {
-        display: block;
-        margin-bottom: 5px;
-      }
-      input,
-      textarea {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-      }
-      button {
-        background: #007cba;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .message {
-        margin: 10px 0;
-        padding: 10px;
-        border-left: 3px solid #007cba;
-        background: #f5f5f5;
-      }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
   </head>
+  <h1>Заголовок</h1>
   <body>
-    <h1>Contact Form</h1>
+    <div class="output-container">
+      <output class="output" id="text"> </output>
+    </div>
 
-    <form id="messageForm">
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" id="name" required />
-      </div>
+    <div>
+      <button class="but" id="test" onclick="action()">Test</button>
+    </div>
 
-      <div class="form-group">
-        <label for="email">ID:</label>
-        <input type="email" id="id" required />
-      </div>
+    <div>
+      <button class="but" id="cre">CREATE</button>
+    </div>
 
-      <div class="form-group">
-        <label for="content">Message:</label>
-        <textarea id="content" rows="4" required></textarea>
-      </div>
+    <div>
+      <button class="but" id="sho">SHOW</button>
+    </div>
 
-      <button type="submit">Добавить в БД</button>
-    </form>
-
-    <h2>Messages</h2>
-    <div id="messagesList"></div>
-
-    <script>
-      const API_BASE = "http://176.123.166.19:8080/api";
-
-      // Отправка формы
-      document
-        .getElementById("messageForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          const message = {
-            // email: document.getElementById('email').value,
-            email: parseInt(document.getElementById("id").value),
-            name: document.getElementById("name").value,
-            // content: document.getElementById('content').value
-          };
-
-          try {
-            const response = await fetch(`${API_BASE}/testdb`, {
-              // база данных
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(message),
-            });
-
-            if (response.ok) {
-              alert("Message sent successfully!");
-              document.getElementById("messageForm").reset();
-              loadMessages();
-            } else {
-              throw new Error("Failed to send message");
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("Error sending message");
-          }
-        });
-
-      // Загрузка сообщений
-      async function loadMessages() {
-        try {
-          const response = await fetch(`${API_BASE}/testdb`);
-          const messages = await response.json();
-
-          const messagesList = document.getElementById("messagesList");
-          messagesList.innerHTML = messages
-            .map(
-              (msg) => `
-                    <div class="message">
-                        <strong>${msg.name}</strong> (${msg.email})<br>
-                        ${msg.content}
-                        <button onclick="deleteMessage(${msg.id})">Delete</button>
-                    </div>
-                `
-            )
-            .join("");
-        } catch (error) {
-          console.error("Error loading messages:", error);
-        }
-      }
-
-      // Удаление сообщения
-      async function deleteMessage(id) {
-        if (confirm("Are you sure?")) {
-          try {
-            await fetch(`${API_BASE}/testdb/${id}`, {
-              method: "DELETE",
-            });
-            loadMessages();
-          } catch (error) {
-            console.error("Error deleting message:", error);
-          }
-        }
-      }
-
-      // Загружаем сообщения при загрузке страницы
-      loadMessages();
-    </script>
+    <div>
+      <button class="but" id="del">DELETE</button>
+    </div>
   </body>
 </html>
+
+<script>
+  let tg = window.Telegram.WebApp;
+  const cloudStorage = tg.CloudStorage;
+
+  const button = document.getElementById("test");
+  const output = document.getElementById("text");
+
+  const create = document.getElementById("cre");
+  const show = document.getElementById("sho");
+  const delet = document.getElementById("del");
+
+  create.addEventListener("click", () => {
+    output.innerHTML = "";
+
+    const object = {
+      // message
+      id: 1,
+      name: "Lera",
+      //parseInt(document.getElementById("id").value)
+    };
+
+    try {
+      const response = fetch(`${API_BASE}/testdb`, {
+        // база данных
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(object),
+      });
+
+      if (response.ok) {
+        alert("Message sent successfully!");
+        document.getElementById("messageForm").reset();
+        loadMessages();
+      } else {
+        throw new Error("Failed to send message");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error sending message");
+    }
+
+    output.append(" <Success> ");
+  });
+
+  show.addEventListener("click", () => {
+    output.innerHTML = "";
+  });
+
+  delet.addEventListener("click", () => {
+    output.innerHTML = "";
+  });
+
+  function action() {
+    output.innerHTML = "";
+    let data1 = tg.initDataUnsafe.user.first_name;
+    output.append(" " + data1 + " ");
+
+    tg.WebApp.sendData("Test data from web app");
+  }
+
+  /*
+
+  button.addEventListener("click", function () {
+    alert(`ALERT`);
+  });
+ 
+
+   */
+</script>
+
+<style>
+  .output-container {
+    width: 500px;
+    height: 200px;
+    background-color: rgb(86, 152, 228);
+    padding: 20px;
+  }
+  .output {
+    width: 450px;
+    height: 190px;
+    background-color: rgb(178, 247, 230);
+    margin: 10px;
+    padding: 20px;
+  }
+  .but {
+    background-color: rgb(8, 255, 193);
+    padding: 20px;
+  }
+  .but:hover {
+    background-color: rgb(4, 202, 153);
+  }
+</style>
