@@ -1,128 +1,153 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <h1>Version 1</h1>
-  <body>
-    <div class="output-container">
-      <output class="output" id="text"> </output>
-    </div>
-
+<html>
+<head>
+    <title>Simple User Manager</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 20px auto; padding: 20px; }
+        input, button { padding: 8px; margin: 5px; }
+        .user-item { padding: 10px; border: 1px solid #ddd; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>User Manager</h1>
+    
+    <!-- Форма для добавления пользователя -->
     <div>
-      <button class="but" id="test" onclick="action()">Test</button>
+        <input type="text" id="userName" placeholder="Enter user name">
+        <button onclick="addUser()">Add User</button>
     </div>
+    
+    <!-- Список пользователей -->
+    <div id="usersList"></div>
 
-    <div>
-      <button class="but" id="cre">CREATE</button>
-    </div>
-
-    <div>
-      <button class="but" id="sho">SHOW</button>
-    </div>
-
-    <div>
-      <button class="but" id="del">DELETE</button>
-    </div>
-  </body>
+    <script>
+        // Базовый URL вашего Spring Boot сервера на cloud.ru
+        // ЗАМЕНИТЕ 'your-server-ip' на реальный IP вашего сервера
+        const API_BASE = 'http://176.123.166.19:8080/api'; //  const API_BASE = 'http://your-server-ip:8080/api';
+        
+        // Функция для добавления нового пользователя
+        async function addUser() {
+            // Получаем значение из поля ввода
+            const userNameInput = document.getElementById('userName');
+            const name = userNameInput.value.trim();
+            
+            // Проверяем, что поле не пустое
+            if (!name) {
+                alert('Please enter a name');
+                return;
+            }
+            
+            try {
+                // Отправляем POST запрос на сервер для создания пользователя
+                const response = await fetch(API_BASE + '/testdb', { //  const response = await fetch(API_BASE + '/users', {
+                    method: 'POST', // Метод HTTP для создания данных
+                    headers: {
+                        'Content-Type': 'application/json', // Указываем, что отправляем JSON
+                    },
+                    body: JSON.stringify({ // Преобразуем объект в JSON строку
+                        name: name // Создаем объект с полем name
+                        // Поле id не указываем - оно сгенерируется автоматически в БД
+                    })
+                });
+                
+                // Проверяем, что запрос выполнен успешно (статус 200-299)
+                if (response.ok) {
+                    // Очищаем поле ввода
+                    userNameInput.value = '';
+                    // Обновляем список пользователей
+                    loadUsers();
+                } else {
+                    // Если сервер вернул ошибку
+                    throw new Error('Server returned error: ' + response.status);
+                }
+            } catch (error) {
+                // Обрабатываем ошибки сети или другие ошибки
+                console.error('Error adding user:', error);
+                alert('Error adding user: ' + error.message);
+            }
+        }
+        
+        // Функция для загрузки списка пользователей
+        async function loadUsers() {
+            try {
+                // Отправляем GET запрос для получения всех пользователей
+                const response = await fetch(API_BASE + '/testdb'); // const response = await fetch(API_BASE + '/users');
+                
+                // Проверяем успешность запроса
+                if (!response.ok) {
+                    throw new Error('Failed to load users: ' + response.status);
+                }
+                
+                // Преобразуем ответ из JSON в JavaScript объект
+                const users = await response.json();
+                
+                // Получаем контейнер для списка пользователей
+                const usersList = document.getElementById('usersList');
+                
+                // Очищаем предыдущий список
+                usersList.innerHTML = '';
+                
+                // Проверяем, есть ли пользователи
+                if (users.length === 0) {
+                    usersList.innerHTML = '<p>No users found</p>';
+                    return;
+                }
+                
+                // Для каждого пользователя создаем HTML элемент
+                users.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'user-item';
+                    userElement.innerHTML = `
+                        <strong>ID:</strong> ${user.id} 
+                        <strong>Name:</strong> ${user.name}
+                        <button onclick="deleteUser(${user.id})">Delete</button>
+                    `;
+                    usersList.appendChild(userElement);
+                });
+                
+            } catch (error) {
+                // Обрабатываем ошибки
+                console.error('Error loading users:', error);
+                document.getElementById('usersList').innerHTML = 
+                    '<p>Error loading users: ' + error.message + '</p>';
+            }
+        }
+        
+        // Функция для удаления пользователя
+        async function deleteUser(userId) {
+            // Подтверждаем удаление
+            if (!confirm('Are you sure you want to delete this user?')) {
+                return;
+            }
+            
+            try {
+                // Отправляем DELETE запрос на сервер
+                const response = await fetch(API_BASE + '/testdb/' + userId, {  //  const response = await fetch(API_BASE + '/users/' + userId, { 
+                    method: 'DELETE' // Метод HTTP для удаления данных
+                });
+                
+                // Проверяем успешность запроса
+                if (response.ok) {
+                    // Обновляем список пользователей после удаления
+                    loadUsers();
+                } else {
+                    throw new Error('Failed to delete user: ' + response.status);
+                }
+            } catch (error) {
+                // Обрабатываем ошибки
+                console.error('Error deleting user:', error);
+                alert('Error deleting user: ' + error.message);
+            }
+        }
+        
+        // Загружаем пользователей при загрузке страницы
+        // Эта функция выполнится, когда страница полностью загрузится
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+        });
+        
+        // Также можно обновлять список каждые 10 секунд
+        // setInterval(loadUsers, 10000);
+    </script>
+</body>
 </html>
-
-<script>
-  const API_BASE = "http://176.123.166.19:8080/api";
-
-  let tg = window.Telegram.WebApp;
-  const cloudStorage = tg.CloudStorage;
-
-  const button = document.getElementById("test");
-  const output = document.getElementById("text");
-
-  const create = document.getElementById("cre");
-  const show = document.getElementById("sho");
-  const delet = document.getElementById("del");
-
-  create.addEventListener("click", () => {
-    output.innerHTML = "";
-
-    const object = {
-      // message
-      id: 1,
-      name: "Lera",
-      //parseInt(document.getElementById("id").value)
-    };
-
-    try {
-      const response = fetch(`${API_BASE}/testdb`, {
-        // база данных
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(object),
-      });
-
-      if (response.ok) {
-        alert("Message sent successfully!");
-        document.getElementById("messageForm").reset();
-        loadMessages();
-      } else {
-        throw new Error("Failed to send message");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error sending message");
-    }
-
-    output.append(" <Success> ");
-  });
-
-  show.addEventListener("click", () => {
-    output.innerHTML = "";
-  });
-
-  delet.addEventListener("click", () => {
-    output.innerHTML = "";
-  });
-
-  function action() {
-    output.innerHTML = "";
-    let data1 = tg.initDataUnsafe.user.first_name;
-    output.append(" " + data1 + " ");
-
-    tg.WebApp.sendData("Test data from web app");
-  }
-
-  /*
-
-  button.addEventListener("click", function () {
-    alert(`ALERT`);
-  });
- 
-
-   */
-</script>
-
-<style>
-  .output-container {
-    width: 500px;
-    height: 200px;
-    background-color: rgb(86, 152, 228);
-    padding: 20px;
-  }
-  .output {
-    width: 450px;
-    height: 190px;
-    background-color: rgb(178, 247, 230);
-    margin: 10px;
-    padding: 20px;
-  }
-  .but {
-    background-color: rgb(8, 255, 193);
-    padding: 20px;
-  }
-  .but:hover {
-    background-color: rgb(4, 202, 153);
-  }
-</style>
