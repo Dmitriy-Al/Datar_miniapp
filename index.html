@@ -9,21 +9,42 @@
     </style>
 </head>
 <body>
-    <h1>User Manager 1</h1>
+    <h1>User Manager</h1>
     
     <!-- Форма для добавления пользователя -->
     <div>
         <input type="text" id="userName" placeholder="Enter user name">
         <button onclick="addUser()">Add User</button>
     </div>
+
+    <div>
+      <button id="showUsers">SHOW</button>
+    </div>
     
     <!-- Список пользователей -->
     <div id="usersList"></div>
 
+        <div>
+      <output id="text">  </output>
+    </div>
+
     <script>
+
+
         // Базовый URL вашего Spring Boot сервера на cloud.ru
-        // ЗАМЕНИТЕ 'your-server-ip' на реальный IP вашего сервера
-        const API_BASE = 'http://176.123.166.19:8080/api'; //  const API_BASE = 'http://your-server-ip:8080/api';
+        // ЗАМЕНИТЕ 'your-server-ip' на реальный IP вашего сервера http://176.123.166.19
+        const API_BASE = "http://176.123.166.19:8080/api/testdb"; //  const API_BASE = 'http://your-server-ip:8080/api'; 'http://localhost:8080/api/testdb'
+
+        const use = document.getElementById("text");
+        const showUsersButton = document.getElementById("showUsers");
+        
+
+        showUsersButton.addEventListener("click", () => {
+            use.innerHTML = ' pizdec '
+/**/
+            const resp = fetch(API_BASE);
+            use.innerHTML += ' < ' + resp;
+              });
         
         // Функция для добавления нового пользователя
         async function addUser() {
@@ -36,12 +57,18 @@
                 alert('Please enter a name');
                 return;
             }
+
+            /*
+            origin 'null' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: 
+            No 'Access-Control-Allow-Origin' header is present on the requested resource.
+            */
             
             try {
-                // Отправляем POST запрос на сервер для создания пользователя
-                const response = await fetch(API_BASE + '/testdb', { //  const response = await fetch(API_BASE + '/users', {
+                // Отправляем POST запрос на сервер для создания пользователя  function fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>
+                const response = await fetch(API_BASE, { //  const response = await fetch(API_BASE + '/users', {
                     method: 'POST', // Метод HTTP для создания данных
                     headers: {
+                       //  'Access-Control-Allow-Origin': "localhost",
                         'Content-Type': 'application/json', // Указываем, что отправляем JSON
                     },
                     body: JSON.stringify({ // Преобразуем объект в JSON строку
@@ -63,10 +90,11 @@
             } catch (error) {
                 // Обрабатываем ошибки сети или другие ошибки
                 console.error('Error adding user:', error);
-                alert('Error adding user: ' + error.message);
+                alert('Error adding user: ' + error.message + ' <> ' + error.value + ' <> ' + response.status + ' <> ' + response.message);
             }
         }
         
+        /*  */ 
         // Функция для загрузки списка пользователей
         async function loadUsers() {
             try {
@@ -112,7 +140,11 @@
                     '<p>Error loading users: ' + error.message + '</p>';
             }
         }
-        
+          
+
+                
+     
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Функция для удаления пользователя
         async function deleteUser(userId) {
             // Подтверждаем удаление
@@ -122,7 +154,7 @@
             
             try {
                 // Отправляем DELETE запрос на сервер
-                const response = await fetch(API_BASE + '/testdb/' + userId, {  //  const response = await fetch(API_BASE + '/users/' + userId, { 
+                const response = await fetch(API_BASE + '/' + userId, {  //  const response = await fetch(API_BASE + '/users/' + userId, { 
                     method: 'DELETE' // Метод HTTP для удаления данных
                 });
                 
@@ -139,12 +171,14 @@
                 alert('Error deleting user: ' + error.message);
             }
         }
-        
+           
+        /*
         // Загружаем пользователей при загрузке страницы
         // Эта функция выполнится, когда страница полностью загрузится
         document.addEventListener('DOMContentLoaded', function() {
             loadUsers();
         });
+        */
         
         // Также можно обновлять список каждые 10 секунд
         // setInterval(loadUsers, 10000);
