@@ -9,7 +9,7 @@
     </style>
 </head>
 <body>
-    <h1>User Manager 2</h1>
+    <h1>User Manager 3</h1>
     
     <!-- Форма для добавления пользователя -->
     <div>
@@ -18,7 +18,7 @@
     </div>
 
     <div>
-      <button id="showUsers">SHOW</button>
+      <button id="showUsers">Show Users</button>
     </div>
     
     <!-- Список пользователей -->
@@ -30,7 +30,6 @@
 
     <script>
 
-
         // Базовый URL вашего Spring Boot сервера на cloud.ru
         // ЗАМЕНИТЕ 'your-server-ip' на реальный IP вашего сервера http://176.123.166.19
         const API_BASE = "http://176.123.166.19:8080/api/testdb"; //  const API_BASE = 'http://your-server-ip:8080/api'; 'http://localhost:8080/api/testdb'
@@ -40,10 +39,14 @@
         
 
         showUsersButton.addEventListener("click", () => {
-            use.innerHTML = ' pizdec '
-/**/
+            loadUsers();
+
+
+            /*
+            use.innerHTML = ' SHOW '
             const resp = fetch(API_BASE);
-            use.innerHTML += ' < ' + resp;
+            use.innerHTML += ' < ' + resp + ' > ';
+            */
               });
         
         // Функция для добавления нового пользователя
@@ -82,7 +85,7 @@
                     // Очищаем поле ввода
                     userNameInput.value = '';
                     // Обновляем список пользователей
-                    loadUsers();
+                   // loadUsers();
                 } else {
                     // Если сервер вернул ошибку
                     throw new Error('Server returned error: ' + response.status);
@@ -99,7 +102,7 @@
         async function loadUsers() {
             try {
                 // Отправляем GET запрос для получения всех пользователей
-                const response = await fetch(API_BASE + '/testdb'); // const response = await fetch(API_BASE + '/users');
+                const response = await fetch(API_BASE); // const response = await fetch(API_BASE + '/users');
                 
                 // Проверяем успешность запроса
                 if (!response.ok) {
