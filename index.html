@@ -9,7 +9,7 @@
     </style>
 </head>
 <body>
-    <h1>User Manager 2</h1>
+    <h1>User Manager 4</h1>
     
     <!-- Форма для добавления пользователя -->
     <div>
@@ -31,8 +31,8 @@
     <script>// const API_BASE = 'https://176.123.166.19:8443/api';
 
         // Базовый URL вашего Spring Boot сервера на cloud.ru
-        // ЗАМЕНИТЕ 'your-server-ip' на реальный IP вашего сервера http://176.123.166.19
-        const API_BASE = "https://176.123.166.19:8443/api/testdb"; //  const API_BASE = 'http://your-server-ip:8080/api'; 'http://localhost:8080/api/testdb'
+        // ЗАМЕНИТЕ 'your-server-ip' на реальный IP вашего сервера http://176.123.166.19  https://alimovdev.ru/api/testdb
+        const API_BASE = "https://alimovdev.ru/api/"; //  const API_BASE = 'http://your-server-ip:8080/api'; 'http://localhost:8080/api/testdb'
 
         const use = document.getElementById("text");
         const showUsersButton = document.getElementById("showUsers");
@@ -68,7 +68,7 @@
             
             try {
                 // Отправляем POST запрос на сервер для создания пользователя  function fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>
-                const response = await fetch(API_BASE, { //  const response = await fetch(API_BASE + '/users', {
+                const response = await fetch(API_BASE + "/testdb", { //  const response = await fetch(API_BASE + '/users', {
                     method: 'POST', // Метод HTTP для создания данных
                     headers: {
                        //  'Access-Control-Allow-Origin': "localhost",
@@ -102,7 +102,7 @@
         async function loadUsers() {
             try {
                 // Отправляем GET запрос для получения всех пользователей
-                const response = await fetch(API_BASE); // const response = await fetch(API_BASE + '/users');
+                const response = await fetch(API_BASE + "/testdb"); // const response = await fetch(API_BASE + '/users');
                 
                 // Проверяем успешность запроса
                 if (!response.ok) {
@@ -157,7 +157,7 @@
             
             try {
                 // Отправляем DELETE запрос на сервер
-                const response = await fetch(API_BASE + '/' + userId, {  //  const response = await fetch(API_BASE + '/users/' + userId, { 
+                const response = await fetch(API_BASE + "/testdb" + '/' + userId, {  //  const response = await fetch(API_BASE + '/users/' + userId, { 
                     method: 'DELETE' // Метод HTTP для удаления данных
                 });
                 
