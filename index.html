@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Запись ко мне</title>
+    <title>Управление объектами</title>
     <style>
         * {
             margin: 0;
@@ -29,7 +29,7 @@
             background-color: #faf2c5;
             border-radius: 15px;
             padding: 15px;
-            min-height: 200px;
+            min-height: 600px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
@@ -180,7 +180,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100px;
+            flex-grow: 1;
+            cursor: pointer;
         }
 
         /* Адаптивность для разных устройств */
@@ -192,7 +193,7 @@
             
             .column {
                 padding: 10px;
-                min-height: 180px;
+                min-height: 500px;
             }
             
             .cards-container {
@@ -224,12 +225,20 @@
                 max-width: 800px;
                 margin: 0 auto;
             }
+            
+            .column {
+                min-height: 700px;
+            }
         }
 
         @media (min-width: 1024px) {
             .container {
                 grid-template-columns: repeat(3, 1fr);
                 max-width: 1000px;
+            }
+            
+            .column {
+                min-height: 800px;
             }
         }
     </style>
@@ -285,9 +294,13 @@
                     </div>
                 `;
                 
-                // Обработчик клика по столбцу
+                // Обработчик клика по столбцу - исправленная версия
                 column.addEventListener('click', function(e) {
-                    if (e.target === column || e.target.tagName === 'H2' || e.target.classList.contains('empty-column')) {
+                    // Клик срабатывает только если кликнули на сам столбец, заголовок или пустую область
+                    if (e.target === column || 
+                        e.target.tagName === 'H2' || 
+                        e.target.classList.contains('empty-column') ||
+                        e.target.classList.contains('cards-container')) {
                         currentColumn = i;
                         openAddModal();
                     }
