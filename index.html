@@ -272,247 +272,261 @@
         </div>
     </div>
 
-    <script>
-        const API_BASE = "https://alimovdev.ru/api";
-        let currentColumn = null;
-        let currentObjectId = null;
-        let allObjects = [];
+<script>
+    const API_BASE = "https://alimovdev.ru/api";
+    let currentColumn = null;
+    let currentObjectId = null;
+    let allObjects = [];
 
-        // Создание столбцов
-        function createColumns() {
-            const container = document.getElementById('columnsContainer');
-            container.innerHTML = '';
-            
-            for (let i = 1; i <= 9; i++) {
-                const column = document.createElement('div');
-                column.className = 'column';
-                column.setAttribute('data-column-id', i);
-                column.innerHTML = `
-                    <h2>Столбец ${i}</h2>
-                    <div class="cards-container" id="cards-${i}">
-                        <div class="empty-column">Кликните чтобы добавить объект</div>
-                    </div>
-                `;
-                
-                // Обработчик клика по столбцу - исправленная версия
-                column.addEventListener('click', function(e) {
-                    // Клик срабатывает только если кликнули на сам столбец, заголовок или пустую область
-                    if (e.target === column || 
-                        e.target.tagName === 'H2' || 
-                        e.target.classList.contains('empty-column') ||
-                        e.target.classList.contains('cards-container')) {
-                        currentColumn = i;
-                        openAddModal();
-                    }
-                });
-                
-                container.appendChild(column);
-            }
-            
-            // Загрузка данных при инициализации
-            loadAllObjects();
-        }
-
-        // Открытие модального окна добавления
-        function openAddModal() {
-            document.getElementById('addModal').style.display = 'block';
-            document.getElementById('objectName').value = '';
-            document.getElementById('objectName').focus();
-        }
-
-        // Закрытие модального окна добавления
-        function closeAddModal() {
-            document.getElementById('addModal').style.display = 'none';
-            currentColumn = null;
-        }
-
-        // Открытие модального окна удаления
-        function openDeleteModal(objectId, objectName) {
-            currentObjectId = objectId;
-            const messageElement = document.getElementById('deleteMessage');
-            messageElement.textContent = `Вы уверены, что хотите удалить объект "${objectName}"?`;
-            document.getElementById('deleteModal').style.display = 'block';
-        }
-
-        // Закрытие модального окна удаления
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').style.display = 'none';
-            currentObjectId = null;
-        }
-
-        // Добавление нового объекта
-        async function addNewObject() {
-            const name = document.getElementById('objectName').value.trim();
-            
-            if (!name) {
-                alert('Пожалуйста, введите имя объекта');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/testdb`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ name: name })
-                });
-
-                if (response.ok) {
-                    const newObject = await response.json();
-                    // Добавляем объект в общий массив
-                    allObjects.push(newObject);
-                    // Перераспределяем все объекты по столбцам
-                    distributeObjectsToColumns(allObjects);
-                    closeAddModal();
-                } else {
-                    throw new Error('Ошибка при добавлении объекта');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Ошибка при добавлении объекта');
-            }
-        }
-
-        // Удаление объекта
-        async function deleteObject() {
-            if (!currentObjectId) return;
-
-            try {
-                const response = await fetch(`${API_BASE}/testdb/${currentObjectId}`, {
-                    method: 'DELETE'
-                });
-
-                if (response.ok) {
-                    // Удаляем объект из общего массива
-                    allObjects = allObjects.filter(obj => obj.id !== currentObjectId);
-                    // Перераспределяем оставшиеся объекты
-                    distributeObjectsToColumns(allObjects);
-                    closeDeleteModal();
-                } else {
-                    throw new Error('Ошибка при удалении объекта');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Ошибка при удалении объекта');
-            }
-        }
-
-        // Загрузка всех объектов
-        async function loadAllObjects() {
-            try {
-                const response = await fetch(`${API_BASE}/testdb`);
-                
-                if (response.ok) {
-                    allObjects = await response.json();
-                    distributeObjectsToColumns(allObjects);
-                } else {
-                    throw new Error('Ошибка при загрузке объектов');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                // Для демонстрации создадим тестовые данные
-                createDemoData();
-            }
-        }
-
-        // Распределение объектов по столбцам
-        function distributeObjectsToColumns(objects) {
-            // Очищаем все столбцы
-            for (let i = 1; i <= 9; i++) {
-                const cardsContainer = document.getElementById(`cards-${i}`);
-                cardsContainer.innerHTML = '';
-            }
-
-            if (objects.length === 0) {
-                // Если объектов нет, показываем сообщения во всех столбцах
-                for (let i = 1; i <= 9; i++) {
-                    const cardsContainer = document.getElementById(`cards-${i}`);
-                    cardsContainer.innerHTML = '<div class="empty-column">Кликните чтобы добавить объект</div>';
-                }
-                return;
-            }
-
-            // Распределяем объекты по столбцам (равномерно)
-            objects.forEach((object, index) => {
-                const columnNumber = (index % 9) + 1;
-                addCardToColumn(columnNumber, object);
-            });
-        }
-
-        // Добавление карточки в столбец
-        function addCardToColumn(columnNumber, object) {
-            const cardsContainer = document.getElementById(`cards-${columnNumber}`);
-            
-            // Убираем сообщение о пустом столбце если оно есть
-            const emptyMessage = cardsContainer.querySelector('.empty-column');
-            if (emptyMessage) {
-                emptyMessage.remove();
-            }
-
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.setAttribute('data-object-id', object.id);
-            card.innerHTML = `
-                <h3>${object.name}</h3>
-                <p>ID: ${object.id}</p>
+    // Создание столбцов
+    function createColumns() {
+        const container = document.getElementById('columnsContainer');
+        container.innerHTML = '';
+        
+        for (let i = 1; i <= 9; i++) {
+            const column = document.createElement('div');
+            column.className = 'column';
+            column.setAttribute('data-column-id', i);
+            column.innerHTML = `
+                <h2>Столбец ${i}</h2>
+                <div class="cards-container" id="cards-${i}">
+                    <div class="empty-column">Кликните чтобы добавить объект</div>
+                </div>
             `;
             
-            card.addEventListener('click', function(e) {
-                e.stopPropagation();
-                openDeleteModal(object.id, object.name);
+            // Обработчик клика по столбцу - исправленная версия
+            column.addEventListener('click', function(e) {
+                // Клик срабатывает только если кликнули на сам столбец, заголовок или пустую область
+                if (e.target === column || 
+                    e.target.tagName === 'H2' || 
+                    e.target.classList.contains('empty-column') ||
+                    e.target.classList.contains('cards-container')) {
+                    currentColumn = i;
+                    openAddModal();
+                }
             });
             
-            cardsContainer.appendChild(card);
+            container.appendChild(column);
+        }
+        
+        // Загрузка данных при инициализации
+        loadAllObjects();
+    }
+
+    // Открытие модального окна добавления
+    function openAddModal() {
+        document.getElementById('addModal').style.display = 'block';
+        document.getElementById('objectName').value = '';
+        document.getElementById('objectName').focus();
+    }
+
+    // Закрытие модального окна добавления
+    function closeAddModal() {
+        document.getElementById('addModal').style.display = 'none';
+        currentColumn = null;
+    }
+
+    // Открытие модального окна удаления
+    function openDeleteModal(objectId, objectName) {
+        currentObjectId = objectId;
+        const messageElement = document.getElementById('deleteMessage');
+        messageElement.textContent = `Вы уверены, что хотите удалить объект "${objectName}"?`;
+        document.getElementById('deleteModal').style.display = 'block';
+    }
+
+    // Закрытие модального окна удаления
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+        currentObjectId = null;
+    }
+
+    // Добавление нового объекта
+    async function addNewObject() {
+        const name = document.getElementById('objectName').value.trim();
+        
+        if (!name) {
+            alert('Пожалуйста, введите имя объекта');
+            return;
         }
 
-        // Создание демо-данных (если API недоступно)
-        function createDemoData() {
-            allObjects = [
-                { id: 1, name: 'Объект 1' },
-                { id: 2, name: 'Объект 2' },
-                { id: 3, name: 'Объект 3' },
-                { id: 4, name: 'Объект 4' },
-                { id: 5, name: 'Объект 5' },
-                { id: 6, name: 'Объект 6' },
-                { id: 7, name: 'Объект 7' },
-                { id: 8, name: 'Объект 8' },
-                { id: 9, name: 'Объект 9' },
-                { id: 10, name: 'Объект 10' },
-                { id: 11, name: 'Объект 11' },
-                { id: 12, name: 'Объект 12' },
-                { id: 13, name: 'Объект 13' },
-                { id: 14, name: 'Объект 14' },
-                { id: 15, name: 'Объект 15' }
-            ];
-            
-            distributeObjectsToColumns(allObjects);
-        }
+        try {
+            const response = await fetch(`${API_BASE}/testdb`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: name })
+            });
 
-        // Обработка нажатия Enter в поле ввода
-        document.getElementById('objectName').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addNewObject();
-            }
-        });
-
-        // Закрытие модальных окон при клике вне их
-        window.addEventListener('click', function(e) {
-            const addModal = document.getElementById('addModal');
-            const deleteModal = document.getElementById('deleteModal');
-            
-            if (e.target === addModal) {
+            if (response.ok) {
+                const newObject = await response.json();
+                // Добавляем объект в общий массив
+                allObjects.push(newObject);
+                // Добавляем карточку именно в тот столбец, по которому кликнули
+                addCardToColumn(currentColumn, newObject);
                 closeAddModal();
+            } else {
+                throw new Error('Ошибка при добавлении объекта');
             }
-            if (e.target === deleteModal) {
-                closeDeleteModal();
-            }
-        });
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Ошибка при добавлении объекта');
+        }
+    }
 
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            createColumns();
+    // Удаление объекта
+    async function deleteObject() {
+        if (!currentObjectId) return;
+
+        try {
+            const response = await fetch(`${API_BASE}/testdb/${currentObjectId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                // Удаляем объект из общего массива
+                allObjects = allObjects.filter(obj => obj.id !== currentObjectId);
+                // Удаляем карточку
+                removeCard(currentObjectId);
+                closeDeleteModal();
+            } else {
+                throw new Error('Ошибка при удалении объекта');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Ошибка при удалении объекта');
+        }
+    }
+
+    // Загрузка всех объектов
+    async function loadAllObjects() {
+        try {
+            const response = await fetch(`${API_BASE}/testdb`);
+            
+            if (response.ok) {
+                allObjects = await response.json();
+                distributeObjectsToColumns(allObjects);
+            } else {
+                throw new Error('Ошибка при загрузке объектов');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Для демонстрации создадим тестовые данные
+            createDemoData();
+        }
+    }
+
+    // Распределение объектов по столбцам (только для начальной загрузки)
+    function distributeObjectsToColumns(objects) {
+        // Очищаем все столбцы
+        for (let i = 1; i <= 9; i++) {
+            const cardsContainer = document.getElementById(`cards-${i}`);
+            cardsContainer.innerHTML = '';
+        }
+
+        if (objects.length === 0) {
+            // Если объектов нет, показываем сообщения во всех столбцах
+            for (let i = 1; i <= 9; i++) {
+                const cardsContainer = document.getElementById(`cards-${i}`);
+                cardsContainer.innerHTML = '<div class="empty-column">Кликните чтобы добавить объект</div>';
+            }
+            return;
+        }
+
+        // Распределяем объекты по столбцам (равномерно) - только при начальной загрузке
+        objects.forEach((object, index) => {
+            const columnNumber = (index % 9) + 1;
+            addCardToColumn(columnNumber, object);
         });
-    </script>
+    }
+
+    // Добавление карточки в столбец
+    function addCardToColumn(columnNumber, object) {
+        const cardsContainer = document.getElementById(`cards-${columnNumber}`);
+        
+        // Убираем сообщение о пустом столбце если оно есть
+        const emptyMessage = cardsContainer.querySelector('.empty-column');
+        if (emptyMessage) {
+            emptyMessage.remove();
+        }
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.setAttribute('data-object-id', object.id);
+        card.innerHTML = `
+            <h3>${object.name}</h3>
+            <p>ID: ${object.id}</p>
+        `;
+        
+        card.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openDeleteModal(object.id, object.name);
+        });
+        
+        cardsContainer.appendChild(card);
+    }
+
+    // Удаление карточки
+    function removeCard(objectId) {
+        const card = document.querySelector(`[data-object-id="${objectId}"]`);
+        if (card) {
+            const cardsContainer = card.parentElement;
+            card.remove();
+            
+            // Если в столбце не осталось карточек, показываем сообщение
+            if (cardsContainer.children.length === 0) {
+                cardsContainer.innerHTML = '<div class="empty-column">Кликните чтобы добавить объект</div>';
+            }
+        }
+    }
+
+    // Создание демо-данных (если API недоступно)
+    function createDemoData() {
+        allObjects = [
+            { id: 1, name: 'Объект 1' },
+            { id: 2, name: 'Объект 2' },
+            { id: 3, name: 'Объект 3' },
+            { id: 4, name: 'Объект 4' },
+            { id: 5, name: 'Объект 5' },
+            { id: 6, name: 'Объект 6' },
+            { id: 7, name: 'Объект 7' },
+            { id: 8, name: 'Объект 8' },
+            { id: 9, name: 'Объект 9' },
+            { id: 10, name: 'Объект 10' },
+            { id: 11, name: 'Объект 11' },
+            { id: 12, name: 'Объект 12' },
+            { id: 13, name: 'Объект 13' },
+            { id: 14, name: 'Объект 14' },
+            { id: 15, name: 'Объект 15' }
+        ];
+        
+        distributeObjectsToColumns(allObjects);
+    }
+
+    // Обработка нажатия Enter в поле ввода
+    document.getElementById('objectName').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addNewObject();
+        }
+    });
+
+    // Закрытие модальных окон при клике вне их
+    window.addEventListener('click', function(e) {
+        const addModal = document.getElementById('addModal');
+        const deleteModal = document.getElementById('deleteModal');
+        
+        if (e.target === addModal) {
+            closeAddModal();
+        }
+        if (e.target === deleteModal) {
+            closeDeleteModal();
+        }
+    });
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        createColumns();
+    });
+</script>
 </body>
 </html>
