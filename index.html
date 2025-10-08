@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Управление объектами</title>
@@ -277,6 +278,8 @@
     let currentColumn = null;
     let currentObjectId = null;
     let allObjects = [];
+    let tg = window.Telegram.WebApp; // Аккаунта Telegram
+    let id = tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
     // Создание столбцов
     function createColumns() {
@@ -296,6 +299,7 @@
             
             // Обработчик клика по столбцу - исправленная версия
             column.addEventListener('click', function(e) {
+                alert('Telegram id ' + id); // TODO Данные из Telegram
                 // Клик срабатывает только если кликнули на сам столбец, заголовок или пустую область
                 if (e.target === column || 
                     e.target.tagName === 'H2' || 
