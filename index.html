@@ -89,12 +89,12 @@
             position: relative;
         }
 
-     /* Вертикальная шкала времени */
+        /* Вертикальная шкала времени */
         .time-scale {
             position: absolute;
             left: 0;
             top: 60px; /* Начинаем от уровня заголовка столбца */
-            bottom: 0;
+            bottom: 0px;
             width: 15px;
             background: linear-gradient(to bottom, #fff5e4, #fae4bd);
             border-right: 2px solid #3498db;
@@ -130,11 +130,12 @@
             background-color: #2980b9;
         }
 
-          .time-label {
+        .time-label {
+         margin-bottom: 5px;
+          margin-left: 18px;
             font-size: 10px;
             color: #2c3e50;
             font-weight: bold;
-            position: absolute;
             right: -25px;
             background: white;
             padding: 1px 3px;
@@ -142,11 +143,10 @@
             border: 1px solid #bdc3c7;
             top: 50%; /* Центрируем по вертикали относительно маркера */
             transform: translateY(-50%); /* Смещаем вверх на половину высоты */
-            margin-top: 8px; /* Дополнительное смещение вниз */
         }
 
         .column-content {
-            margin-left: 40px; /* Отступ для шкалы времени */
+            margin-left: 15px; /* Отступ для шкалы времени */
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -161,9 +161,13 @@
             text-align: center;
             margin-bottom: 15px;
             color: #333;
-            border-bottom: 2px solid #2c3e50;
+            border-bottom: 2px solid #3b648d;
             padding-bottom: 10px;
             font-size: 16px;
+            height: 60px; /* Фиксируем высоту заголовка */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .cards-container {
@@ -332,15 +336,23 @@
 
             .time-scale {
                 width: 30px;
+                top: 50px; /* Меньший отступ для мобильных */
             }
 
             .time-label {
                 font-size: 8px;
                 right: -20px;
+                margin-top: 6px; /* Меньшее смещение для мобильных */
             }
 
             .column-content {
                 margin-left: 30px;
+            }
+
+            .column h2 {
+                height: 50px; /* Меньшая высота заголовка для мобильных */
+                font-size: 14px;
+                margin-bottom: 10px;
             }
             
             .cards-container {
@@ -357,11 +369,6 @@
             
             .card p {
                 font-size: 11px;
-            }
-            
-            .column h2 {
-                font-size: 14px;
-                margin-bottom: 10px;
             }
 
             .key-button {
