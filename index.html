@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Управление объектами</title>
@@ -60,7 +59,7 @@
         }
 
         .card {
-            background-color: #fce8c4;
+            background-color: #ffdc9c;
             border-radius: 10px;
             padding: 12px;
             aspect-ratio: 1;
@@ -158,12 +157,12 @@
         }
 
         .modal-button.ok {
-            background-color: #7af17e;
+            background-color: #57ff5d;
             color: white;
         }
 
         .modal-button.cancel {
-            background-color: #f17a71;
+            background-color: #e94e43;
             color: white;
         }
 
@@ -185,8 +184,8 @@
             cursor: pointer;
         }
 
-        /* Адаптивность для разных устройств */
-        @media (max-width: 480px) {
+        /* Мобильные устройства - 3 столбца */
+        @media (max-width: 767px) {
             .container {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
@@ -219,7 +218,8 @@
             }
         }
 
-        @media (min-width: 768px) {
+        /* Планшеты - 3 столбца */
+        @media (min-width: 768px) and (max-width: 1023px) {
             .container {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 20px;
@@ -232,10 +232,13 @@
             }
         }
 
+        /* Десктоп - 5 столбцов */
         @media (min-width: 1024px) {
             .container {
-                grid-template-columns: repeat(3, 1fr);
-                max-width: 1000px;
+                grid-template-columns: repeat(5, 1fr);
+                max-width: 1400px;
+                margin: 0 auto;
+                gap: 20px;
             }
             
             .column {
@@ -274,7 +277,7 @@
     </div>
 
 <script>
-    //const API_BASE = "https://alimovdev.ru/api";
+    const API_BASE = "https://alimovdev.ru/api";
     let currentColumn = null;
     let currentObjectId = null;
     let allObjects = [];
@@ -285,7 +288,11 @@
         const container = document.getElementById('columnsContainer');
         container.innerHTML = '';
         
-        for (let i = 1; i <= 9; i++) {
+        // Определяем количество столбцов в зависимости от ширины экрана
+        const isDesktop = window.innerWidth >= 1024;
+        const columnCount = isDesktop ? 5 : 3;
+        
+        for (let i = 1; i <= columnCount; i++) {
             const column = document.createElement('div');
             column.className = 'column';
             column.setAttribute('data-column-id', i);
@@ -352,7 +359,7 @@
         }
 
         try {
-            const response = await fetch(`${API_BASE}/testdb`, {
+            const response = await fetch(`${API_BASE}/clients`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -381,7 +388,7 @@
         if (!currentObjectId) return;
 
         try {
-            const response = await fetch(`${API_BASE}/testdb/${currentObjectId}`, {
+            const response = await fetch(`${API_BASE}/clients/${currentObjectId}`, {
                 method: 'DELETE'
             });
 
@@ -403,7 +410,7 @@
     // Загрузка всех объектов
     async function loadAllObjects() {
         try {
-            const response = await fetch(`${API_BASE}/testdb`);
+            const response = await fetch(`${API_BASE}/clients`);
             
             if (response.ok) {
                 allObjects = await response.json();
@@ -420,24 +427,32 @@
 
     // Распределение объектов по столбцам (только для начальной загрузки)
     function distributeObjectsToColumns(objects) {
+        // Определяем количество столбцов
+        const isDesktop = window.innerWidth >= 1024;
+        const columnCount = isDesktop ? 5 : 3;
+        
         // Очищаем все столбцы
-        for (let i = 1; i <= 9; i++) {
+        for (let i = 1; i <= columnCount; i++) {
             const cardsContainer = document.getElementById(`cards-${i}`);
-            cardsContainer.innerHTML = '';
+            if (cardsContainer) {
+                cardsContainer.innerHTML = '';
+            }
         }
 
         if (objects.length === 0) {
             // Если объектов нет, показываем сообщения во всех столбцах
-            for (let i = 1; i <= 9; i++) {
+            for (let i = 1; i <= columnCount; i++) {
                 const cardsContainer = document.getElementById(`cards-${i}`);
-                cardsContainer.innerHTML = '<div class="empty-column">Кликните чтобы добавить объект</div>';
+                if (cardsContainer) {
+                    cardsContainer.innerHTML = '<div class="empty-column">Кликните чтобы добавить объект</div>';
+                }
             }
             return;
         }
 
         // Распределяем объекты по столбцам (равномерно) - только при начальной загрузке
         objects.forEach((object, index) => {
-            const columnNumber = (index % 9) + 1;
+            const columnNumber = (index % columnCount) + 1;
             addCardToColumn(columnNumber, object);
         });
     }
@@ -445,6 +460,7 @@
     // Добавление карточки в столбец
     function addCardToColumn(columnNumber, object) {
         const cardsContainer = document.getElementById(`cards-${columnNumber}`);
+        if (!cardsContainer) return;
         
         // Убираем сообщение о пустом столбце если оно есть
         const emptyMessage = cardsContainer.querySelector('.empty-column');
@@ -523,6 +539,11 @@
         if (e.target === deleteModal) {
             closeDeleteModal();
         }
+    });
+
+    // Обработка изменения размера окна
+    window.addEventListener('resize', function() {
+        createColumns();
     });
 
     // Инициализация при загрузке страницы
