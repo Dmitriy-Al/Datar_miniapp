@@ -19,6 +19,56 @@
             overflow-x: hidden;
         }
 
+        /* Шапка с кнопками-клавишами */
+        .header {
+            height: 50px;
+            background-color: #2c3e50;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 5px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .keys-container {
+            display: inline-flex;
+            gap: 8px;
+            height: 100%;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .key-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            min-width: 80px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .key-button:hover {
+            background: linear-gradient(135deg, #2980b9, #1f618d);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .key-button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
         .container {
             display: grid;
             gap: 15px;
@@ -185,6 +235,25 @@
             cursor: pointer;
         }
 
+        /* Стили для скроллбара в шапке */
+        .header::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .header::-webkit-scrollbar-track {
+            background: #34495e;
+            border-radius: 3px;
+        }
+
+        .header::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 3px;
+        }
+
+        .header::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+
         /* Мобильные устройства - 3 столбца в ряд */
         @media (max-width: 767px) {
             .container {
@@ -216,6 +285,12 @@
             .column h2 {
                 font-size: 14px;
                 margin-bottom: 10px;
+            }
+
+            .key-button {
+                padding: 6px 12px;
+                font-size: 12px;
+                min-width: 70px;
             }
         }
 
@@ -249,6 +324,13 @@
     </style>
 </head>
 <body>
+    <!-- Шапка с кнопками-клавишами -->
+    <div class="header">
+        <div class="keys-container" id="keysContainer">
+            <!-- Кнопки-клавиши будут созданы через JavaScript -->
+        </div>
+    </div>
+
     <div class="container" id="columnsContainer">
         <!-- Столбцы будут созданы через JavaScript -->
     </div>
@@ -282,6 +364,37 @@
     let currentColumn = null;
     let currentObjectId = null;
     let allObjects = [];
+
+    // Создание кнопок-клавиш в шапке
+    function createKeyButtons() {
+        const keysContainer = document.getElementById('keysContainer');
+        keysContainer.innerHTML = '';
+
+        if (allObjects.length === 0) {
+            const emptyMessage = document.createElement('div');
+            emptyMessage.className = 'key-button';
+            emptyMessage.textContent = 'Нет объектов';
+            emptyMessage.style.background = '#95a5a6';
+            emptyMessage.style.cursor = 'default';
+            keysContainer.appendChild(emptyMessage);
+            return;
+        }
+
+        allObjects.forEach(object => {
+            const keyButton = document.createElement('button');
+            keyButton.className = 'key-button';
+            keyButton.textContent = object.name;
+            keyButton.setAttribute('data-object-id', object.id);
+            
+            keyButton.addEventListener('click', function() {
+                // Действие при клике на кнопку-клавишу
+                alert(`Выбрана клавиша: ${object.name}\nID: ${object.id}`);
+                // Здесь можно добавить дополнительную логику для кнопок
+            });
+            
+            keysContainer.appendChild(keyButton);
+        });
+    }
 
     // Создание столбцов - всегда 16 столбцов
     function createColumns() {
@@ -369,6 +482,8 @@
                 allObjects.push(newObject);
                 // Добавляем карточку именно в тот столбец, по которому кликнули
                 addCardToColumn(currentColumn, newObject);
+                // Обновляем кнопки-клавиши в шапке
+                createKeyButtons();
                 closeAddModal();
             } else {
                 throw new Error('Ошибка при добавлении объекта');
@@ -393,6 +508,8 @@
                 allObjects = allObjects.filter(obj => obj.id !== currentObjectId);
                 // Удаляем карточку
                 removeCard(currentObjectId);
+                // Обновляем кнопки-клавиши в шапке
+                createKeyButtons();
                 closeDeleteModal();
             } else {
                 throw new Error('Ошибка при удалении объекта');
@@ -411,6 +528,8 @@
             if (response.ok) {
                 allObjects = await response.json();
                 distributeObjectsToColumns(allObjects);
+                // Создаем кнопки-клавиши после загрузки объектов
+                createKeyButtons();
             } else {
                 throw new Error('Ошибка при загрузке объектов');
             }
@@ -520,6 +639,8 @@
         ];
         
         distributeObjectsToColumns(allObjects);
+        // Создаем кнопки-клавиши для демо-данных
+        createKeyButtons();
     }
 
     // Обработка нажатия Enter в поле ввода
