@@ -16,19 +16,14 @@
             background-color: #f0f0f0;
             padding: 15px;
             min-height: 100vh;
-            overflow-x: auto; /* Горизонтальный скроллинг для всего тела */
-        }
-
-        .container-wrapper {
-            width: max-content; /* Ширина по содержимому */
-            margin: 0 auto;
+            overflow-x: hidden;
         }
 
         .container {
             display: grid;
-            grid-template-columns: repeat(16, 1fr); /* Всегда 16 столбцов */
             gap: 15px;
-            width: max-content; /* Ширина по содержимому */
+            width: 100%;
+            max-width: 100%;
         }
 
         .column {
@@ -41,7 +36,6 @@
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
-            width: 300px; /* Фиксированная ширина столбцов */
         }
 
         .column:hover {
@@ -191,20 +185,16 @@
             cursor: pointer;
         }
 
-        /* Мобильные устройства - показывать по 3 столбца в видимой области */
+        /* Мобильные устройства - 3 столбца в ряд */
         @media (max-width: 767px) {
-            body {
-                padding: 10px;
-            }
-            
             .container {
+                grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
             }
             
             .column {
                 padding: 10px;
                 min-height: 500px;
-                width: 280px; /* Немного уже для мобильных */
             }
             
             .cards-container {
@@ -229,36 +219,38 @@
             }
         }
 
-        /* Планшеты - показывать по 3 столбца в видимой области */
+        /* Планшеты - 3 столбца в ряд */
         @media (min-width: 768px) and (max-width: 1023px) {
             .container {
+                grid-template-columns: repeat(3, 1fr);
                 gap: 20px;
+                max-width: 1200px;
+                margin: 0 auto;
             }
             
             .column {
                 min-height: 900px;
-                width: 300px;
             }
         }
 
-        /* Десктоп - показывать по 5 столбцов в видимой области */
+        /* Десктоп - 5 столбцов в ряд */
         @media (min-width: 1024px) {
             .container {
+                grid-template-columns: repeat(5, 1fr);
+                max-width: 2000px;
+                margin: 0 auto;
                 gap: 20px;
             }
             
             .column {
                 min-height: 900px;
-                width: 300px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container-wrapper">
-        <div class="container" id="columnsContainer">
-            <!-- Столбцы будут созданы через JavaScript -->
-        </div>
+    <div class="container" id="columnsContainer">
+        <!-- Столбцы будут созданы через JavaScript -->
     </div>
 
     <!-- Модальное окно для добавления объекта -->
@@ -286,17 +278,17 @@
     </div>
 
 <script>
-    const API_BASE = "https://alimovdev.ru/api" //"http://localhost:8080/api";
+    const API_BASE = "https://alimovdev.ru/api";
     let currentColumn = null;
     let currentObjectId = null;
     let allObjects = [];
 
-    // Создание столбцов
+    // Создание столбцов - всегда 16 столбцов
     function createColumns() {
         const container = document.getElementById('columnsContainer');
         container.innerHTML = '';
         
-        // Создаем 16 столбцов
+        // Создаем 16 столбцов (как в изначальном варианте)
         for (let i = 1; i <= 16; i++) {
             const column = document.createElement('div');
             column.className = 'column';
@@ -363,7 +355,7 @@
         }
 
         try {
-            const response = await fetch(`${API_BASE}/testdb`, {  //   clients
+            const response = await fetch(`${API_BASE}/testdb`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -431,7 +423,7 @@
 
     // Распределение объектов по столбцам (только для начальной загрузки)
     function distributeObjectsToColumns(objects) {
-        // Очищаем все столбцы
+        // Очищаем все 16 столбцов
         for (let i = 1; i <= 16; i++) {
             const cardsContainer = document.getElementById(`cards-${i}`);
             if (cardsContainer) {
@@ -440,7 +432,7 @@
         }
 
         if (objects.length === 0) {
-            // Если объектов нет, показываем сообщения во всех столбцах
+            // Если объектов нет, показываем сообщения во всех 16 столбцах
             for (let i = 1; i <= 16; i++) {
                 const cardsContainer = document.getElementById(`cards-${i}`);
                 if (cardsContainer) {
@@ -450,7 +442,7 @@
             return;
         }
 
-        // Распределяем объекты по столбцам (равномерно) - только при начальной загрузке
+        // Распределяем объекты по 16 столбцам (равномерно) - как в изначальном варианте
         objects.forEach((object, index) => {
             const columnNumber = (index % 16) + 1;
             addCardToColumn(columnNumber, object);
@@ -520,7 +512,11 @@
             { id: 17, name: 'Объект 17' },
             { id: 18, name: 'Объект 18' },
             { id: 19, name: 'Объект 19' },
-            { id: 20, name: 'Объект 20' }
+            { id: 20, name: 'Объект 20' },
+            { id: 21, name: 'Объект 21' },
+            { id: 22, name: 'Объект 22' },
+            { id: 23, name: 'Объект 23' },
+            { id: 24, name: 'Объект 24' }
         ];
         
         distributeObjectsToColumns(allObjects);
@@ -544,6 +540,12 @@
         if (e.target === deleteModal) {
             closeDeleteModal();
         }
+    });
+
+    // Обработка изменения размера окна
+    window.addEventListener('resize', function() {
+        // При изменении размера окна перестраиваем сетку
+        createColumns();
     });
 
     // Инициализация при загрузке страницы
