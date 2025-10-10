@@ -130,7 +130,7 @@
             background-color: #2980b9;
         }
 
-        .time-label {
+          .time-label {
             font-size: 10px;
             color: #2c3e50;
             font-weight: bold;
@@ -140,6 +140,9 @@
             padding: 1px 3px;
             border-radius: 2px;
             border: 1px solid #bdc3c7;
+            top: 50%; /* Центрируем по вертикали относительно маркера */
+            transform: translateY(-50%); /* Смещаем вверх на половину высоты */
+            margin-top: 8px; /* Дополнительное смещение вниз */
         }
 
         .column-content {
