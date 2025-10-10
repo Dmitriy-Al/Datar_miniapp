@@ -86,6 +86,69 @@
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
+            position: relative;
+        }
+
+        /* Вертикальная шкала времени */
+
+         /* #e8f4f8 #d4e7f0 */
+        .time-scale {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 40px;
+            background: linear-gradient(to bottom, #fff5e4, #fae4bd);
+            border-right: 2px solid #3498db;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 0;
+            z-index: 1;
+        }
+
+        .time-marker {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .time-marker::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            width: 8px;
+            height: 1px;
+            background-color: #3498db;
+        }
+
+        .time-marker.hour::after {
+            width: 12px;
+            height: 2px;
+            background-color: #2980b9;
+        }
+
+        .time-label {
+            font-size: 10px;
+            color: #2c3e50;
+            font-weight: bold;
+            position: absolute;
+            right: -25px;
+            background: white;
+            padding: 1px 3px;
+            border-radius: 2px;
+            border: 1px solid #bdc3c7;
+        }
+
+        .column-content {
+            margin-left: 40px; /* Отступ для шкалы времени */
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         .column:hover {
@@ -97,7 +160,7 @@
             text-align: center;
             margin-bottom: 15px;
             color: #333;
-            border-bottom: 2px solid #ffa500;
+            border-bottom: 2px solid #ff0000;
             padding-bottom: 10px;
             font-size: 16px;
         }
@@ -265,6 +328,19 @@
                 padding: 10px;
                 min-height: 500px;
             }
+
+            .time-scale {
+                width: 30px;
+            }
+
+            .time-label {
+                font-size: 8px;
+                right: -20px;
+            }
+
+            .column-content {
+                margin-left: 30px;
+            }
             
             .cards-container {
                 gap: 8px;
@@ -365,6 +441,41 @@
     let currentObjectId = null;
     let allObjects = [];
 
+    // Функция для создания шкалы времени
+    function createTimeScale(columnElement) {
+        const timeScale = document.createElement('div');
+        timeScale.className = 'time-scale';
+        
+        // Время с 08:00 до 22:00 с шагом 10 минут
+        const startHour = 8;
+        const endHour = 22;
+        const totalMinutes = (endHour - startHour) * 60;
+        
+        for (let hour = startHour; hour <= endHour; hour++) {
+            for (let minute = 0; minute < 60; minute += 10) {
+                if (hour === endHour && minute > 0) break; // Останавливаемся на 22:00
+                
+                const timeMarker = document.createElement('div');
+                timeMarker.className = 'time-marker';
+                
+                // Добавляем класс для часовых отметок
+                if (minute === 0) {
+                    timeMarker.classList.add('hour');
+                    
+                    // Добавляем текстовую метку для каждого часа
+                    const timeLabel = document.createElement('div');
+                    timeLabel.className = 'time-label';
+                    timeLabel.textContent = `${hour.toString().padStart(2, '0')}:00`;
+                    timeMarker.appendChild(timeLabel);
+                }
+                
+                timeScale.appendChild(timeMarker);
+            }
+        }
+        
+        columnElement.appendChild(timeScale);
+    }
+
     // Создание кнопок-клавиш в шапке
     function createKeyButtons() {
         const keysContainer = document.getElementById('keysContainer');
@@ -407,18 +518,24 @@
             column.className = 'column';
             column.setAttribute('data-column-id', i);
             column.innerHTML = `
-                <h2>Столбец ${i}</h2>
-                <div class="cards-container" id="cards-${i}">
-                    <div class="empty-column">Кликните чтобы добавить объект</div>
+                <div class="column-content">
+                    <h2>Столбец ${i}</h2>
+                    <div class="cards-container" id="cards-${i}">
+                        <div class="empty-column">Кликните чтобы добавить объект</div>
+                    </div>
                 </div>
             `;
+            
+            // Добавляем шкалу времени
+            createTimeScale(column);
             
             // Обработчик клика по столбцу
             column.addEventListener('click', function(e) {
                 if (e.target === column || 
                     e.target.tagName === 'H2' || 
                     e.target.classList.contains('empty-column') ||
-                    e.target.classList.contains('cards-container')) {
+                    e.target.classList.contains('cards-container') ||
+                    e.target.classList.contains('column-content')) {
                     currentColumn = i;
                     openAddModal();
                 }
