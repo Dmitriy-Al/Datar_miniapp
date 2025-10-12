@@ -17,7 +17,7 @@
         background-color: #f0f0f0;
         padding: 15px;
         min-height: 100vh;
-        overflow-x: hidden;
+        overflow-x: auto; /* Добавляем горизонтальный скролл для мобильных */
       }
 
       /* Шапка с кнопками-клавишами */
@@ -73,21 +73,22 @@
       .container {
         display: grid;
         gap: 15px;
-        width: 100%;
-        max-width: 100%;
+        width: max-content; /* Ширина по содержимому */
+        min-width: 100%; /* Минимальная ширина 100% */
       }
 
       .column {
         background-color: #fcf8e1;
         border-radius: 5px;
         padding: 15px;
-        min-height: 900px;
+        height: 900px; /* Фиксированная высота для всех устройств */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
         display: flex;
         flex-direction: column;
         position: relative;
+        width: 200px; /* Фиксированная ширина столбца */
       }
 
       /* Вертикальная шкала времени */
@@ -181,7 +182,7 @@
         gap: 10px;
         flex-grow: 1;
         position: relative;
-        height: 840px;
+        height: 840px; /* Фиксированная высота для всех устройств */
       }
 
       .card {
@@ -201,7 +202,7 @@
         left: 0;
         right: 0;
         box-sizing: border-box;
-        margin-top: -10px; /* Добавляем небольшое смещение для точного выравнивания */
+        margin-top: -15px; /* Добавляем небольшое смещение для точного выравнивания */
       }
 
       .card:hover {
@@ -351,27 +352,37 @@
         background: #2980b9;
       }
 
-      /* Мобильные устройства - 3 столбца в ряд */
+      /* Мобильные устройства - горизонтальный скролл для столбцов */
       @media (max-width: 767px) {
+        body {
+          padding: 10px;
+          overflow-x: auto; /* Горизонтальный скролл для тела */
+        }
+
         .container {
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(
+            auto-fill,
+            200px
+          ); /* Фиксированная ширина столбцов */
           gap: 10px;
+          width: max-content;
         }
 
         .column {
           padding: 10px;
-          min-height: 500px;
+          height: 900px; /* Такая же высота как на десктопе */
+          width: 200px; /* Фиксированная ширина */
         }
 
         .time-scale {
           width: 30px;
-          top: 50px; /* Меньший отступ для мобильных */
+          top: 50px;
         }
 
         .time-label {
           font-size: 8px;
           right: -20px;
-          margin-top: 6px; /* Меньшее смещение для мобильных */
+          margin-top: 6px;
         }
 
         .column-content {
@@ -379,13 +390,13 @@
         }
 
         .column h2 {
-          height: 50px; /* Меньшая высота заголовка для мобильных */
+          height: 50px;
           font-size: 14px;
           margin-bottom: 10px;
         }
 
         .cards-container {
-          height: 420px; /* Половина высоты для мобильных */
+          height: 840px; /* Такая же высота как на десктопе */
         }
 
         .card {
@@ -416,10 +427,12 @@
           gap: 20px;
           max-width: 1200px;
           margin: 0 auto;
+          width: 100%;
         }
 
         .column {
-          min-height: 900px;
+          height: 900px;
+          width: auto; /* Автоматическая ширина */
         }
       }
 
@@ -430,10 +443,12 @@
           max-width: 2000px;
           margin: 0 auto;
           gap: 20px;
+          width: 100%;
         }
 
         .column {
-          min-height: 900px;
+          height: 900px;
+          width: auto; /* Автоматическая ширина */
         }
       }
     </style>
@@ -507,7 +522,6 @@
     <script>
       let tg = window.Telegram.WebApp; // Аккаунта Telegram
       let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
-
       const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
 
       let currentSpecialist = null;
