@@ -1,803 +1,587 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Управление объектами</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 15px;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        padding: 15px;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
 
-        /* Шапка с кнопками-клавишами */
-        .header {
-            height: 50px;
-            background-color: #2c3e50;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            padding: 5px;
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
+      .container {
+        display: grid;
+        gap: 15px;
+        width: 100%;
+        max-width: 100%;
+      }
 
-        .keys-container {
-            display: inline-flex;
-            gap: 8px;
-            height: 100%;
-            align-items: center;
-            padding: 0 10px;
-        }
+      .column {
+        background-color: #fcf8e1;
+        border-radius: 5px;
+        padding: 15px;
+        min-height: 900px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+      }
 
-        .key-button {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            min-width: 80px;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+      .column:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      }
 
-        .key-button:hover {
-            background: linear-gradient(135deg, #2980b9, #1f618d);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
+      .column h2 {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #333;
+        border-bottom: 2px solid #ffa500;
+        padding-bottom: 10px;
+        font-size: 16px;
+      }
 
-        .key-button:active {
-            transform: translateY(0);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
+      .cards-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex-grow: 1;
+      }
 
+      .card {
+        background-color: #ffdc9c;
+        border-radius: 10px;
+        padding: 12px;
+        aspect-ratio: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        word-break: break-word;
+      }
+
+      .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .card h3 {
+        margin-bottom: 8px;
+        color: #333;
+        font-size: 14px;
+        line-height: 1.2;
+      }
+
+      .card p {
+        color: #666;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        width: 90%;
+        max-width: 350px;
+      }
+
+      .modal h2 {
+        margin-bottom: 15px;
+        color: #333;
+        text-align: center;
+        font-size: 18px;
+      }
+
+      .modal input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+      }
+
+      .modal input:focus {
+        outline: none;
+        border-color: #ffa500;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .modal-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s;
+        min-width: 80px;
+      }
+
+      .modal-button.ok {
+        background-color: #57ff5d;
+        color: white;
+      }
+
+      .modal-button.cancel {
+        background-color: #e94e43;
+        color: white;
+      }
+
+      .modal-button:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+      }
+
+      .empty-column {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 20px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-grow: 1;
+        cursor: pointer;
+      }
+
+      /* Мобильные устройства - 3 столбца в ряд */
+      @media (max-width: 767px) {
         .container {
-            display: grid;
-            gap: 15px;
-            width: 100%;
-            max-width: 100%;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
         }
 
         .column {
-            background-color: #fcf8e1;
-            border-radius: 5px;
-            padding: 15px;
-            min-height: 900px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        /* Вертикальная шкала времени */
-        .time-scale {
-            position: absolute;
-            left: 0;
-            top: 60px; /* Начинаем от уровня заголовка столбца */
-            bottom: 0px;
-            width: 15px;
-            background: linear-gradient(to bottom, #fff5e4, #fae4bd);
-            border-right: 2px solid #3498db;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 0;
-            z-index: 1;
-        }
-
-        .time-marker {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            flex: 1;
-            min-height: 0;
-        }
-
-        .time-marker::after {
-            content: '';
-            position: absolute;
-            right: -2px;
-            width: 8px;
-            height: 1px;
-            background-color: #3498db;
-        }
-
-        .time-marker.hour::after {
-            width: 12px;
-            height: 2px;
-            background-color: #2980b9;
-        }
-
-        .time-label {
-         margin-bottom: 5px;
-          margin-left: 18px;
-            font-size: 10px;
-            color: #2c3e50;
-            font-weight: bold;
-            right: -25px;
-            background: white;
-            padding: 1px 3px;
-            border-radius: 2px;
-            border: 1px solid #bdc3c7;
-            top: 50%; /* Центрируем по вертикали относительно маркера */
-            transform: translateY(-50%); /* Смещаем вверх на половину высоты */
-        }
-
-        .column-content {
-            margin-left: 15px; /* Отступ для шкалы времени */
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .column:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-
-        .column h2 {
-            text-align: center;
-            margin-bottom: 15px;
-            color: #333;
-            border-bottom: 2px solid #3b648d;
-            padding-bottom: 10px;
-            font-size: 16px;
-            height: 60px; /* Фиксируем высоту заголовка */
-            display: flex;
-            align-items: center;
-            justify-content: center;
+          padding: 10px;
+          min-height: 500px;
         }
 
         .cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex-grow: 1;
+          gap: 8px;
         }
 
         .card {
-            background-color: #ffdc9c;
-            border-radius: 10px;
-            padding: 12px;
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-            word-break: break-word;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          padding: 10px;
         }
 
         .card h3 {
-            margin-bottom: 8px;
-            color: #333;
-            font-size: 14px;
-            line-height: 1.2;
+          font-size: 12px;
         }
 
         .card p {
-            color: #666;
-            font-size: 12px;
-            font-weight: bold;
+          font-size: 11px;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+        .column h2 {
+          font-size: 14px;
+          margin-bottom: 10px;
+        }
+      }
+
+      /* Планшеты - 3 столбца в ряд */
+      @media (min-width: 768px) and (max-width: 1023px) {
+        .container {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+          max-width: 1200px;
+          margin: 0 auto;
         }
 
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 350px;
+        .column {
+          min-height: 900px;
+        }
+      }
+
+      /* Десктоп - 5 столбцов в ряд */
+      @media (min-width: 1024px) {
+        .container {
+          grid-template-columns: repeat(5, 1fr);
+          max-width: 2000px;
+          margin: 0 auto;
+          gap: 20px;
         }
 
-        .modal h2 {
-            margin-bottom: 15px;
-            color: #333;
-            text-align: center;
-            font-size: 18px;
+        .column {
+          min-height: 900px;
         }
-
-        .modal input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .modal input:focus {
-            outline: none;
-            border-color: #ffa500;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .modal-button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s;
-            min-width: 80px;
-        }
-
-        .modal-button.ok {
-            background-color: #57ff5d;
-            color: white;
-        }
-
-        .modal-button.cancel {
-            background-color: #e94e43;
-            color: white;
-        }
-
-        .modal-button:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        .empty-column {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            padding: 20px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-grow: 1;
-            cursor: pointer;
-        }
-
-        /* Стили для скроллбара в шапке */
-        .header::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .header::-webkit-scrollbar-track {
-            background: #34495e;
-            border-radius: 3px;
-        }
-
-        .header::-webkit-scrollbar-thumb {
-            background: #3498db;
-            border-radius: 3px;
-        }
-
-        .header::-webkit-scrollbar-thumb:hover {
-            background: #2980b9;
-        }
-
-        /* Мобильные устройства - 3 столбца в ряд */
-        @media (max-width: 767px) {
-            .container {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-            }
-            
-            .column {
-                padding: 10px;
-                min-height: 500px;
-            }
-
-            .time-scale {
-                width: 30px;
-                top: 50px; /* Меньший отступ для мобильных */
-            }
-
-            .time-label {
-                font-size: 8px;
-                right: -20px;
-                margin-top: 6px; /* Меньшее смещение для мобильных */
-            }
-
-            .column-content {
-                margin-left: 30px;
-            }
-
-            .column h2 {
-                height: 50px; /* Меньшая высота заголовка для мобильных */
-                font-size: 14px;
-                margin-bottom: 10px;
-            }
-            
-            .cards-container {
-                gap: 8px;
-            }
-            
-            .card {
-                padding: 10px;
-            }
-            
-            .card h3 {
-                font-size: 12px;
-            }
-            
-            .card p {
-                font-size: 11px;
-            }
-
-            .key-button {
-                padding: 6px 12px;
-                font-size: 12px;
-                min-width: 70px;
-            }
-        }
-
-        /* Планшеты - 3 столбца в ряд */
-        @media (min-width: 768px) and (max-width: 1023px) {
-            .container {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 20px;
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-            
-            .column {
-                min-height: 900px;
-            }
-        }
-
-        /* Десктоп - 5 столбцов в ряд */
-        @media (min-width: 1024px) {
-            .container {
-                grid-template-columns: repeat(5, 1fr);
-                max-width: 2000px;
-                margin: 0 auto;
-                gap: 20px;
-            }
-            
-            .column {
-                min-height: 900px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
-    <!-- Шапка с кнопками-клавишами -->
-    <div class="header">
-        <div class="keys-container" id="keysContainer">
-            <!-- Кнопки-клавиши будут созданы через JavaScript -->
-        </div>
-    </div>
-
+  </head>
+  <body>
     <div class="container" id="columnsContainer">
-        <!-- Столбцы будут созданы через JavaScript -->
+      <!-- Столбцы будут созданы через JavaScript -->
     </div>
 
     <!-- Модальное окно для добавления объекта -->
     <div class="modal" id="addModal">
-        <div class="modal-content">
-            <h2>Добавить новый объект</h2>
-            <input type="text" id="objectName" placeholder="Введите имя объекта" maxlength="50">
-            <div class="modal-buttons">
-                <button class="modal-button cancel" onclick="closeAddModal()">Отмена</button>
-                <button class="modal-button ok" onclick="addNewObject()">OK</button>
-            </div>
+      <div class="modal-content">
+        <h2>Добавить новый объект</h2>
+        <input
+          type="text"
+          id="objectName"
+          placeholder="Введите имя объекта"
+          maxlength="50"
+        />
+        <div class="modal-buttons">
+          <button class="modal-button cancel" onclick="closeAddModal()">
+            Отмена
+          </button>
+          <button class="modal-button ok" onclick="addNewObject()">OK</button>
         </div>
+      </div>
     </div>
 
     <!-- Модальное окно для удаления объекта -->
     <div class="modal" id="deleteModal">
-        <div class="modal-content">
-            <h2>Удалить объект</h2>
-            <p style="text-align: center; margin-bottom: 20px; color: #666; font-size: 14px;" id="deleteMessage">Вы уверены, что хотите удалить этот объект?</p>
-            <div class="modal-buttons">
-                <button class="modal-button cancel" onclick="closeDeleteModal()">Отмена</button>
-                <button class="modal-button ok" onclick="deleteObject()">OK</button>
-            </div>
+      <div class="modal-content">
+        <h2>Удалить объект</h2>
+        <p
+          style="
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 14px;
+          "
+          id="deleteMessage"
+        >
+          Вы уверены, что хотите удалить этот объект?
+        </p>
+        <div class="modal-buttons">
+          <button class="modal-button cancel" onclick="closeDeleteModal()">
+            Отмена
+          </button>
+          <button class="modal-button ok" onclick="deleteObject()">OK</button>
         </div>
+      </div>
     </div>
 
-<script>
-    const API_BASE = "https://alimovdev.ru/api";
-    let currentColumn = null;
-    let currentObjectId = null;
-    let allObjects = [];
+    <script>
+      const API_BASE = "https://alimovdev.ru/api";
+      let currentColumn = null;
+      let currentObjectId = null;
+      let allObjects = [];
 
-    // Функция для создания шкалы времени
-    function createTimeScale(columnElement) {
-        const timeScale = document.createElement('div');
-        timeScale.className = 'time-scale';
-        
-        // Время с 08:00 до 22:00 с шагом 10 минут
-        const startHour = 8;
-        const endHour = 22;
-        const totalMinutes = (endHour - startHour) * 60;
-        
-        for (let hour = startHour; hour <= endHour; hour++) {
-            for (let minute = 0; minute < 60; minute += 10) {
-                if (hour === endHour && minute > 0) break; // Останавливаемся на 22:00
-                
-                const timeMarker = document.createElement('div');
-                timeMarker.className = 'time-marker';
-                
-                // Добавляем класс для часовых отметок
-                if (minute === 0) {
-                    timeMarker.classList.add('hour');
-                    
-                    // Добавляем текстовую метку для каждого часа
-                    const timeLabel = document.createElement('div');
-                    timeLabel.className = 'time-label';
-                    timeLabel.textContent = `${hour.toString().padStart(2, '0')}:00`;
-                    timeMarker.appendChild(timeLabel);
-                }
-                
-                timeScale.appendChild(timeMarker);
-            }
-        }
-        
-        columnElement.appendChild(timeScale);
-    }
+      // Создание столбцов - всегда 16 столбцов
+      function createColumns() {
+        const container = document.getElementById("columnsContainer");
+        container.innerHTML = "";
 
-    // Создание кнопок-клавиш в шапке
-    function createKeyButtons() {
-        const keysContainer = document.getElementById('keysContainer');
-        keysContainer.innerHTML = '';
-
-        if (allObjects.length === 0) {
-            const emptyMessage = document.createElement('div');
-            emptyMessage.className = 'key-button';
-            emptyMessage.textContent = 'Нет объектов';
-            emptyMessage.style.background = '#95a5a6';
-            emptyMessage.style.cursor = 'default';
-            keysContainer.appendChild(emptyMessage);
-            return;
-        }
-
-        allObjects.forEach(object => {
-            const keyButton = document.createElement('button');
-            keyButton.className = 'key-button';
-            keyButton.textContent = object.name;
-            keyButton.setAttribute('data-object-id', object.id);
-            
-            keyButton.addEventListener('click', function() {
-                // Действие при клике на кнопку-клавишу
-                alert(`Выбрана клавиша: ${object.name}\nID: ${object.id}`);
-                // Здесь можно добавить дополнительную логику для кнопок
-            });
-            
-            keysContainer.appendChild(keyButton);
-        });
-    }
-
-    // Создание столбцов - всегда 16 столбцов
-    function createColumns() {
-        const container = document.getElementById('columnsContainer');
-        container.innerHTML = '';
-        
         // Создаем 16 столбцов (как в изначальном варианте)
         for (let i = 1; i <= 16; i++) {
-            const column = document.createElement('div');
-            column.className = 'column';
-            column.setAttribute('data-column-id', i);
-            column.innerHTML = `
-                <div class="column-content">
-                    <h2>Столбец ${i}</h2>
-                    <div class="cards-container" id="cards-${i}">
-                        <div class="empty-column">Кликните чтобы добавить объект</div>
-                    </div>
+          const column = document.createElement("div");
+          column.className = "column";
+          column.setAttribute("data-column-id", i);
+          column.innerHTML = `
+                <h2>Столбец ${i}</h2>
+                <div class="cards-container" id="cards-${i}">
+                    <div class="empty-column">Кликните чтобы добавить объект</div>
                 </div>
             `;
-            
-            // Добавляем шкалу времени
-            createTimeScale(column);
-            
-            // Обработчик клика по столбцу
-            column.addEventListener('click', function(e) {
-                if (e.target === column || 
-                    e.target.tagName === 'H2' || 
-                    e.target.classList.contains('empty-column') ||
-                    e.target.classList.contains('cards-container') ||
-                    e.target.classList.contains('column-content')) {
-                    currentColumn = i;
-                    openAddModal();
-                }
-            });
-            
-            container.appendChild(column);
+
+          // Обработчик клика по столбцу
+          column.addEventListener("click", function (e) {
+            if (
+              e.target === column ||
+              e.target.tagName === "H2" ||
+              e.target.classList.contains("empty-column") ||
+              e.target.classList.contains("cards-container")
+            ) {
+              currentColumn = i;
+              openAddModal();
+            }
+          });
+
+          container.appendChild(column);
         }
-        
+
         // Загрузка данных при инициализации
         loadAllObjects();
-    }
+      }
 
-    // Открытие модального окна добавления
-    function openAddModal() {
-        document.getElementById('addModal').style.display = 'block';
-        document.getElementById('objectName').value = '';
-        document.getElementById('objectName').focus();
-    }
+      // Открытие модального окна добавления
+      function openAddModal() {
+        document.getElementById("addModal").style.display = "block";
+        document.getElementById("objectName").value = "";
+        document.getElementById("objectName").focus();
+      }
 
-    // Закрытие модального окна добавления
-    function closeAddModal() {
-        document.getElementById('addModal').style.display = 'none';
+      // Закрытие модального окна добавления
+      function closeAddModal() {
+        document.getElementById("addModal").style.display = "none";
         currentColumn = null;
-    }
+      }
 
-    // Открытие модального окна удаления
-    function openDeleteModal(objectId, objectName) {
+      // Открытие модального окна удаления
+      function openDeleteModal(objectId, objectName) {
         currentObjectId = objectId;
-        const messageElement = document.getElementById('deleteMessage');
+        const messageElement = document.getElementById("deleteMessage");
         messageElement.textContent = `Вы уверены, что хотите удалить объект "${objectName}"?`;
-        document.getElementById('deleteModal').style.display = 'block';
-    }
+        document.getElementById("deleteModal").style.display = "block";
+      }
 
-    // Закрытие модального окна удаления
-    function closeDeleteModal() {
-        document.getElementById('deleteModal').style.display = 'none';
+      // Закрытие модального окна удаления
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").style.display = "none";
         currentObjectId = null;
-    }
+      }
 
-    // Добавление нового объекта
-    async function addNewObject() {
-        const name = document.getElementById('objectName').value.trim();
-        
+      // Добавление нового объекта
+      async function addNewObject() {
+        const name = document.getElementById("objectName").value.trim();
+
         if (!name) {
-            alert('Пожалуйста, введите имя объекта');
-            return;
+          alert("Пожалуйста, введите имя объекта");
+          return;
         }
 
         try {
-            const response = await fetch(`${API_BASE}/testdb`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: name })
-            });
+          const response = await fetch(`${API_BASE}/testdb`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name: name }),
+          });
 
-            if (response.ok) {
-                const newObject = await response.json();
-                // Добавляем объект в общий массив
-                allObjects.push(newObject);
-                // Добавляем карточку именно в тот столбец, по которому кликнули
-                addCardToColumn(currentColumn, newObject);
-                // Обновляем кнопки-клавиши в шапке
-                createKeyButtons();
-                closeAddModal();
-            } else {
-                throw new Error('Ошибка при добавлении объекта');
-            }
+          if (response.ok) {
+            const newObject = await response.json();
+            // Добавляем объект в общий массив
+            allObjects.push(newObject);
+            // Добавляем карточку именно в тот столбец, по которому кликнули
+            addCardToColumn(currentColumn, newObject);
+            closeAddModal();
+          } else {
+            throw new Error("Ошибка при добавлении объекта");
+          }
         } catch (error) {
-            console.error('Error:', error);
-            alert('Ошибка при добавлении объекта');
+          console.error("Error:", error);
+          alert("Ошибка при добавлении объекта");
         }
-    }
+      }
 
-    // Удаление объекта
-    async function deleteObject() {
+      // Удаление объекта
+      async function deleteObject() {
         if (!currentObjectId) return;
 
         try {
-            const response = await fetch(`${API_BASE}/testdb/${currentObjectId}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                // Удаляем объект из общего массива
-                allObjects = allObjects.filter(obj => obj.id !== currentObjectId);
-                // Удаляем карточку
-                removeCard(currentObjectId);
-                // Обновляем кнопки-клавиши в шапке
-                createKeyButtons();
-                closeDeleteModal();
-            } else {
-                throw new Error('Ошибка при удалении объекта');
+          const response = await fetch(
+            `${API_BASE}/testdb/${currentObjectId}`,
+            {
+              method: "DELETE",
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Ошибка при удалении объекта');
-        }
-    }
+          );
 
-    // Загрузка всех объектов
-    async function loadAllObjects() {
+          if (response.ok) {
+            // Удаляем объект из общего массива
+            allObjects = allObjects.filter((obj) => obj.id !== currentObjectId);
+            // Удаляем карточку
+            removeCard(currentObjectId);
+            closeDeleteModal();
+          } else {
+            throw new Error("Ошибка при удалении объекта");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Ошибка при удалении объекта");
+        }
+      }
+
+      // Загрузка всех объектов
+      async function loadAllObjects() {
         try {
-            const response = await fetch(`${API_BASE}/testdb`);
-            
-            if (response.ok) {
-                allObjects = await response.json();
-                distributeObjectsToColumns(allObjects);
-                // Создаем кнопки-клавиши после загрузки объектов
-                createKeyButtons();
-            } else {
-                throw new Error('Ошибка при загрузке объектов');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            // Для демонстрации создадим тестовые данные
-            createDemoData();
-        }
-    }
+          const response = await fetch(`${API_BASE}/testdb`);
 
-    // Распределение объектов по столбцам (только для начальной загрузки)
-    function distributeObjectsToColumns(objects) {
+          if (response.ok) {
+            allObjects = await response.json();
+            distributeObjectsToColumns(allObjects);
+          } else {
+            throw new Error("Ошибка при загрузке объектов");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          // Для демонстрации создадим тестовые данные
+          createDemoData();
+        }
+      }
+
+      // Распределение объектов по столбцам (только для начальной загрузки)
+      function distributeObjectsToColumns(objects) {
         // Очищаем все 16 столбцов
         for (let i = 1; i <= 16; i++) {
-            const cardsContainer = document.getElementById(`cards-${i}`);
-            if (cardsContainer) {
-                cardsContainer.innerHTML = '';
-            }
+          const cardsContainer = document.getElementById(`cards-${i}`);
+          if (cardsContainer) {
+            cardsContainer.innerHTML = "";
+          }
         }
 
         if (objects.length === 0) {
-            // Если объектов нет, показываем сообщения во всех 16 столбцах
-            for (let i = 1; i <= 16; i++) {
-                const cardsContainer = document.getElementById(`cards-${i}`);
-                if (cardsContainer) {
-                    cardsContainer.innerHTML = '<div class="empty-column">Кликните чтобы добавить объект</div>';
-                }
+          // Если объектов нет, показываем сообщения во всех 16 столбцах
+          for (let i = 1; i <= 16; i++) {
+            const cardsContainer = document.getElementById(`cards-${i}`);
+            if (cardsContainer) {
+              cardsContainer.innerHTML =
+                '<div class="empty-column">Кликните чтобы добавить объект</div>';
             }
-            return;
+          }
+          return;
         }
 
         // Распределяем объекты по 16 столбцам (равномерно) - как в изначальном варианте
         objects.forEach((object, index) => {
-            const columnNumber = (index % 16) + 1;
-            addCardToColumn(columnNumber, object);
+          const columnNumber = (index % 16) + 1;
+          addCardToColumn(columnNumber, object);
         });
-    }
+      }
 
-    // Добавление карточки в столбец
-    function addCardToColumn(columnNumber, object) {
+      // Добавление карточки в столбец
+      function addCardToColumn(columnNumber, object) {
         const cardsContainer = document.getElementById(`cards-${columnNumber}`);
         if (!cardsContainer) return;
-        
+
         // Убираем сообщение о пустом столбце если оно есть
-        const emptyMessage = cardsContainer.querySelector('.empty-column');
+        const emptyMessage = cardsContainer.querySelector(".empty-column");
         if (emptyMessage) {
-            emptyMessage.remove();
+          emptyMessage.remove();
         }
 
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.setAttribute('data-object-id', object.id);
+        const card = document.createElement("div");
+        card.className = "card";
+        card.setAttribute("data-object-id", object.id);
         card.innerHTML = `
             <h3>${object.name}</h3>
             <p>ID: ${object.id}</p>
         `;
-        
-        card.addEventListener('click', function(e) {
-            e.stopPropagation();
-            openDeleteModal(object.id, object.name);
-        });
-        
-        cardsContainer.appendChild(card);
-    }
 
-    // Удаление карточки
-    function removeCard(objectId) {
+        card.addEventListener("click", function (e) {
+          e.stopPropagation();
+          openDeleteModal(object.id, object.name);
+        });
+
+        cardsContainer.appendChild(card);
+      }
+
+      // Удаление карточки
+      function removeCard(objectId) {
         const card = document.querySelector(`[data-object-id="${objectId}"]`);
         if (card) {
-            const cardsContainer = card.parentElement;
-            card.remove();
-            
-            // Если в столбце не осталось карточек, показываем сообщение
-            if (cardsContainer.children.length === 0) {
-                cardsContainer.innerHTML = '<div class="empty-column">Кликните чтобы добавить объект</div>';
-            }
-        }
-    }
+          const cardsContainer = card.parentElement;
+          card.remove();
 
-    // Создание демо-данных (если API недоступно)
-    function createDemoData() {
+          // Если в столбце не осталось карточек, показываем сообщение
+          if (cardsContainer.children.length === 0) {
+            cardsContainer.innerHTML =
+              '<div class="empty-column">Кликните чтобы добавить объект</div>';
+          }
+        }
+      }
+
+      // Создание демо-данных (если API недоступно)
+      function createDemoData() {
         allObjects = [
-            { id: 1, name: 'Объект 1' },
-            { id: 2, name: 'Объект 2' },
-            { id: 3, name: 'Объект 3' },
-            { id: 4, name: 'Объект 4' },
-            { id: 5, name: 'Объект 5' },
-            { id: 6, name: 'Объект 6' },
-            { id: 7, name: 'Объект 7' },
-            { id: 8, name: 'Объект 8' },
-            { id: 9, name: 'Объект 9' },
-            { id: 10, name: 'Объект 10' },
-            { id: 11, name: 'Объект 11' },
-            { id: 12, name: 'Объект 12' },
-            { id: 13, name: 'Объект 13' },
-            { id: 14, name: 'Объект 14' },
-            { id: 15, name: 'Объект 15' },
-            { id: 16, name: 'Объект 16' },
-            { id: 17, name: 'Объект 17' },
-            { id: 18, name: 'Объект 18' },
-            { id: 19, name: 'Объект 19' },
-            { id: 20, name: 'Объект 20' },
-            { id: 21, name: 'Объект 21' },
-            { id: 22, name: 'Объект 22' },
-            { id: 23, name: 'Объект 23' },
-            { id: 24, name: 'Объект 24' }
+          { id: 1, name: "Объект 1" },
+          { id: 2, name: "Объект 2" },
+          { id: 3, name: "Объект 3" },
+          { id: 4, name: "Объект 4" },
+          { id: 5, name: "Объект 5" },
+          { id: 6, name: "Объект 6" },
+          { id: 7, name: "Объект 7" },
+          { id: 8, name: "Объект 8" },
+          { id: 9, name: "Объект 9" },
+          { id: 10, name: "Объект 10" },
+          { id: 11, name: "Объект 11" },
+          { id: 12, name: "Объект 12" },
+          { id: 13, name: "Объект 13" },
+          { id: 14, name: "Объект 14" },
+          { id: 15, name: "Объект 15" },
+          { id: 16, name: "Объект 16" },
+          { id: 17, name: "Объект 17" },
+          { id: 18, name: "Объект 18" },
+          { id: 19, name: "Объект 19" },
+          { id: 20, name: "Объект 20" },
+          { id: 21, name: "Объект 21" },
+          { id: 22, name: "Объект 22" },
+          { id: 23, name: "Объект 23" },
+          { id: 24, name: "Объект 24" },
         ];
-        
+
         distributeObjectsToColumns(allObjects);
-        // Создаем кнопки-клавиши для демо-данных
-        createKeyButtons();
-    }
+      }
 
-    // Обработка нажатия Enter в поле ввода
-    document.getElementById('objectName').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
+      // Обработка нажатия Enter в поле ввода
+      document
+        .getElementById("objectName")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
             addNewObject();
-        }
-    });
+          }
+        });
 
-    // Закрытие модальных окон при клике вне их
-    window.addEventListener('click', function(e) {
-        const addModal = document.getElementById('addModal');
-        const deleteModal = document.getElementById('deleteModal');
-        
+      // Закрытие модальных окон при клике вне их
+      window.addEventListener("click", function (e) {
+        const addModal = document.getElementById("addModal");
+        const deleteModal = document.getElementById("deleteModal");
+
         if (e.target === addModal) {
-            closeAddModal();
+          closeAddModal();
         }
         if (e.target === deleteModal) {
-            closeDeleteModal();
+          closeDeleteModal();
         }
-    });
+      });
 
-    // Обработка изменения размера окна
-    window.addEventListener('resize', function() {
+      // Обработка изменения размера окна
+      window.addEventListener("resize", function () {
         // При изменении размера окна перестраиваем сетку
         createColumns();
-    });
+      });
 
-    // Инициализация при загрузке страницы
-    document.addEventListener('DOMContentLoaded', function() {
+      // Инициализация при загрузке страницы
+      document.addEventListener("DOMContentLoaded", function () {
         createColumns();
-    });
-</script>
-</body>
+      });
+    </script>
+  </body>
 </html>
+
