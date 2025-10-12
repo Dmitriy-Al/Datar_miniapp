@@ -4,7 +4,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Управление объектами</title>
+    <title>Система записи на прием</title>
     <style>
       * {
         margin: 0;
@@ -18,6 +18,56 @@
         padding: 15px;
         min-height: 100vh;
         overflow-x: hidden;
+      }
+
+      /* Шапка с кнопками-клавишами */
+      .header {
+        height: 50px;
+        background-color: #2c3e50;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        padding: 5px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .keys-container {
+        display: inline-flex;
+        gap: 8px;
+        height: 100%;
+        align-items: center;
+        padding: 0 10px;
+      }
+
+      .key-button {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        min-width: 80px;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .key-button:hover {
+        background: linear-gradient(135deg, #2980b9, #1f618d);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .key-button:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
       }
 
       .container {
@@ -37,6 +87,74 @@
         transition: transform 0.2s, box-shadow 0.2s;
         display: flex;
         flex-direction: column;
+        position: relative;
+      }
+
+      /* Вертикальная шкала времени */
+      .time-scale {
+        position: absolute;
+        left: 0;
+        top: 60px; /* Начинаем от уровня заголовка столбца */
+        bottom: 0px;
+        width: 15px;
+        background: linear-gradient(to bottom, #fff5e4, #fae4bd);
+        border-right: 2px solid #3498db;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 0;
+        z-index: 1;
+      }
+
+      .time-marker {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .time-marker::after {
+        content: "";
+        position: absolute;
+        right: -2px;
+        width: 8px;
+        height: 1px;
+        background-color: #3498db;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .time-marker.hour::after {
+        width: 12px;
+        height: 2px;
+        background-color: #2980b9;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .time-label {
+        margin-top: 15px;
+        margin-left: 18px;
+        font-size: 10px;
+        color: #2c3e50;
+        font-weight: bold;
+        right: -25px;
+        background: white;
+        padding: 1px 3px;
+        border-radius: 2px;
+        border: 1px solid #bdc3c7;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+      }
+
+      .column-content {
+        margin-left: 15px; /* Отступ для шкалы времени */
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
       }
 
       .column:hover {
@@ -48,9 +166,13 @@
         text-align: center;
         margin-bottom: 15px;
         color: #333;
-        border-bottom: 2px solid #ffa500;
+        border-bottom: 2px solid #3b648d;
         padding-bottom: 10px;
         font-size: 16px;
+        height: 60px; /* Фиксируем высоту заголовка */
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .cards-container {
@@ -58,13 +180,14 @@
         flex-direction: column;
         gap: 10px;
         flex-grow: 1;
+        position: relative;
+        height: 840px;
       }
 
       .card {
         background-color: #ffdc9c;
-        border-radius: 10px;
-        padding: 12px;
-        aspect-ratio: 1;
+        border-radius: 5px;
+        padding: 5px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -74,6 +197,11 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         text-align: center;
         word-break: break-word;
+        position: absolute;
+        left: 0;
+        right: 0;
+        box-sizing: border-box;
+        margin-top: -10px; /* Добавляем небольшое смещение для точного выравнивания */
       }
 
       .card:hover {
@@ -83,13 +211,14 @@
 
       .card h3 {
         margin-bottom: 8px;
-        color: #333;
+        color: black;
         font-size: 14px;
+        font-weight: bold;
         line-height: 1.2;
       }
 
       .card p {
-        color: #666;
+        color: black;
         font-size: 12px;
         font-weight: bold;
       }
@@ -116,7 +245,7 @@
         border-radius: 15px;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         width: 90%;
-        max-width: 350px;
+        max-width: 400px;
       }
 
       .modal h2 {
@@ -126,17 +255,26 @@
         font-size: 18px;
       }
 
-      .modal input {
+      .modal input,
+      .modal textarea,
+      .modal select {
         width: 100%;
         padding: 12px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         border: 2px solid #ddd;
         border-radius: 8px;
         font-size: 16px;
         transition: border-color 0.3s;
       }
 
-      .modal input:focus {
+      .modal textarea {
+        height: 80px;
+        resize: vertical;
+      }
+
+      .modal input:focus,
+      .modal textarea:focus,
+      .modal select:focus {
         outline: none;
         border-color: #ffa500;
       }
@@ -186,6 +324,33 @@
         cursor: pointer;
       }
 
+      .guest-message {
+        text-align: center;
+        color: #666;
+        font-size: 24px;
+        margin-top: 100px;
+        font-weight: bold;
+      }
+
+      /* Стили для скроллбара в шапке */
+      .header::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      .header::-webkit-scrollbar-track {
+        background: #34495e;
+        border-radius: 3px;
+      }
+
+      .header::-webkit-scrollbar-thumb {
+        background: #3498db;
+        border-radius: 3px;
+      }
+
+      .header::-webkit-scrollbar-thumb:hover {
+        background: #2980b9;
+      }
+
       /* Мобильные устройства - 3 столбца в ряд */
       @media (max-width: 767px) {
         .container {
@@ -198,25 +363,49 @@
           min-height: 500px;
         }
 
-        .cards-container {
-          gap: 8px;
+        .time-scale {
+          width: 30px;
+          top: 50px; /* Меньший отступ для мобильных */
         }
 
-        .card {
-          padding: 10px;
+        .time-label {
+          font-size: 8px;
+          right: -20px;
+          margin-top: 6px; /* Меньшее смещение для мобильных */
         }
 
-        .card h3 {
-          font-size: 12px;
-        }
-
-        .card p {
-          font-size: 11px;
+        .column-content {
+          margin-left: 30px;
         }
 
         .column h2 {
+          height: 50px; /* Меньшая высота заголовка для мобильных */
           font-size: 14px;
           margin-bottom: 10px;
+        }
+
+        .cards-container {
+          height: 420px; /* Половина высоты для мобильных */
+        }
+
+        .card {
+          padding: 8px;
+        }
+
+        .card h3 {
+          font-size: 8px;
+          margin-bottom: 4px;
+        }
+
+        .card p {
+          font-size: 8px;
+          margin-bottom: 2px;
+        }
+
+        .key-button {
+          padding: 6px 12px;
+          font-size: 12px;
+          min-width: 70px;
         }
       }
 
@@ -250,338 +439,605 @@
     </style>
   </head>
   <body>
+    <!-- Шапка с кнопками-клавишами (будет скрыта для специалистов) -->
+    <div class="header" id="header" style="display: none">
+      <div class="keys-container" id="keysContainer">
+        <!-- Кнопки-клавиши будут созданы через JavaScript -->
+      </div>
+    </div>
+
     <div class="container" id="columnsContainer">
       <!-- Столбцы будут созданы через JavaScript -->
     </div>
 
-    <!-- Модальное окно для добавления объекта -->
+    <!-- Модальное окно для добавления новой записи -->
     <div class="modal" id="addModal">
       <div class="modal-content">
-        <h2>Добавить новый объект</h2>
+        <h2>Добавить запись</h2>
         <input
           type="text"
-          id="objectName"
-          placeholder="Введите имя объекта"
-          maxlength="50"
+          id="searchClient"
+          placeholder="Фамилия Имя Отчество для поиска"
         />
+        <div
+          id="searchResults"
+          style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
+        ></div>
+        <input type="datetime-local" id="appointmentDateTime" />
+        <input
+          type="number"
+          id="visitDuration"
+          placeholder="Продолжительность приема (мин)"
+          min="10"
+          step="10"
+        />
+        <textarea
+          id="appointmentNote"
+          placeholder="Заметка о приеме"
+        ></textarea>
+        <input type="tel" id="phoneNumber" placeholder="Телефон" />
+        <input type="date" id="birthdate" />
         <div class="modal-buttons">
           <button class="modal-button cancel" onclick="closeAddModal()">
             Отмена
           </button>
-          <button class="modal-button ok" onclick="addNewObject()">OK</button>
+          <button class="modal-button ok" onclick="saveAppointment()">
+            Сохранить
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Модальное окно для удаления объекта -->
-    <div class="modal" id="deleteModal">
+    <!-- Модальное окно для просмотра и редактирования записи -->
+    <div class="modal" id="viewModal">
       <div class="modal-content">
-        <h2>Удалить объект</h2>
-        <p
-          style="
-            text-align: center;
-            margin-bottom: 20px;
-            color: #666;
-            font-size: 14px;
-          "
-          id="deleteMessage"
-        >
-          Вы уверены, что хотите удалить этот объект?
-        </p>
+        <h2>Информация о записи</h2>
+        <div id="clientInfo"></div>
         <div class="modal-buttons">
-          <button class="modal-button cancel" onclick="closeDeleteModal()">
-            Отмена
+          <button class="modal-button cancel" onclick="closeViewModal()">
+            Закрыть
           </button>
-          <button class="modal-button ok" onclick="deleteObject()">OK</button>
+          <button class="modal-button cancel" onclick="cancelAppointment()">
+            Отменить запись
+          </button>
         </div>
       </div>
     </div>
 
     <script>
-      const API_BASE = "https://alimovdev.ru/api";
-      let currentColumn = null;
-      let currentObjectId = null;
-      let allObjects = [];
+      let tg = window.Telegram.WebApp; // Аккаунта Telegram
+      let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
-      // Создание столбцов - всегда 16 столбцов
-      function createColumns() {
+      const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
+
+      let currentSpecialist = null;
+      let currentClients = [];
+      let currentSelectedClient = null;
+      let currentAppointmentIndex = null;
+
+      // Функция для форматирования ФИО в формат "Фамилия И. О."
+      function formatFullName(surname, name, patronymic) {
+        const nameInitial = name ? `${name.charAt(0)}.` : "";
+        const patronymicInitial = patronymic ? `${patronymic.charAt(0)}.` : "";
+        return `${surname} ${nameInitial}${patronymicInitial}`;
+      }
+
+      // Функция для создания шкалы времени
+      function createTimeScale(columnElement) {
+        const timeScale = document.createElement("div");
+        timeScale.className = "time-scale";
+
+        // Время с 08:00 до 22:00 с шагом 10 минут
+        const startHour = 8;
+        const endHour = 22;
+
+        for (let hour = startHour; hour <= endHour; hour++) {
+          for (let minute = 0; minute < 60; minute += 10) {
+            if (hour === endHour && minute > 0) break;
+
+            const timeMarker = document.createElement("div");
+            timeMarker.className = "time-marker";
+
+            if (minute === 0) {
+              timeMarker.classList.add("hour");
+
+              const timeLabel = document.createElement("div");
+              timeLabel.className = "time-label";
+              timeLabel.textContent = `${hour.toString().padStart(2, "0")}:00`;
+              timeMarker.appendChild(timeLabel);
+            }
+
+            timeScale.appendChild(timeMarker);
+          }
+        }
+
+        columnElement.appendChild(timeScale);
+      }
+
+      // Функция для получения специалистов по массиву ID
+      async function loadSpecialistsByIds(specialistIds) {
+        try {
+          const response = await fetch(`${API_BASE}/specialists/by-ids`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(specialistIds),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to load specialists: " + response.status);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading specialists by IDs:", error);
+          throw error;
+        }
+      }
+
+      // Функция для получения клиентов по specialistId
+      async function getClientsBySpecialistId(specialistId) {
+        try {
+          const response = await fetch(
+            `${API_BASE}/clients/by-specialist-id/${encodeURIComponent(
+              specialistId
+            )}`
+          );
+
+          if (!response.ok) {
+            if (response.status === 404) {
+              return [];
+            }
+            throw new Error("Failed to load CLIENTS: " + response.status);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading clients by specialistId:", error);
+          throw error;
+        }
+      }
+
+      // Частичное обновление клиента
+      async function patchClient(clientId, updates) {
+        try {
+          const response = await fetch(`${API_BASE}/clients/${clientId}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updates),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to update client: " + response.status);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error("Error patching client:", error);
+          throw error;
+        }
+      }
+
+      // Функция для поиска пользователя Telegram по ID
+      async function searchTgUserById(tgUserId) {
+        try {
+          const responseSpecialist = await fetch(
+            `${API_BASE}/specialists/${tgUserId}`
+          );
+          if (responseSpecialist.ok) {
+            const tgSpecialist = await responseSpecialist.json();
+
+            // TODO 1: Логика для специалиста
+            currentSpecialist = tgSpecialist;
+            document.getElementById("header").style.display = "none"; // Скрываем шапку для специалиста
+            await loadAndDisplayClients(tgSpecialist);
+          } else {
+            const responseAdmin = await fetch(
+              `${API_BASE}/administrators/${tgUserId}`
+            );
+            if (responseAdmin.ok) {
+              const tgAdministrator = await responseAdmin.json();
+              const specialistsIdList = tgAdministrator.specialistIdList
+                .split("/")
+                .filter((id) => id.length > 1)
+                .map((id) => parseInt(id.trim()));
+
+              try {
+                const specialists = await loadSpecialistsByIds(
+                  specialistsIdList
+                );
+
+                // TODO 3: Логика для администратора
+                document.getElementById("header").style.display = "block"; // Показываем шапку для администратора
+                createSpecialistButtons(specialists);
+                if (specialists.length > 0) {
+                  currentSpecialist = specialists[0];
+                  await loadAndDisplayClients(specialists[0]);
+                }
+              } catch (error) {
+                alert("Error loading SPECIALISTS: " + error.message);
+              }
+            } else {
+              if (responseAdmin.status === 404) {
+                // TODO 4: Логика для гостя
+                document.getElementById("columnsContainer").innerHTML =
+                  '<div class="guest-message">Здравствуйте, гость!</div>';
+              } else {
+                throw new Error(
+                  "Failed to load tgUser: " + responseAdmin.status
+                );
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error loading user by ID:", error);
+          alert("Error loading user: " + error.message);
+        }
+      }
+
+      // Создание кнопок специалистов в шапке
+      function createSpecialistButtons(specialists) {
+        const keysContainer = document.getElementById("keysContainer");
+        keysContainer.innerHTML = "";
+
+        specialists.forEach((specialist) => {
+          const keyButton = document.createElement("button");
+          keyButton.className = "key-button";
+          keyButton.textContent = `${specialist.surname} ${specialist.name} ${specialist.patronymic}`;
+          keyButton.setAttribute("data-specialist-id", specialist.id);
+
+          keyButton.addEventListener("click", async function () {
+            currentSpecialist = specialist;
+            await loadAndDisplayClients(specialist);
+          });
+
+          keysContainer.appendChild(keyButton);
+        });
+      }
+
+      // Загрузка и отображение клиентов специалиста
+      async function loadAndDisplayClients(specialist) {
+        try {
+          currentClients = await getClientsBySpecialistId(specialist.id);
+          createColumnsWithAppointments(currentClients);
+        } catch (error) {
+          console.error("Error loading clients:", error);
+          alert("Error loading clients: " + error.message);
+        }
+      }
+
+      // Создание столбцов с записями
+      function createColumnsWithAppointments(clients) {
         const container = document.getElementById("columnsContainer");
         container.innerHTML = "";
 
-        // Создаем 16 столбцов (как в изначальном варианте)
-        for (let i = 1; i <= 16; i++) {
-          const column = document.createElement("div");
-          column.className = "column";
-          column.setAttribute("data-column-id", i);
-          column.innerHTML = `
-                <h2>Столбец ${i}</h2>
-                <div class="cards-container" id="cards-${i}">
-                    <div class="empty-column">Кликните чтобы добавить объект</div>
+        // Собираем все даты приемов
+        const allAppointments = [];
+        clients.forEach((client) => {
+          if (client.appointmentDateTime) {
+            const appointments = client.appointmentDateTime
+              .split("#")
+              .filter((app) => app.trim());
+            const durations = client.visitDuration
+              ? client.visitDuration.split("#").filter((dur) => dur.trim())
+              : [];
+
+            appointments.forEach((appointment, index) => {
+              const [datePart, timePart] = appointment.split(" - ");
+              const duration = durations[index]
+                ? parseInt(durations[index])
+                : 30; // По умолчанию 30 минут
+
+              allAppointments.push({
+                client: client,
+                dateTime: new Date(
+                  `${datePart.split(".").reverse().join("-")}T${timePart}`
+                ),
+                duration: duration,
+                appointmentIndex: index,
+              });
+            });
+          }
+        });
+
+        // Сортируем по дате
+        allAppointments.sort((a, b) => a.dateTime - b.dateTime);
+
+        // Группируем по датам
+        const appointmentsByDate = {};
+        allAppointments.forEach((appointment) => {
+          const dateKey = appointment.dateTime.toLocaleDateString("ru-RU");
+          if (!appointmentsByDate[dateKey]) {
+            appointmentsByDate[dateKey] = [];
+          }
+          appointmentsByDate[dateKey].push(appointment);
+        });
+
+        // Создаем столбцы для каждой даты
+        const dates = Object.keys(appointmentsByDate).sort(
+          (a, b) =>
+            new Date(a.split(".").reverse().join("-")) -
+            new Date(b.split(".").reverse().join("-"))
+        );
+
+        dates.forEach((date) => {
+          createColumn(date, appointmentsByDate[date]);
+        });
+
+        // Добавляем пустой столбец для новой записи
+        createEmptyColumn();
+      }
+
+      // Создание столбца с записями
+      function createColumn(date, appointments) {
+        const container = document.getElementById("columnsContainer");
+
+        const column = document.createElement("div");
+        column.className = "column";
+        column.innerHTML = `
+            <div class="column-content">
+                <h2>${date}</h2>
+                <div class="cards-container" id="cards-${date}">
                 </div>
-            `;
+            </div>
+        `;
 
-          // Обработчик клика по столбцу
-          column.addEventListener("click", function (e) {
-            if (
-              e.target === column ||
-              e.target.tagName === "H2" ||
-              e.target.classList.contains("empty-column") ||
-              e.target.classList.contains("cards-container")
-            ) {
-              currentColumn = i;
-              openAddModal();
-            }
-          });
+        createTimeScale(column);
 
-          container.appendChild(column);
-        }
+        const cardsContainer = column.querySelector(".cards-container");
 
-        // Загрузка данных при инициализации
-        loadAllObjects();
+        // Сортируем записи по времени
+        appointments.sort((a, b) => a.dateTime - b.dateTime);
+
+        appointments.forEach((appointment) => {
+          const card = createAppointmentCard(appointment);
+          cardsContainer.appendChild(card);
+        });
+
+        column.addEventListener("click", function (e) {
+          if (
+            e.target === column ||
+            e.target.classList.contains("empty-column") ||
+            e.target.classList.contains("cards-container")
+          ) {
+            openAddModal();
+          }
+        });
+
+        container.appendChild(column);
+      }
+
+      // Создание карточки записи
+      function createAppointmentCard(appointment) {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        // Высота карточки зависит от продолжительности приема (10px за 10 минут)
+        const height = (appointment.duration / 10) * 10;
+        card.style.height = `${height}px`;
+
+        // Позиционирование карточки относительно времени приема
+        const startTime = appointment.dateTime;
+        const hours = startTime.getHours();
+        const minutes = startTime.getMinutes();
+
+        // Вычисляем позицию сверху (0px = 08:00, 840px = 22:00)
+        const totalMinutesFrom8 = (hours - 8) * 60 + minutes;
+        const topPosition = (totalMinutesFrom8 / 840) * 840; // 840px = 14 часов * 60 минут
+
+        card.style.top = `${topPosition}px`;
+
+        const startTimeStr = startTime.toLocaleTimeString("ru-RU", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        const endTime = new Date(
+          startTime.getTime() + appointment.duration * 60000
+        );
+        const endTimeStr = endTime.toLocaleTimeString("ru-RU", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        // Форматируем ФИО в формат "Фамилия И.О."
+        const formattedName = formatFullName(
+          appointment.client.surname,
+          appointment.client.name,
+          appointment.client.patronymic
+        );
+
+        card.innerHTML = `
+            <h3>${formattedName}</h3>
+            <p>${appointment.client.phoneNumber || "Телефон не указан"}</p>
+            <p>${startTimeStr} - ${endTimeStr}</p>
+        `;
+
+        card.addEventListener("click", function (e) {
+          e.stopPropagation();
+          openViewModal(appointment.client, appointment.appointmentIndex);
+        });
+
+        return card;
+      }
+
+      // Создание пустого столбца
+      function createEmptyColumn() {
+        const container = document.getElementById("columnsContainer");
+
+        const column = document.createElement("div");
+        column.className = "column";
+        column.innerHTML = `
+            <div class="column-content">
+                <h2>Новая запись</h2>
+                <div class="cards-container">
+                    <div class="empty-column">Кликните для записи клиента</div>
+                </div>
+            </div>
+        `;
+
+        createTimeScale(column);
+
+        column.addEventListener("click", function (e) {
+          if (
+            e.target === column ||
+            e.target.classList.contains("empty-column") ||
+            e.target.classList.contains("cards-container")
+          ) {
+            openAddModal();
+          }
+        });
+
+        container.appendChild(column);
       }
 
       // Открытие модального окна добавления
       function openAddModal() {
         document.getElementById("addModal").style.display = "block";
-        document.getElementById("objectName").value = "";
-        document.getElementById("objectName").focus();
+        document.getElementById("searchClient").value = "";
+        document.getElementById("searchResults").innerHTML = "";
+        document.getElementById("appointmentDateTime").value = "";
+        document.getElementById("visitDuration").value = "";
+        document.getElementById("appointmentNote").value = "";
+        document.getElementById("phoneNumber").value = "";
+        document.getElementById("birthdate").value = "";
+        document.getElementById("searchClient").focus();
       }
 
       // Закрытие модального окна добавления
       function closeAddModal() {
         document.getElementById("addModal").style.display = "none";
-        currentColumn = null;
+        currentSelectedClient = null;
       }
 
-      // Открытие модального окна удаления
-      function openDeleteModal(objectId, objectName) {
-        currentObjectId = objectId;
-        const messageElement = document.getElementById("deleteMessage");
-        messageElement.textContent = `Вы уверены, что хотите удалить объект "${objectName}"?`;
-        document.getElementById("deleteModal").style.display = "block";
-      }
+      // Открытие модального окна просмотра
+      function openViewModal(client, appointmentIndex) {
+        currentSelectedClient = client;
+        currentAppointmentIndex = appointmentIndex;
 
-      // Закрытие модального окна удаления
-      function closeDeleteModal() {
-        document.getElementById("deleteModal").style.display = "none";
-        currentObjectId = null;
-      }
+        const appointments = client.appointmentDateTime
+          .split("#")
+          .filter((app) => app.trim());
+        const durations = client.visitDuration
+          ? client.visitDuration.split("#").filter((dur) => dur.trim())
+          : [];
+        const notes = client.appointmentNote
+          ? client.appointmentNote.split("#").filter((note) => note.trim())
+          : [];
 
-      // Добавление нового объекта
-      async function addNewObject() {
-        const name = document.getElementById("objectName").value.trim();
+        const appointment = appointments[appointmentIndex];
+        const duration = durations[appointmentIndex] || "30";
+        const note = notes[appointmentIndex] || "Заметка отсутствует";
 
-        if (!name) {
-          alert("Пожалуйста, введите имя объекта");
-          return;
-        }
-
-        try {
-          const response = await fetch(`${API_BASE}/testdb`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ name: name }),
-          });
-
-          if (response.ok) {
-            const newObject = await response.json();
-            // Добавляем объект в общий массив
-            allObjects.push(newObject);
-            // Добавляем карточку именно в тот столбец, по которому кликнули
-            addCardToColumn(currentColumn, newObject);
-            closeAddModal();
-          } else {
-            throw new Error("Ошибка при добавлении объекта");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Ошибка при добавлении объекта");
-        }
-      }
-
-      // Удаление объекта
-      async function deleteObject() {
-        if (!currentObjectId) return;
-
-        try {
-          const response = await fetch(
-            `${API_BASE}/testdb/${currentObjectId}`,
-            {
-              method: "DELETE",
-            }
-          );
-
-          if (response.ok) {
-            // Удаляем объект из общего массива
-            allObjects = allObjects.filter((obj) => obj.id !== currentObjectId);
-            // Удаляем карточку
-            removeCard(currentObjectId);
-            closeDeleteModal();
-          } else {
-            throw new Error("Ошибка при удалении объекта");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Ошибка при удалении объекта");
-        }
-      }
-
-      // Загрузка всех объектов
-      async function loadAllObjects() {
-        try {
-          const response = await fetch(`${API_BASE}/testdb`);
-
-          if (response.ok) {
-            allObjects = await response.json();
-            distributeObjectsToColumns(allObjects);
-          } else {
-            throw new Error("Ошибка при загрузке объектов");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          // Для демонстрации создадим тестовые данные
-          createDemoData();
-        }
-      }
-
-      // Распределение объектов по столбцам (только для начальной загрузки)
-      function distributeObjectsToColumns(objects) {
-        // Очищаем все 16 столбцов
-        for (let i = 1; i <= 16; i++) {
-          const cardsContainer = document.getElementById(`cards-${i}`);
-          if (cardsContainer) {
-            cardsContainer.innerHTML = "";
-          }
-        }
-
-        if (objects.length === 0) {
-          // Если объектов нет, показываем сообщения во всех 16 столбцах
-          for (let i = 1; i <= 16; i++) {
-            const cardsContainer = document.getElementById(`cards-${i}`);
-            if (cardsContainer) {
-              cardsContainer.innerHTML =
-                '<div class="empty-column">Кликните чтобы добавить объект</div>';
-            }
-          }
-          return;
-        }
-
-        // Распределяем объекты по 16 столбцам (равномерно) - как в изначальном варианте
-        objects.forEach((object, index) => {
-          const columnNumber = (index % 16) + 1;
-          addCardToColumn(columnNumber, object);
-        });
-      }
-
-      // Добавление карточки в столбец
-      function addCardToColumn(columnNumber, object) {
-        const cardsContainer = document.getElementById(`cards-${columnNumber}`);
-        if (!cardsContainer) return;
-
-        // Убираем сообщение о пустом столбце если оно есть
-        const emptyMessage = cardsContainer.querySelector(".empty-column");
-        if (emptyMessage) {
-          emptyMessage.remove();
-        }
-
-        const card = document.createElement("div");
-        card.className = "card";
-        card.setAttribute("data-object-id", object.id);
-        card.innerHTML = `
-            <h3>${object.name}</h3>
-            <p>ID: ${object.id}</p>
+        document.getElementById("clientInfo").innerHTML = `
+            <p><strong>Клиент:</strong> ${client.surname} ${client.name} ${
+          client.patronymic
+        }</p>
+            <p><strong>Телефон:</strong> ${
+              client.phoneNumber || "Не указан"
+            }</p>
+            <p><strong>Дата рождения:</strong> ${
+              client.birthdate || "Не указана"
+            }</p>
+            <p><strong>Дата и время приема:</strong> ${appointment}</p>
+            <p><strong>Продолжительность:</strong> ${duration} минут</p>
+            <p><strong>Заметка:</strong> ${note}</p>
         `;
 
-        card.addEventListener("click", function (e) {
-          e.stopPropagation();
-          openDeleteModal(object.id, object.name);
-        });
-
-        cardsContainer.appendChild(card);
+        document.getElementById("viewModal").style.display = "block";
       }
 
-      // Удаление карточки
-      function removeCard(objectId) {
-        const card = document.querySelector(`[data-object-id="${objectId}"]`);
-        if (card) {
-          const cardsContainer = card.parentElement;
-          card.remove();
+      // Закрытие модального окна просмотра
+      function closeViewModal() {
+        document.getElementById("viewModal").style.display = "none";
+        currentSelectedClient = null;
+        currentAppointmentIndex = null;
+      }
 
-          // Если в столбце не осталось карточек, показываем сообщение
-          if (cardsContainer.children.length === 0) {
-            cardsContainer.innerHTML =
-              '<div class="empty-column">Кликните чтобы добавить объект</div>';
-          }
+      // Сохранение записи
+      async function saveAppointment() {
+        // Реализация сохранения записи
+        alert("Функция сохранения записи будет реализована");
+        closeAddModal();
+      }
+
+      // Отмена записи
+      async function cancelAppointment() {
+        if (currentSelectedClient && currentAppointmentIndex !== null) {
+          // Реализация отмены записи
+          alert("Функция отмены записи будет реализована");
+          closeViewModal();
         }
       }
 
-      // Создание демо-данных (если API недоступно)
-      function createDemoData() {
-        allObjects = [
-          { id: 1, name: "Объект 1" },
-          { id: 2, name: "Объект 2" },
-          { id: 3, name: "Объект 3" },
-          { id: 4, name: "Объект 4" },
-          { id: 5, name: "Объект 5" },
-          { id: 6, name: "Объект 6" },
-          { id: 7, name: "Объект 7" },
-          { id: 8, name: "Объект 8" },
-          { id: 9, name: "Объект 9" },
-          { id: 10, name: "Объект 10" },
-          { id: 11, name: "Объект 11" },
-          { id: 12, name: "Объект 12" },
-          { id: 13, name: "Объект 13" },
-          { id: 14, name: "Объект 14" },
-          { id: 15, name: "Объект 15" },
-          { id: 16, name: "Объект 16" },
-          { id: 17, name: "Объект 17" },
-          { id: 18, name: "Объект 18" },
-          { id: 19, name: "Объект 19" },
-          { id: 20, name: "Объект 20" },
-          { id: 21, name: "Объект 21" },
-          { id: 22, name: "Объект 22" },
-          { id: 23, name: "Объект 23" },
-          { id: 24, name: "Объект 24" },
-        ];
-
-        distributeObjectsToColumns(allObjects);
-      }
-
-      // Обработка нажатия Enter в поле ввода
+      // Поиск клиента
       document
-        .getElementById("objectName")
+        .getElementById("searchClient")
+        .addEventListener("input", function (e) {
+          const searchTerm = e.target.value.toLowerCase();
+          const resultsContainer = document.getElementById("searchResults");
+          resultsContainer.innerHTML = "";
+
+          if (searchTerm.length > 2) {
+            const filteredClients = currentClients.filter((client) =>
+              `${client.surname} ${client.name} ${client.patronymic}`
+                .toLowerCase()
+                .includes(searchTerm)
+            );
+
+            filteredClients.forEach((client) => {
+              const resultItem = document.createElement("div");
+              resultItem.style.padding = "8px";
+              resultItem.style.borderBottom = "1px solid #eee";
+              resultItem.style.cursor = "pointer";
+              resultItem.textContent = `${client.surname} ${client.name} ${client.patronymic}`;
+
+              resultItem.addEventListener("click", function () {
+                currentSelectedClient = client;
+                document.getElementById(
+                  "searchClient"
+                ).value = `${client.surname} ${client.name} ${client.patronymic}`;
+                document.getElementById("phoneNumber").value =
+                  client.phoneNumber || "";
+                document.getElementById("birthdate").value =
+                  client.birthdate || "";
+                resultsContainer.innerHTML = "";
+              });
+
+              resultsContainer.appendChild(resultItem);
+            });
+          }
+        });
+
+      // Обработка нажатия Enter в поле поиска
+      document
+        .getElementById("searchClient")
         .addEventListener("keypress", function (e) {
           if (e.key === "Enter") {
-            addNewObject();
+            e.preventDefault();
           }
         });
 
       // Закрытие модальных окон при клике вне их
       window.addEventListener("click", function (e) {
         const addModal = document.getElementById("addModal");
-        const deleteModal = document.getElementById("deleteModal");
+        const viewModal = document.getElementById("viewModal");
 
         if (e.target === addModal) {
           closeAddModal();
         }
-        if (e.target === deleteModal) {
-          closeDeleteModal();
+        if (e.target === viewModal) {
+          closeViewModal();
         }
-      });
-
-      // Обработка изменения размера окна
-      window.addEventListener("resize", function () {
-        // При изменении размера окна перестраиваем сетку
-        createColumns();
       });
 
       // Инициализация при загрузке страницы
       document.addEventListener("DOMContentLoaded", function () {
-        createColumns();
+        searchTgUserById(tgUserId);
       });
     </script>
   </body>
 </html>
-
