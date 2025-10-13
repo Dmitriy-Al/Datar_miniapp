@@ -203,8 +203,8 @@
         position: absolute;
         left: 0;
         right: 0;
+        margin-top: -10px; /* -10px; Добавляем небольшое смещение для точного выравнивания */
         box-sizing: border-box;
-        margin-top: -10px; /* Добавляем небольшое смещение для точного выравнивания */
       }
 
       .card:hover {
@@ -368,13 +368,13 @@
 
         .time-scale {
           width: 15px;
-          top: 50px; /* Меньший отступ для мобильных */
+          top: 40px; /* Меньший отступ для мобильных */
         }
 
         .time-label {
           font-size: 8px;
           right: -20px;
-          margin-top: 6px; /* Меньшее смещение для мобильных */
+          margin-top: 12px; /*  Меньшее смещение для мобильных */
         }
 
         .column-content {
@@ -817,7 +817,7 @@
         card.className = "card";
 
         // Высота карточки зависит от продолжительности приема (10px за 10 минут)
-        const height = (appointment.duration / 10) * 10;
+        const height = (appointment.duration / 10) * 10; //
         card.style.height = `${height}px`;
 
         // Позиционирование карточки относительно времени приема
@@ -827,7 +827,7 @@
 
         // Вычисляем позицию сверху (0px = 08:00, 840px = 22:00)
         const totalMinutesFrom8 = (hours - 8) * 60 + minutes;
-        const topPosition = (totalMinutesFrom8 / 840) * 840; // 840px = 14 часов * 60 минут
+        const topPosition = (totalMinutesFrom8 / 840) * 900; // 840px = 14 часов * 60 минут
 
         card.style.top = `${topPosition}px`;
 
@@ -1042,3 +1042,4 @@
     </script>
   </body>
 </html>
+
