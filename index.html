@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
   <head>
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
@@ -852,11 +851,10 @@
         );
 
         if (height > 50) {
+          // TODO убрать || "Телефон не указан
           card.innerHTML = `
             <h3>${formattedName}</h3>
-            <p>${
-              appointment.client.phoneNumber || "Телефон не указан"
-            }</p> // TODO убрать || "Телефон не указан
+            <p>${appointment.client.phoneNumber || "Телефон не указан"}</p> 
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
         } else if (height >= 30) {
@@ -873,7 +871,7 @@
         /*
         card.innerHTML = `
             <h3>${formattedName}</h3>
-            <p>${appointment.client.phoneNumber || "Телефон не указан"}</p> // TODO убрать || "Телефон не указан
+            <p>${appointment.client.phoneNumber || "Телефон не указан"}</p> 
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
         */
@@ -1063,7 +1061,3 @@
     </script>
   </body>
 </html>
-
-  </body>
-</html>
-
