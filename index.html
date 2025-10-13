@@ -823,7 +823,7 @@
         card.className = "card";
 
         // Высота карточки зависит от продолжительности приема (10px за 10 минут)
-        const height = (appointment.duration / 10) * 11; //10
+        const height = (appointment.duration / 10) * 10.5; //10
         card.style.height = `${height}px`;
 
         // Позиционирование карточки относительно времени приема
@@ -868,12 +868,10 @@
             <h3>${formattedName}</h3>
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
-        } else if (height >= 20) {
+        } else {
           card.innerHTML = `
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
-        } else {//  <small>${startTimeStr} - ${endTimeStr}</small>
-          card.innerHTML = "";
         }
 
         card.addEventListener("click", function (e) {
