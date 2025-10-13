@@ -225,12 +225,12 @@
         font-weight: bold;
       }
 
-      .card small {
-        /*  самый маленький текст  */
+  /*    .card small {
+         самый маленький текст 
         color: black;
         font-size: 6px;
         font-weight: bold;
-      }
+      } */
 
       .modal {
         display: none;
@@ -823,8 +823,10 @@
         card.className = "card";
 
         // Высота карточки зависит от продолжительности приема (10px за 10 минут)
-        const height = (appointment.duration / 10) * 10; //
-        card.style.height = `${height}px`;
+     /*   const height = (appointment.duration / 10) * 11; //10
+        card.style.height = `${height}px`; */
+        const height = appointment.duration.parseInt > 120 ? (appointment.duration / 10) * 10 : (appointment.duration / 10) * 11;
+
 
         // Позиционирование карточки относительно времени приема
         const startTime = appointment.dateTime;
@@ -872,10 +874,8 @@
           card.innerHTML = `
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
-        } else {
-          card.innerHTML = `
-            <small>${startTimeStr} - ${endTimeStr}</small>
-        `;
+        } else {//  <small>${startTimeStr} - ${endTimeStr}</small>
+          card.innerHTML = "";
         }
 
         card.addEventListener("click", function (e) {
@@ -1063,4 +1063,3 @@
     </script>
   </body>
 </html>
-
