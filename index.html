@@ -217,7 +217,7 @@
         color: black;
         font-size: 14px;
         font-weight: bold;
-        line-height: 1.2;
+        /*   line-height: 1.2; */
       }
 
       .card p {
@@ -374,7 +374,7 @@
         .time-label {
           font-size: 8px;
           right: -20px;
-          margin-top: 12px; /*  Меньшее смещение для мобильных */
+          margin-top: 10px; /*  Меньшее смещение для мобильных */
         }
 
         .column-content {
@@ -825,7 +825,7 @@
         const hours = startTime.getHours();
         const minutes = startTime.getMinutes();
 
-        // Вычисляем позицию сверху (0px = 08:00, 840px = 22:00)
+        // Вычисление позиции карточки относительно верха столбца (0px = 08:00, 840px = 22:00)
         const totalMinutesFrom8 = (hours - 8) * 60 + minutes;
         const topPosition = (totalMinutesFrom8 / 840) * 900; // 840px = 14 часов * 60 минут
 
@@ -851,11 +851,32 @@
           appointment.client.patronymic
         );
 
-        card.innerHTML = `
+        if (height > 50) {
+          card.innerHTML = `
             <h3>${formattedName}</h3>
-            <p>${appointment.client.phoneNumber || "Телефон не указан"}</p>
+            <p>${
+              appointment.client.phoneNumber || "Телефон не указан"
+            }</p> // TODO убрать || "Телефон не указан
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
+        } else if (height >= 30) {
+          card.innerHTML = `
+            <h3>${formattedName}</h3>
+            <p>${startTimeStr} - ${endTimeStr}</p>
+        `;
+        } else {
+          card.innerHTML = `
+            <p>${startTimeStr} - ${endTimeStr}</p>
+        `;
+        }
+
+        /*
+        card.innerHTML = `
+            <h3>${formattedName}</h3>
+            <p>${appointment.client.phoneNumber || "Телефон не указан"}</p> // TODO убрать || "Телефон не указан
+            <p>${startTimeStr} - ${endTimeStr}</p>
+        `;
+        */
 
         card.addEventListener("click", function (e) {
           e.stopPropagation();
@@ -1040,6 +1061,9 @@
         searchTgUserById(tgUserId);
       });
     </script>
+  </body>
+</html>
+
   </body>
 </html>
 
