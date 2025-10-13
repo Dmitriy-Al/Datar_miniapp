@@ -225,7 +225,7 @@
         font-weight: bold;
       }
 
-  /*    .card small {
+      /*    .card small {
          самый маленький текст 
         color: black;
         font-size: 6px;
@@ -823,7 +823,7 @@
         card.className = "card";
 
         // Высота карточки зависит от продолжительности приема (10px за 10 минут)
-        const height = appointment.duration// * 1.07 (appointment.duration / 10) * 10.7; //10
+        const height = appointment.duration * 1.05; //(appointment.duration / 10) * 10.7; //10
         card.style.height = `${height}px`;
 
         // Позиционирование карточки относительно времени приема
@@ -863,13 +863,13 @@
             <p>${appointment.client.phoneNumber}</p> 
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
-        } else if (height >= 40) {
+        } else if (height > 30) {
           card.innerHTML = `
             <h3>${formattedName}</h3>
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
         } else {
-          card.style.backgroundColor = '#ffc457';
+          card.style.backgroundColor = "#ffc457";
           card.innerHTML = `
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
@@ -1060,4 +1060,3 @@
     </script>
   </body>
 </html>
-
