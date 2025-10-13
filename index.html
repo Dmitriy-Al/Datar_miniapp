@@ -225,6 +225,13 @@
         font-weight: bold;
       }
 
+      .card s {
+        /*  самый маленький текст  */
+        color: black;
+        font-size: 5px;
+        font-weight: bold;
+      }
+
       .modal {
         display: none;
         position: fixed;
@@ -851,30 +858,25 @@
         );
 
         if (height > 50) {
-          // TODO убрать || "Телефон не указан
           card.innerHTML = `
             <h3>${formattedName}</h3>
-            <p>${appointment.client.phoneNumber || "Телефон не указан"}</p> 
+            <p>${appointment.client.phoneNumber}</p> 
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
-        } else if (height >= 30) {
+        } else if (height >= 40) {
           card.innerHTML = `
             <h3>${formattedName}</h3>
+            <p>${startTimeStr} - ${endTimeStr}</p>
+        `;
+        } else if (height >= 20) {
+          card.innerHTML = `
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
         } else {
           card.innerHTML = `
-            <p>${startTimeStr} - ${endTimeStr}</p>
+            <s>${startTimeStr} - ${endTimeStr}</s>
         `;
         }
-
-        /*
-        card.innerHTML = `
-            <h3>${formattedName}</h3>
-            <p>${appointment.client.phoneNumber || "Телефон не указан"}</p> 
-            <p>${startTimeStr} - ${endTimeStr}</p>
-        `;
-        */
 
         card.addEventListener("click", function (e) {
           e.stopPropagation();
@@ -1061,3 +1063,4 @@
     </script>
   </body>
 </html>
+
