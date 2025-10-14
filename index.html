@@ -248,6 +248,7 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         width: 90%;
         max-width: 400px;
+        line-height: 2; /* разделение строк по высоте */
       }
 
       .modal h2 {
@@ -282,6 +283,7 @@
       }
 
       .modal-buttons {
+        padding: 20px;
         display: flex;
         gap: 10px;
         justify-content: center;
@@ -305,6 +307,11 @@
 
       .modal-button.cancel {
         background-color: #ffbe44;
+        color: white;
+      }
+
+      .modal-button.cancelAppointment {
+        background-color: #ff7b6a;
         color: white;
       }
 
@@ -486,24 +493,27 @@
       </div>
     </div>
 
-    <!-- Модальное окно для просмотра и редактирования записи -->
+    <!-- Модальное окно для просмотра записи -->
     <div class="modal" id="viewModal">
       <div class="modal-content">
         <h2>Информация о записи</h2>
         <div id="clientInfo"></div>
         <div class="modal-buttons">
+          <button
+            class="modal-button cancelAppointment"
+            onclick="cancelAppointment()"
+          >
+            Отменить запись
+          </button>
           <button class="modal-button ok" onclick="closeViewModal()">
             Закрыть
-          </button>
-          <button class="modal-button cancel" onclick="cancelAppointment()">
-            Отменить запись
           </button>
         </div>
       </div>
     </div>
 
     <script>
-let tg = window.Telegram.WebApp; // Аккаунта Telegram
+      let tg = window.Telegram.WebApp; // Аккаунта Telegram
       let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
       const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
@@ -912,18 +922,16 @@ let tg = window.Telegram.WebApp; // Аккаунта Telegram
         document.getElementById("appointmentDateTime").value = "";
         document.getElementById("visitDuration").value = "";
         document.getElementById("appointmentNote").value = "";
-        // document.getElementById("phoneNumber").value = "";
-        //  document.getElementById("birthdate").value = "";
         document.getElementById("searchClient").focus();
       }
 
-      // Закрытие модального окна добавления
+      // Закрытие модального окна добавления записи
       function closeAddModal() {
         document.getElementById("addModal").style.display = "none";
         currentSelectedClient = null;
       }
 
-      // Открытие модального окна просмотра
+      // Открытие модального окна просмотра записи
       function openViewModal(client, appointmentIndex) {
         currentSelectedClient = client;
         currentAppointmentIndex = appointmentIndex;
@@ -940,21 +948,21 @@ let tg = window.Telegram.WebApp; // Аккаунта Telegram
 
         const appointment = appointments[appointmentIndex];
         const duration = durations[appointmentIndex] || "30";
-        const note = notes[appointmentIndex] || "Заметка отсутствует";
-
+        const note = notes[appointmentIndex] || "";
+        //<p><strong>Телефон:</strong> ${client.phoneNumber || "Не указан"}</p>
         document.getElementById("clientInfo").innerHTML = `
-            <p><strong>Клиент:</strong> ${client.surname} ${client.name} ${
+            <h4><strong>Клиент:</strong> ${client.surname} ${client.name} ${
           client.patronymic
-        }</p>
-            <p><strong>Телефон:</strong> ${
-              client.phoneNumber || "Не указан"
-            }</p>
+        }</h4>
+        <a href="Телефон:"> ${
+          client.phoneNumber || "Телефонный номер не указан"
+        }</a>
             <p><strong>Дата рождения:</strong> ${
               client.birthdate || "Не указана"
             }</p>
             <p><strong>Дата и время приема:</strong> ${appointment}</p>
             <p><strong>Продолжительность:</strong> ${duration} минут</p>
-            <p><strong>Заметка:</strong> ${note}</p>
+            <p><strong>Комментарий:</strong> ${note}</p>
         `;
 
         document.getElementById("viewModal").style.display = "block";
