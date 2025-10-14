@@ -480,7 +480,7 @@
         />
         <textarea
           id="appointmentNote"
-          placeholder="Добавьте комментарий"
+          placeholder="Добавить комментарий"
         ></textarea>
         <div class="modal-buttons">
           <button class="modal-button cancel" onclick="closeAddModal()">
@@ -950,11 +950,12 @@
         const duration = durations[appointmentIndex] || "30";
         const note = notes[appointmentIndex] || "";
         //<p><strong>Телефон:</strong> ${client.phoneNumber || "Не указан"}</p>
+        //  <a href="tel:+12215555555">+1(221) 555-55-55</a>
         document.getElementById("clientInfo").innerHTML = `
             <h4><strong>Клиент:</strong> ${client.surname} ${client.name} ${
           client.patronymic
         }</h4>
-        <a href="Телефон:"> ${
+        <a href="tel:+12215555555">${
           client.phoneNumber || "Телефонный номер не указан"
         }</a>
             <p><strong>Дата рождения:</strong> ${
