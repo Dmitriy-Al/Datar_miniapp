@@ -470,7 +470,9 @@
           id="searchResults"
           style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
         ></div>
-        <input type="datetime-local" id="appointmentDateTime" />
+        <!--   <input type="datetime-local" id="appointmentDateTime" /> -->
+        <!--    <input type="text" data-time-format="H:i:s" /> -->
+        <input type="datetime-local" id="appointmentDateTime" step="600" />
         <input
           type="number"
           id="visitDuration"
@@ -513,7 +515,7 @@
     </div>
 
     <script>
-      let tg = window.Telegram.WebApp; // Аккаунта Telegram
+     let tg = window.Telegram.WebApp; // Аккаунта Telegram
       let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
       const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
@@ -914,8 +916,9 @@
         container.appendChild(column);
       }
 
-      // Открытие модального окна добавления
+      // Открытие модального окна добавления записи
       function openAddModal() {
+        // document.getElementById("addModal").modal-button.ok.backgroundColor = "#ff7b6a";
         document.getElementById("addModal").style.display = "block";
         document.getElementById("searchClient").value = "";
         document.getElementById("searchResults").innerHTML = "";
@@ -947,10 +950,9 @@
           : [];
 
         const appointment = appointments[appointmentIndex];
-        const duration = durations[appointmentIndex] || "30";
+        const duration = durations[appointmentIndex]; //  || "30"
         const note = notes[appointmentIndex] || "";
         //<p><strong>Телефон:</strong> ${client.phoneNumber || "Не указан"}</p>
-        //  <a href="tel:+12215555555">+1(221) 555-55-55</a>
         document.getElementById("clientInfo").innerHTML = `
             <h4><strong>Клиент:</strong> ${client.surname} ${client.name} ${
           client.patronymic
