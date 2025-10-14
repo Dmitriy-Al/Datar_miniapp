@@ -137,7 +137,7 @@
       .time-label {
         /*       margin-bottom: 5px;*/
         margin-top: 15px;
-        margin-left: 18px;
+        margin-left: 16px;
         font-size: 10px;
         color: #2c3e50;
         font-weight: bold;
@@ -297,14 +297,14 @@
         transition: all 0.3s;
         min-width: 80px;
       }
-
+      /* #57ff5d  #e94e43 */
       .modal-button.ok {
-        background-color: #57ff5d;
+        background-color: #3ed3d8;
         color: white;
       }
 
       .modal-button.cancel {
-        background-color: #e94e43;
+        background-color: #ffbe44;
         color: white;
       }
 
@@ -453,11 +453,11 @@
     <!-- Модальное окно для добавления новой записи -->
     <div class="modal" id="addModal">
       <div class="modal-content">
-        <h2>Добавить запись</h2>
+        <h2>Записать</h2>
         <input
           type="text"
           id="searchClient"
-          placeholder="Фамилия Имя Отчество для поиска"
+          placeholder="Введите фамилию для поиска"
         />
         <div
           id="searchResults"
@@ -473,10 +473,8 @@
         />
         <textarea
           id="appointmentNote"
-          placeholder="Заметка о приеме"
+          placeholder="Добавьте комментарий"
         ></textarea>
-        <input type="tel" id="phoneNumber" placeholder="Телефон" />
-        <input type="date" id="birthdate" />
         <div class="modal-buttons">
           <button class="modal-button cancel" onclick="closeAddModal()">
             Отмена
@@ -505,7 +503,7 @@
     </div>
 
     <script>
-      let tg = window.Telegram.WebApp; // Аккаунта Telegram
+let tg = window.Telegram.WebApp; // Аккаунта Telegram
       let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
       const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
@@ -849,7 +847,7 @@
           appointment.client.name,
           appointment.client.patronymic
         );
-
+        // Наполнение карточки контентом зависит от ее размера
         if (height > 50) {
           card.innerHTML = `
             <h3>${formattedName}</h3>
@@ -858,7 +856,7 @@
         `;
         } else if (height > 30) {
           card.innerHTML = `
-            <h3>${formattedName}</h3>
+            <p>${formattedName}</p>
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
         } else {
@@ -886,7 +884,7 @@
             <div class="column-content">
                 <h2>Новая запись</h2>
                 <div class="cards-container">
-                    <div class="empty-column">Кликните для записи клиента</div>
+                    <div class="empty-column">Кликните для записи</div>
                 </div>
             </div>
         `;
@@ -914,8 +912,8 @@
         document.getElementById("appointmentDateTime").value = "";
         document.getElementById("visitDuration").value = "";
         document.getElementById("appointmentNote").value = "";
-        document.getElementById("phoneNumber").value = "";
-        document.getElementById("birthdate").value = "";
+        // document.getElementById("phoneNumber").value = "";
+        //  document.getElementById("birthdate").value = "";
         document.getElementById("searchClient").focus();
       }
 
