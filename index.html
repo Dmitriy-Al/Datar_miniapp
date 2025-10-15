@@ -514,6 +514,7 @@
 
         <div class="duration-container">
           <input
+            inputmode="numeric"
             type="number"
             id="visitDuration"
             placeholder="Продолжительность приема (мин)"
@@ -559,7 +560,7 @@
     </div>
 
     <script>
-      let tg = window.Telegram.WebApp; // Аккаунта Telegram
+     let tg = window.Telegram.WebApp; // Аккаунта Telegram
       let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
       const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
@@ -1425,5 +1426,3 @@
     </script>
   </body>
 </html>
-
-
