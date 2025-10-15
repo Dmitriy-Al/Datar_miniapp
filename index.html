@@ -282,6 +282,38 @@
         border-color: #ffa500;
       }
 
+      .readonly-field {
+        background-color: #f5f5f5;
+        color: #666;
+        cursor: not-allowed;
+      }
+
+      .duration-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .duration-input {
+        flex: 2;
+      }
+
+      .end-time-display {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f0f8ff;
+        border: 1px solid #3498db;
+        border-radius: 8px;
+        padding: 0 12px;
+        font-size: 14px;
+        color: #2c3e50;
+        font-weight: bold;
+        min-height: 48px;
+        text-align: center;
+      }
+
       .modal-buttons {
         padding: 20px;
         display: flex;
@@ -414,6 +446,14 @@
           font-size: 12px;
           min-width: 70px;
         }
+
+        .duration-container {
+          flex-direction: column;
+        }
+
+        .end-time-display {
+          min-height: 40px;
+        }
       }
 
       /* Планшеты - 3 столбца в ряд */
@@ -471,13 +511,19 @@
           style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
         ></div>
         <input type="datetime-local" id="appointmentDateTime" step="600" />
-        <input
-          type="number"
-          id="visitDuration"
-          placeholder="Продолжительность приема (мин)"
-          min="10"
-          step="10"
-        />
+
+        <div class="duration-container">
+          <input
+            type="number"
+            id="visitDuration"
+            placeholder="Продолжительность приема (мин)"
+            min="10"
+            step="10"
+            class="duration-input"
+          />
+          <div id="appointmentEndTime" class="end-time-display">Окончание</div>
+        </div>
+
         <textarea
           id="appointmentNote"
           placeholder="Добавить комментарий"
@@ -626,6 +672,33 @@
         } catch (error) {
           console.error("Error patching client:", error);
           throw error;
+        }
+      }
+
+      // Функция для расчета времени окончания приема
+      function calculateEndTime() {
+        const dateTimeInput = document.getElementById(
+          "appointmentDateTime"
+        ).value;
+        const durationInput = document.getElementById("visitDuration").value;
+        const endTimeDisplay = document.getElementById("appointmentEndTime");
+
+        if (dateTimeInput && durationInput) {
+          const startTime = new Date(dateTimeInput);
+          const duration = parseInt(durationInput);
+
+          if (!isNaN(duration) && duration > 0) {
+            const endTime = new Date(startTime.getTime() + duration * 60000);
+            const formattedEndTime = endTime.toLocaleTimeString("ru-RU", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            endTimeDisplay.textContent = `Окончание в: ${formattedEndTime}`;
+          } else {
+            endTimeDisplay.textContent = "Окончание";
+          }
+        } else {
+          endTimeDisplay.textContent = "Окончание";
         }
       }
 
@@ -916,13 +989,13 @@
 
       // Открытие модального окна добавления записи
       function openAddModal() {
-        // document.getElementById("addModal").modal-button.ok.backgroundColor = "#ff7b6a";
         document.getElementById("addModal").style.display = "block";
         document.getElementById("searchClient").value = "";
         document.getElementById("searchResults").innerHTML = "";
         document.getElementById("appointmentDateTime").value = "";
         document.getElementById("visitDuration").value = "";
         document.getElementById("appointmentNote").value = "";
+        document.getElementById("appointmentEndTime").textContent = "Окончание";
         document.getElementById("searchClient").focus();
       }
 
@@ -1116,7 +1189,6 @@
           }
 
           // Обновление интерфейса
-          alert("Запись добавлена");
           closeAddModal();
 
           // Перезагрузка данных
@@ -1203,7 +1275,6 @@
             }
 
             // Обновление интерфейса
-            alert("Запись была отменена");
             closeViewModal();
 
             // Перезагрузка данных
@@ -1319,6 +1390,20 @@
             e.preventDefault();
           }
         });
+
+      // Обработчики для расчета времени окончания
+      document
+        .getElementById("appointmentDateTime")
+        .addEventListener("change", calculateEndTime);
+      document
+        .getElementById("appointmentDateTime")
+        .addEventListener("input", calculateEndTime);
+      document
+        .getElementById("visitDuration")
+        .addEventListener("input", calculateEndTime);
+      document
+        .getElementById("visitDuration")
+        .addEventListener("change", calculateEndTime);
 
       // Закрытие модальных окон при клике вне их
       window.addEventListener("click", function (e) {
