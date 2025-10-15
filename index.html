@@ -1024,14 +1024,13 @@
         const appointment = appointments[appointmentIndex];
         const duration = durations[appointmentIndex]; //  || "30"
         const note = notes[appointmentIndex] || "";
+       // ${client.phoneNumber}
         //<p><strong>Телефон:</strong> ${client.phoneNumber || "Не указан"}</p>
         document.getElementById("clientInfo").innerHTML = `
             <h4><strong>Клиент:</strong> ${client.surname} ${client.name} ${
           client.patronymic
         }</h4>
-        <a href="tel:+12215555555">${
-          client.phoneNumber || "Телефонный номер не указан"
-        }</a>
+        <a href="tel:${client.phoneNumber}">${client.phoneNumber || "Телефонный номер не указан"}</a>
             <p><strong>Дата рождения:</strong> ${
               client.birthdate || "Не указана"
             }</p>
