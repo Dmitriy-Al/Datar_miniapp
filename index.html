@@ -473,7 +473,7 @@
       /* Десктоп - 5 столбцов в ряд */
       @media (min-width: 1024px) {
         .container {
-          grid-template-columns: repeat(5, 1fr);
+          grid-template-columns: repeat(7, 1fr);
           max-width: 2000px;
           margin: 0 auto;
           gap: 20px;
@@ -560,7 +560,7 @@
     </div>
 
     <script>
-     let tg = window.Telegram.WebApp; // Аккаунта Telegram
+      let tg = window.Telegram.WebApp; // Аккаунта Telegram
       let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
       const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
@@ -1024,13 +1024,15 @@
         const appointment = appointments[appointmentIndex];
         const duration = durations[appointmentIndex]; //  || "30"
         const note = notes[appointmentIndex] || "";
-       // ${client.phoneNumber}
+        // ${client.phoneNumber}
         //<p><strong>Телефон:</strong> ${client.phoneNumber || "Не указан"}</p>
         document.getElementById("clientInfo").innerHTML = `
             <h4><strong>Клиент:</strong> ${client.surname} ${client.name} ${
           client.patronymic
         }</h4>
-        <a href="tel:${client.phoneNumber}">${client.phoneNumber || "Телефонный номер не указан"}</a>
+        <a href="tel:${client.phoneNumber}">${
+          client.phoneNumber || "Телефонный номер не указан"
+        }</a>
             <p><strong>Дата рождения:</strong> ${
               client.birthdate || "Не указана"
             }</p>
@@ -1425,3 +1427,4 @@
     </script>
   </body>
 </html>
+
