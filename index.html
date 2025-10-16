@@ -288,30 +288,14 @@
         cursor: not-allowed;
       }
 
-      .duration-container {
+      .time-inputs-container {
         display: flex;
         gap: 10px;
         margin-bottom: 15px;
       }
 
-      .duration-input {
-        flex: 2;
-      }
-
-      .end-time-display {
+      .time-input {
         flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: #f0f8ff;
-        border: 1px solid #3498db;
-        border-radius: 8px;
-        padding: 0 12px;
-        font-size: 14px;
-        color: #2c3e50;
-        font-weight: bold;
-        min-height: 48px;
-        text-align: center;
       }
 
       .modal-buttons {
@@ -447,12 +431,8 @@
           min-width: 70px;
         }
 
-        .duration-container {
+        .time-inputs-container {
           flex-direction: column;
-        }
-
-        .end-time-display {
-          min-height: 40px;
         }
       }
 
@@ -510,19 +490,10 @@
           id="searchResults"
           style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
         ></div>
-        <input type="datetime-local" id="appointmentDateTime" step="600" />
+        <input type="datetime-local" id="appointmentDateTime" />
 
-        <div class="duration-container">
-          <input
-            inputmode="numeric"
-            type="number"
-            id="visitDuration"
-            placeholder="Продолжительность приема (мин)"
-            min="10"
-            step="10"
-            class="duration-input"
-          />
-          <div id="appointmentEndTime" class="end-time-display">Окончание</div>
+        <div class="time-inputs-container">
+          <input type="time" id="appointmentEndTime" class="time-input" />
         </div>
 
         <textarea
@@ -564,7 +535,6 @@
       let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
       const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
-
       let currentSpecialist = null;
       let currentClients = [];
       let currentSelectedClient = null;
@@ -681,25 +651,14 @@
         const dateTimeInput = document.getElementById(
           "appointmentDateTime"
         ).value;
-        const durationInput = document.getElementById("visitDuration").value;
         const endTimeDisplay = document.getElementById("appointmentEndTime");
 
-        if (dateTimeInput && durationInput) {
+        if (dateTimeInput) {
           const startTime = new Date(dateTimeInput);
-          const duration = parseInt(durationInput);
-
-          if (!isNaN(duration) && duration > 0) {
-            const endTime = new Date(startTime.getTime() + duration * 60000);
-            const formattedEndTime = endTime.toLocaleTimeString("ru-RU", {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
-            endTimeDisplay.textContent = `Окончание в: ${formattedEndTime}`;
-          } else {
-            endTimeDisplay.textContent = "Окончание";
-          }
-        } else {
-          endTimeDisplay.textContent = "Окончание";
+          // Добавляем 30 минут по умолчанию
+          const endTime = new Date(startTime.getTime() + 30 * 60000);
+          const formattedEndTime = endTime.toTimeString().slice(0, 5);
+          endTimeDisplay.value = formattedEndTime;
         }
       }
 
@@ -803,24 +762,35 @@
             const appointments = client.appointmentDateTime
               .split("#")
               .filter((app) => app.trim());
-            const durations = client.visitDuration
-              ? client.visitDuration.split("#").filter((dur) => dur.trim())
-              : [];
 
             appointments.forEach((appointment, index) => {
-              const [datePart, timePart] = appointment.split(" - ");
-              const duration = durations[index]
-                ? parseInt(durations[index])
-                : 30; // По умолчанию 30 минут
+              // Новый формат: "dd.MM.yyyy - HH:mm/HH:mm"
+              const [dateTimePart, timeRange] = appointment.split(" - ");
+              if (timeRange && timeRange.includes("/")) {
+                const [startTimeStr, endTimeStr] = timeRange.split("/");
 
-              allAppointments.push({
-                client: client,
-                dateTime: new Date(
-                  `${datePart.split(".").reverse().join("-")}T${timePart}`
-                ),
-                duration: duration,
-                appointmentIndex: index,
-              });
+                const startTime = new Date(
+                  `${dateTimePart
+                    .split(".")
+                    .reverse()
+                    .join("-")}T${startTimeStr}`
+                );
+                const endTime = new Date(
+                  `${dateTimePart.split(".").reverse().join("-")}T${endTimeStr}`
+                );
+
+                // Вычисляем продолжительность в минутах
+                const duration = (endTime - startTime) / 60000;
+
+                allAppointments.push({
+                  client: client,
+                  dateTime: startTime,
+                  duration: duration,
+                  appointmentIndex: index,
+                  endTime: endTime,
+                  appointmentString: appointment, // Сохраняем исходную строку
+                });
+              }
             });
           }
         });
@@ -897,8 +867,8 @@
         const card = document.createElement("div");
         card.className = "card";
 
-        // Высота карточки зависит от продолжительности приема (10px за 10 минут)
-        const height = appointment.duration * 1.05; //(appointment.duration / 10) * 10.7; //10
+        // Высота карточки зависит от продолжительности приема (1.05px за минуту)
+        const height = appointment.duration * 1.05;
         card.style.height = `${height}px`;
 
         // Позиционирование карточки относительно времени приема
@@ -908,7 +878,7 @@
 
         // Вычисление позиции карточки относительно верха столбца (0px = 08:00, 840px = 22:00)
         const totalMinutesFrom8 = (hours - 8) * 60 + minutes;
-        const topPosition = (totalMinutesFrom8 / 840) * 900; // 840px = 14 часов * 60 минут
+        const topPosition = (totalMinutesFrom8 / 840) * 900;
 
         card.style.top = `${topPosition}px`;
 
@@ -917,10 +887,7 @@
           minute: "2-digit",
         });
 
-        const endTime = new Date(
-          startTime.getTime() + appointment.duration * 60000
-        );
-        const endTimeStr = endTime.toLocaleTimeString("ru-RU", {
+        const endTimeStr = appointment.endTime.toLocaleTimeString("ru-RU", {
           hour: "2-digit",
           minute: "2-digit",
         });
@@ -931,6 +898,7 @@
           appointment.client.name,
           appointment.client.patronymic
         );
+
         // Наполнение карточки контентом зависит от ее размера
         if (height > 50) {
           card.innerHTML = `
@@ -994,9 +962,8 @@
         document.getElementById("searchClient").value = "";
         document.getElementById("searchResults").innerHTML = "";
         document.getElementById("appointmentDateTime").value = "";
-        document.getElementById("visitDuration").value = "";
+        document.getElementById("appointmentEndTime").value = "";
         document.getElementById("appointmentNote").value = "";
-        document.getElementById("appointmentEndTime").textContent = "Окончание";
         document.getElementById("searchClient").focus();
       }
 
@@ -1014,18 +981,21 @@
         const appointments = client.appointmentDateTime
           .split("#")
           .filter((app) => app.trim());
-        const durations = client.visitDuration
-          ? client.visitDuration.split("#").filter((dur) => dur.trim())
-          : [];
         const notes = client.appointmentNote
           ? client.appointmentNote.split("#").filter((note) => note.trim())
           : [];
 
         const appointment = appointments[appointmentIndex];
-        const duration = durations[appointmentIndex]; //  || "30"
         const note = notes[appointmentIndex] || "";
-        // ${client.phoneNumber}
-        //<p><strong>Телефон:</strong> ${client.phoneNumber || "Не указан"}</p>
+
+        // Парсим новый формат: "dd.MM.yyyy - HH:mm/HH:mm"
+        let displayText = appointment;
+        if (appointment.includes(" - ") && appointment.includes("/")) {
+          const [datePart, timePart] = appointment.split(" - ");
+          const [startTime, endTime] = timePart.split("/");
+          displayText = `${datePart} с ${startTime} до ${endTime}`;
+        }
+
         document.getElementById("clientInfo").innerHTML = `
             <h4><strong>Клиент:</strong> ${client.surname} ${client.name} ${
           client.patronymic
@@ -1036,8 +1006,7 @@
             <p><strong>Дата рождения:</strong> ${
               client.birthdate || "Не указана"
             }</p>
-            <p><strong>Дата и время приема:</strong> ${appointment}</p>
-            <p><strong>Продолжительность:</strong> ${duration} минут</p>
+            <p><strong>Дата и время приема:</strong> ${displayText}</p>
             <p><strong>Комментарий:</strong> ${note}</p>
         `;
 
@@ -1058,7 +1027,8 @@
           const dateTimeInput = document.getElementById(
             "appointmentDateTime"
           ).value;
-          const durationInput = document.getElementById("visitDuration").value;
+          const endTimeInput =
+            document.getElementById("appointmentEndTime").value;
           const noteInput = document.getElementById("appointmentNote").value;
 
           // Проверка обязательных полей
@@ -1068,73 +1038,65 @@
           }
 
           if (!dateTimeInput) {
-            alert("Пожалуйста, укажите дату и время приема");
+            alert("Пожалуйста, укажите дату и время начала приема");
             return;
           }
 
-          if (!durationInput || parseInt(durationInput) < 10) {
-            alert(
-              "Пожалуйста, укажите продолжительность приема (минимум 10 минут)"
-            );
+          if (!endTimeInput) {
+            alert("Пожалуйста, укажите время окончания приема");
             return;
           }
 
-          // Преобразование формата даты из "YYYY-MM-DDTHH:mm" в "dd.MM.yyyy - HH:mm"
-          const dateTime = new Date(dateTimeInput);
-          const formattedDate = `${dateTime
+          // Извлекаем время начала из datetime-local
+          const startDateTime = new Date(dateTimeInput);
+          const startTimeStr = startDateTime.toTimeString().slice(0, 5);
+
+          // Проверяем что время окончания больше времени начала
+          if (startTimeStr >= endTimeInput) {
+            alert("Время окончания должно быть позже времени начала");
+            return;
+          }
+
+          // Преобразование формата даты из "YYYY-MM-DD" в "dd.MM.yyyy"
+          const formattedDate = `${startDateTime
             .getDate()
             .toString()
-            .padStart(2, "0")}.${(dateTime.getMonth() + 1)
+            .padStart(2, "0")}.${(startDateTime.getMonth() + 1)
             .toString()
-            .padStart(2, "0")}.${dateTime.getFullYear()}`;
-          const formattedTime = `${dateTime
-            .getHours()
-            .toString()
-            .padStart(2, "0")}:${dateTime
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`;
-          const newAppointment = `${formattedDate} - ${formattedTime}`;
+            .padStart(2, "0")}.${startDateTime.getFullYear()}`;
 
-          const duration = parseInt(durationInput);
+          // Формируем запись в новом формате: "dd.MM.yyyy - HH:mm/HH:mm"
+          const newAppointment = `${formattedDate} - ${startTimeStr}/${endTimeInput}`;
 
           // Проверка времени (не ранее 08:00 и не позже 22:00)
-          const hours = dateTime.getHours();
-          const minutes = dateTime.getMinutes();
+          const startHours = parseInt(startTimeStr.split(":")[0]);
+          const startMinutes = parseInt(startTimeStr.split(":")[1]);
+          const endHours = parseInt(endTimeInput.split(":")[0]);
+          const endMinutes = parseInt(endTimeInput.split(":")[1]);
 
-          if (hours < 8 || (hours === 22 && minutes > 0) || hours > 22) {
-            alert("Время приема должно быть с 08:00 до 22:00");
+          if (
+            startHours < 8 ||
+            (startHours === 22 && startMinutes > 0) ||
+            startHours > 22
+          ) {
+            alert("Время начала приема должно быть с 08:00 до 22:00");
+            return;
+          }
+
+          if (endHours > 22 || (endHours === 22 && endMinutes > 0)) {
+            alert("Время окончания приема не может быть позже 22:00");
             return;
           }
 
           // Проверка что дата не ранее текущей
           const now = new Date();
-          if (dateTime < now) {
+          if (startDateTime < now) {
             alert("Нельзя записать на прошедшую дату");
             return;
           }
 
-          // Проверка продолжительности
-          if (duration > 900) {
-            alert("Продолжительность приема не может превышать 900 минут");
-            return;
-          }
-
-          // Проверка что время окончания не позже 22:00
-          const endTime = new Date(dateTime.getTime() + duration * 60000);
-          const endHours = endTime.getHours();
-          const endMinutes = endTime.getMinutes();
-
-          if (endHours > 22 || (endHours === 22 && endMinutes > 0)) {
-            alert("Окончание приема не может быть позже 22:00");
-            return;
-          }
-
           // Проверка наложения на существующие записи
-          const hasOverlap = await checkAppointmentOverlap(
-            newAppointment,
-            duration
-          );
+          const hasOverlap = await checkAppointmentOverlap(newAppointment);
           if (hasOverlap) {
             alert(
               "Выбранное время накладывается на существующую запись. Пожалуйста, выберите другое время."
@@ -1145,7 +1107,7 @@
           // Подготовка данных для обновления
           const updates = {};
 
-          // Обновление appointmentDateTime
+          // Обновление appointmentDateTime в новом формате
           const currentAppointments = currentSelectedClient.appointmentDateTime
             ? currentSelectedClient.appointmentDateTime
                 .split("#")
@@ -1153,15 +1115,6 @@
             : [];
           currentAppointments.push(newAppointment);
           updates.appointmentDateTime = currentAppointments.join("#") + "#";
-
-          // Обновление visitDuration
-          const currentDurations = currentSelectedClient.visitDuration
-            ? currentSelectedClient.visitDuration
-                .split("#")
-                .filter((dur) => dur.trim())
-            : [];
-          currentDurations.push(duration.toString());
-          updates.visitDuration = currentDurations.join("#") + "#";
 
           // Обновление appointmentNote (если есть комментарий)
           if (noteInput.trim()) {
@@ -1220,12 +1173,6 @@
                     .filter((app) => app.trim())
                 : [];
 
-            const currentDurations = currentSelectedClient.visitDuration
-              ? currentSelectedClient.visitDuration
-                  .split("#")
-                  .filter((dur) => dur.trim())
-              : [];
-
             const currentNotes = currentSelectedClient.appointmentNote
               ? currentSelectedClient.appointmentNote
                   .split("#")
@@ -1235,9 +1182,6 @@
             // Удаление записи по индексу
             if (currentAppointmentIndex < currentAppointments.length) {
               currentAppointments.splice(currentAppointmentIndex, 1);
-              if (currentDurations.length > currentAppointmentIndex) {
-                currentDurations.splice(currentAppointmentIndex, 1);
-              }
               if (currentNotes.length > currentAppointmentIndex) {
                 currentNotes.splice(currentAppointmentIndex, 1);
               }
@@ -1248,9 +1192,6 @@
               appointmentDateTime:
                 currentAppointments.join("#") +
                 (currentAppointments.length > 0 ? "#" : ""),
-              visitDuration:
-                currentDurations.join("#") +
-                (currentDurations.length > 0 ? "#" : ""),
             };
 
             // Сохранение заметок только если они есть
@@ -1289,20 +1230,20 @@
       }
 
       // Вспомогательная функция для проверки наложения записей
-      async function checkAppointmentOverlap(newAppointment, newDuration) {
+      async function checkAppointmentOverlap(newAppointment) {
         try {
           // Получаем всех клиентов текущего специалиста
           const clients = await getClientsBySpecialistId(currentSpecialist.id);
 
-          // Парсим новую запись
+          // Парсим новую запись в новом формате: "dd.MM.yyyy - HH:mm/HH:mm"
           const [newDatePart, newTimePart] = newAppointment.split(" - ");
+          const [newStartTimeStr, newEndTimeStr] = newTimePart.split("/");
           const [day, month, year] = newDatePart.split(".");
-          const [newHour, newMinute] = newTimePart.split(":");
 
           const newStart = new Date(
-            `${year}-${month}-${day}T${newHour}:${newMinute}`
+            `${year}-${month}-${day}T${newStartTimeStr}`
           );
-          const newEnd = new Date(newStart.getTime() + newDuration * 60000);
+          const newEnd = new Date(`${year}-${month}-${day}T${newEndTimeStr}`);
 
           // Проверяем все существующие записи
           for (const client of clients) {
@@ -1310,33 +1251,31 @@
               const appointments = client.appointmentDateTime
                 .split("#")
                 .filter((app) => app.trim());
-              const durations = client.visitDuration
-                ? client.visitDuration.split("#").filter((dur) => dur.trim())
-                : [];
 
               for (let i = 0; i < appointments.length; i++) {
                 const appointment = appointments[i];
-                const [datePart, timePart] = appointment.split(" - ");
-                const [day, month, year] = datePart.split(".");
-                const [hour, minute] = timePart.split(":");
 
-                const existingStart = new Date(
-                  `${year}-${month}-${day}T${hour}:${minute}`
-                );
-                const existingDuration = durations[i]
-                  ? parseInt(durations[i])
-                  : 30;
-                const existingEnd = new Date(
-                  existingStart.getTime() + existingDuration * 60000
-                );
+                // Парсим существующую запись в новом формате
+                if (appointment.includes(" - ") && appointment.includes("/")) {
+                  const [datePart, timePart] = appointment.split(" - ");
+                  const [startTimeStr, endTimeStr] = timePart.split("/");
+                  const [day, month, year] = datePart.split(".");
 
-                // Проверка пересечения временных интервалов
-                if (
-                  (newStart >= existingStart && newStart < existingEnd) ||
-                  (newEnd > existingStart && newEnd <= existingEnd) ||
-                  (newStart <= existingStart && newEnd >= existingEnd)
-                ) {
-                  return true; // Найдено пересечение
+                  const existingStart = new Date(
+                    `${year}-${month}-${day}T${startTimeStr}`
+                  );
+                  const existingEnd = new Date(
+                    `${year}-${month}-${day}T${endTimeStr}`
+                  );
+
+                  // Проверка пересечения временных интервалов
+                  if (
+                    (newStart >= existingStart && newStart < existingEnd) ||
+                    (newEnd > existingStart && newEnd <= existingEnd) ||
+                    (newStart <= existingStart && newEnd >= existingEnd)
+                  ) {
+                    return true; // Найдено пересечение
+                  }
                 }
               }
             }
@@ -1393,18 +1332,9 @@
           }
         });
 
-      // Обработчики для расчета времени окончания
+      // Обработчики для автоматического заполнения времени окончания
       document
         .getElementById("appointmentDateTime")
-        .addEventListener("change", calculateEndTime);
-      document
-        .getElementById("appointmentDateTime")
-        .addEventListener("input", calculateEndTime);
-      document
-        .getElementById("visitDuration")
-        .addEventListener("input", calculateEndTime);
-      document
-        .getElementById("visitDuration")
         .addEventListener("change", calculateEndTime);
 
       // Закрытие модальных окон при клике вне их
@@ -1427,4 +1357,3 @@
     </script>
   </body>
 </html>
-
