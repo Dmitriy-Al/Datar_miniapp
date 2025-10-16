@@ -510,7 +510,11 @@
           id="searchResults"
           style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
         ></div>
-        <input type="datetime-local" id="appointmentDateTime" step="600" />
+        <input 
+        placeholder="Время начала приема"
+        type="datetime-local" 
+        id="appointmentDateTime" 
+         />
 
         <div class="duration-container">
           <input
@@ -564,7 +568,6 @@
       let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
       const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
-
       let currentSpecialist = null;
       let currentClients = [];
       let currentSelectedClient = null;
@@ -1427,4 +1430,3 @@
     </script>
   </body>
 </html>
-
