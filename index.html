@@ -511,23 +511,13 @@
           style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
         ></div>
         <input 
-        placeholder="Время начала приема"
-        type="datetime-local" 
+        type="datetime" 
         id="appointmentDateTime" 
          />
-
-        <div class="duration-container">
-          <input
-            inputmode="numeric"
-            type="number"
-            id="visitDuration"
-            placeholder="Продолжительность приема (мин)"
-            min="10"
-            step="10"
-            class="duration-input"
-          />
-          <div id="appointmentEndTime" class="end-time-display">Окончание</div>
-        </div>
+         <input 
+        type="time" 
+        id="appointmentDateTime" 
+         />
 
         <textarea
           id="appointmentNote"
