@@ -12,21 +12,22 @@
         box-sizing: border-box;
       }
 
+      /*  body padding: 15px;   */
       body {
         font-family: Arial, sans-serif;
         background-color: #f0f0f0;
-        padding: 15px;
         min-height: 100vh;
         overflow-x: hidden;
       }
 
-      /* Шапка с кнопками-клавишами */
+      /* Шапка с кнопками-клавишами 
+      border-radius: 8px;  
+      padding: 5px;
+       */
       .header {
         height: 50px;
         background-color: #2c3e50;
-        border-radius: 8px;
         margin-bottom: 15px;
-        padding: 5px;
         overflow-x: auto;
         overflow-y: hidden;
         white-space: nowrap;
@@ -42,7 +43,7 @@
       }
 
       .key-button {
-        background: linear-gradient(135deg, #3498db, #2980b9);
+        background: linear-gradient(135deg, #2980b9, #1f618d); /*  */
         color: white;
         border: none;
         border-radius: 6px;
@@ -60,7 +61,7 @@
       }
       /*margin-top: 40px;*/
       .key-button:hover {
-        background: linear-gradient(135deg, #2980b9, #1f618d);
+        background: linear-gradient(135deg, #36a1e9, #349ce0);
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
       }
@@ -79,8 +80,10 @@
 
       .column {
         background-color: #fcf8e1;
+        margin-left: 3px;
+        margin-right: 3px;
         border-radius: 5px;
-        padding: 5px;
+        padding: 25px;
         min-height: 900px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         cursor: pointer;
@@ -315,7 +318,7 @@
         transition: all 0.3s;
         min-width: 80px;
       }
-      /* #57ff5d  #e94e43 */
+
       .modal-button.ok {
         background-color: #6cc556;
         color: white;
@@ -450,7 +453,7 @@
         }
       }
 
-      /* Десктоп - 5 столбцов в ряд */
+      /* Десктоп - 7 столбцов в ряд */
       @media (min-width: 1024px) {
         .container {
           grid-template-columns: repeat(7, 1fr);
