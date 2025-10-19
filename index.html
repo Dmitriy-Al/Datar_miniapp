@@ -14,39 +14,25 @@
 
       /*  body padding: 15px;   */
       body {
+        padding: 5px;
         font-family: Arial, sans-serif;
         background-color: #f0f0f0;
         min-height: 100vh;
         overflow-x: hidden;
-        padding-top: 65px; /* Отступ для фиксированного header */
       }
 
-      /* Шапка с кнопками-клавишами */
+      /* Шапка с кнопками-клавишами 
+      border-radius: 8px;  
+      padding: 5px;
+       */
       .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
         height: 50px;
         background-color: #2c3e50;
+        margin-bottom: 15px;
         overflow-x: auto;
         overflow-y: hidden;
         white-space: nowrap;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-      }
-
-      .header.specialist {
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .header.specialist .specialist-title {
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
       }
 
       .keys-container {
@@ -58,7 +44,7 @@
       }
 
       .key-button {
-        background: linear-gradient(135deg, #2980b9, #1f618d);
+        background: linear-gradient(135deg, #2980b9, #1f618d); /*  */
         color: white;
         border: none;
         border-radius: 6px;
@@ -74,11 +60,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-
-      .key-button.active {
-        background: #36a1e9;
-      }
-
+      /*margin-top: 40px;*/
       .key-button:hover {
         background: linear-gradient(135deg, #36a1e9, #349ce0);
         transform: translateY(-2px);
@@ -99,10 +81,9 @@
 
       .column {
         background-color: #fcf8e1;
-        margin-left: 3px;
-        margin-right: 3px;
+
         border-radius: 5px;
-        padding: 25px;
+        padding: 15px;
         min-height: 900px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         cursor: pointer;
@@ -116,9 +97,9 @@
       .time-scale {
         position: absolute;
         left: 0;
-        top: 60px;
+        top: 60px; /* Начинаем от уровня заголовка столбца */
         bottom: 0px;
-        width: 15px;
+        width: 15px; /* 15px */
         background: linear-gradient(to bottom, #fff5e4, #fae4bd);
         border-right: 2px solid #3498db;
         display: flex;
@@ -158,6 +139,7 @@
       }
 
       .time-label {
+        /*       margin-bottom: 5px;*/
         margin-top: 15px;
         margin-left: 16px;
         font-size: 10px;
@@ -168,6 +150,7 @@
         padding: 1px 3px;
         border-radius: 2px;
         border: 1px solid #bdc3c7;
+        /*     position: absolute; */
         top: 50%;
         transform: translateY(-50%);
         z-index: 2;
@@ -192,7 +175,7 @@
         border-bottom: 2px solid #3b648d;
         padding-bottom: 10px;
         font-size: 16px;
-        height: 60px;
+        height: 60px; /* Фиксируем высоту заголовка */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -223,7 +206,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        margin-top: -10px;
+        margin-top: -10px; /* -10px; Добавляем небольшое смещение для точного выравнивания */
         box-sizing: border-box;
       }
 
@@ -237,6 +220,7 @@
         color: black;
         font-size: 14px;
         font-weight: bold;
+        /*   line-height: 1.2; */
       }
 
       .card p {
@@ -268,7 +252,7 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         width: 90%;
         max-width: 400px;
-        line-height: 2;
+        line-height: 2; /* разделение строк по высоте */
       }
 
       .modal h2 {
@@ -398,22 +382,6 @@
 
       /* Мобильные устройства - 3 столбца в ряд */
       @media (max-width: 767px) {
-        body {
-          padding-top: 45px; /* Меньший отступ для мобильных */
-        }
-
-        .header {
-          height: 40px;
-        }
-
-        .header.specialist {
-          height: 25px;
-        }
-
-        .header.specialist .specialist-title {
-          font-size: 14px;
-        }
-
         .container {
           grid-template-columns: repeat(3, 1fr);
           gap: 10px;
@@ -426,13 +394,13 @@
 
         .time-scale {
           width: 15px;
-          top: 40px;
+          top: 40px; /* Меньший отступ для мобильных */
         }
 
         .time-label {
           font-size: 8px;
           right: -20px;
-          margin-top: 10px;
+          margin-top: 10px; /*  Меньшее смещение для мобильных */
         }
 
         .column-content {
@@ -440,13 +408,13 @@
         }
 
         .column h2 {
-          height: 50px;
+          height: 50px; /* Меньшая высота заголовка для мобильных */
           font-size: 14px;
           margin-bottom: 10px;
         }
 
         .cards-container {
-          height: 900px;
+          height: 900px; /* Половина высоты для мобильных */
         }
 
         .card {
@@ -454,11 +422,11 @@
         }
 
         .card h3 {
-          font-size: 8px;
+          font-size: 8px; /* 12px */
         }
 
         .card p {
-          font-size: 8px;
+          font-size: 8px; /* 12px */
         }
 
         .key-button {
@@ -502,7 +470,7 @@
     </style>
   </head>
   <body>
-    <!-- Шапка с кнопками-клавишами -->
+    <!-- Шапка с кнопками-клавишами (будет скрыта для специалистов) -->
     <div class="header" id="header" style="display: none">
       <div class="keys-container" id="keysContainer">
         <!-- Кнопки-клавиши будут созданы через JavaScript -->
@@ -569,10 +537,10 @@
     </div>
 
     <script>
-      let tg = window.Telegram.WebApp;
-      let tgUserId = tg.initDataUnsafe.user.id;
+      let tg = window.Telegram.WebApp; // Аккаунта Telegram
+      let tgUserId = tg.initDataUnsafe.user.id; // tg.initDataUnsafe.user.id; // Данные аккаунта пользователя Telegram
 
-      const API_BASE = "https://alimovdev.ru/api";
+      const API_BASE = "https://alimovdev.ru/api"; //"http://localhost:8080/api";
       let currentSpecialist = null;
       let currentClients = [];
       let currentSelectedClient = null;
@@ -709,9 +677,9 @@
           if (responseSpecialist.ok) {
             const tgSpecialist = await responseSpecialist.json();
 
-            // Логика для специалиста
+            // TODO 1: Логика для специалиста
             currentSpecialist = tgSpecialist;
-            showSpecialistHeader();
+            document.getElementById("header").style.display = "none"; // Скрываем шапку для специалиста
             await loadAndDisplayClients(tgSpecialist);
           } else {
             const responseAdmin = await fetch(
@@ -729,8 +697,8 @@
                   specialistsIdList
                 );
 
-                // Логика для администратора
-                showAdminHeader();
+                // TODO 3: Логика для администратора
+                document.getElementById("header").style.display = "block"; // Показываем шапку для администратора
                 createSpecialistButtons(specialists);
                 if (specialists.length > 0) {
                   currentSpecialist = specialists[0];
@@ -741,7 +709,7 @@
               }
             } else {
               if (responseAdmin.status === 404) {
-                // Логика для гостя
+                // TODO 4: Логика для гостя
                 document.getElementById("columnsContainer").innerHTML =
                   '<div class="guest-message">Здравствуйте, гость!</div>';
               } else {
@@ -757,22 +725,6 @@
         }
       }
 
-      // Показать шапку для специалиста
-      function showSpecialistHeader() {
-        const header = document.getElementById("header");
-        header.style.display = "block";
-        header.className = "header specialist";
-        header.innerHTML = '<div class="specialist-title">Datar</div>';
-      }
-
-      // Показать шапку для администратора
-      function showAdminHeader() {
-        const header = document.getElementById("header");
-        header.style.display = "block";
-        header.className = "header";
-        header.innerHTML = '<div class="keys-container" id="keysContainer"></div>';
-      }
-
       // Создание кнопок специалистов в шапке
       function createSpecialistButtons(specialists) {
         const keysContainer = document.getElementById("keysContainer");
@@ -784,19 +736,7 @@
           keyButton.textContent = `${specialist.surname} ${specialist.name} ${specialist.patronymic}`;
           keyButton.setAttribute("data-specialist-id", specialist.id);
 
-          // Проверяем, является ли этот специалист текущим
-          if (currentSpecialist && currentSpecialist.id === specialist.id) {
-            keyButton.classList.add("active");
-          }
-
           keyButton.addEventListener("click", async function () {
-            // Убираем активный класс у всех кнопок
-            document.querySelectorAll('.key-button').forEach(btn => {
-              btn.classList.remove('active');
-            });
-            // Добавляем активный класс к нажатой кнопке
-            keyButton.classList.add('active');
-            
             currentSpecialist = specialist;
             await loadAndDisplayClients(specialist);
           });
@@ -854,7 +794,7 @@
                   duration: duration,
                   appointmentIndex: index,
                   endTime: endTime,
-                  appointmentString: appointment,
+                  appointmentString: appointment, // Сохраняем исходную строку
                 });
               }
             });
