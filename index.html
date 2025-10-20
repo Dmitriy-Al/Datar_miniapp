@@ -966,7 +966,7 @@
           appointment.client.patronymic
         );
 
-        // Наполнение карточки контентом зависит от ее размера
+        // Наполнение карточки контентом зависит от ее размера //  <p>${startTimeStr} - ${endTimeStr}</p>
         if (height > 50) {
           card.innerHTML = `
             <h3>${formattedName}</h3>
@@ -975,17 +975,15 @@
         `;
         } else if (height > 30) {
           card.style.fontSize = "8px";
-          card.style.padding = "5px";
           card.innerHTML = `
-          <p><small>${formattedName}</small></p>
-            <p><small>${startTimeStr} - ${endTimeStr}</small></p>
+          <p>${formattedName}  ${startTimeStr} - ${endTimeStr}</p>
         `;
         } else {
           card.style.backgroundColor = "#ffc457";
           card.style.fontSize = "7px";
           card.style.padding = "5px";
           card.innerHTML = `
-          <p><small>${startTimeStr} - ${endTimeStr}</small></p>
+          <p>${startTimeStr} - ${endTimeStr}</p>
         `;
         }
 
