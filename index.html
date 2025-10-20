@@ -975,13 +975,14 @@
         `;
         } else if (height > 30) {
           card.style.fontSize = "8px";
+          card.style.padding = "5px";
           card.innerHTML = `
           <p><small>${formattedName}</small></p>
             <p><small>${startTimeStr} - ${endTimeStr}</small></p>
         `;
         } else {
           card.style.backgroundColor = "#ffc457";
-          card.style.fontSize = "7px"; //font-size = "8px";
+          card.style.fontSize = "7px";
           card.style.padding = "5px";
           card.innerHTML = `
           <p><small>${startTimeStr} - ${endTimeStr}</small></p>
