@@ -454,11 +454,11 @@
         }
 
         .card h3 {
-          font-size: 8px;
+          font-size: 10px;
         }
 
         .card p {
-          font-size: 8px;
+          font-size: 10px;
         }
 
         .key-button {
@@ -965,7 +965,6 @@
           appointment.client.name,
           appointment.client.patronymic
         );
-
         // Наполнение карточки контентом зависит от ее размера
         if (height > 50) {
           card.innerHTML = `
@@ -980,6 +979,8 @@
         `;
         } else {
           card.style.backgroundColor = "#ffc457";
+          card.style.fontSize = "7px"; //font-size = "8px";
+          //card.style.padding = "10px";
           card.innerHTML = `
           <p><small>${startTimeStr} - ${endTimeStr}</small></p>
         `;
