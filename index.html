@@ -975,13 +975,13 @@
         `;
         } else if (height > 30) {
           card.innerHTML = `
-            <small>${formattedName}</small>
-            <small>${startTimeStr} - ${endTimeStr}</small>
+          <p><small>${formattedName}</small></p>
+            <p><small>${startTimeStr} - ${endTimeStr}</small></p>
         `;
         } else {
           card.style.backgroundColor = "#ffc457";
           card.innerHTML = `
-            <small>${startTimeStr} - ${endTimeStr}</small>
+          <p><small>${startTimeStr} - ${endTimeStr}</small></p>
         `;
         }
 
