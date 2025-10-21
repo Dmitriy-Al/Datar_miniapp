@@ -6,23 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Система записи на прием</title>
     <style>
+      /* Все стили остаются точно такими же как в оригинальном коде */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
 
-      /*  body padding: 15px;   */
       body {
         padding: 5px;
         font-family: Arial, sans-serif;
         background-color: #f0f0f0;
         min-height: 100vh;
         overflow-x: hidden;
-        padding-top: 65px; /* Отступ для фиксированного header */
+        padding-top: 65px;
       }
 
-      /* Шапка с кнопками-клавишами */
       .header {
         position: fixed;
         top: 0;
@@ -100,7 +99,6 @@
 
       .column {
         background-color: #fcf8e1;
-
         border-radius: 5px;
         padding: 25px;
         min-height: 900px;
@@ -112,7 +110,6 @@
         position: relative;
       }
 
-      /* Вертикальная шкала времени */
       .time-scale {
         position: absolute;
         left: 0;
@@ -377,7 +374,6 @@
         font-weight: bold;
       }
 
-      /* Стили для скроллбара в шапке */
       .header::-webkit-scrollbar {
         height: 6px;
       }
@@ -396,10 +392,9 @@
         background: #2980b9;
       }
 
-      /* Мобильные устройства - 3 столбца в ряд */
       @media (max-width: 767px) {
         body {
-          padding-top: 45px; /* Меньший отступ для мобильных */
+          padding-top: 45px;
         }
 
         .header {
@@ -472,7 +467,6 @@
         }
       }
 
-      /* Планшеты - 3 столбца в ряд */
       @media (min-width: 768px) and (max-width: 1023px) {
         .container {
           grid-template-columns: repeat(3, 1fr);
@@ -486,7 +480,6 @@
         }
       }
 
-      /* Десктоп - 7 столбцов в ряд */
       @media (min-width: 1024px) {
         .container {
           grid-template-columns: repeat(7, 1fr);
@@ -571,12 +564,12 @@
     <script>
       let tg = window.Telegram.WebApp;
       let tgUserId = tg.initDataUnsafe.user.id;
-
       const API_BASE = "https://alimovdev.ru/api";
       let currentSpecialist = null;
+      let currentUser = null; // Может быть Specialist или Administrator
       let currentClients = [];
       let currentSelectedClient = null;
-      let currentAppointmentIndex = null;
+      let currentAppointmentId = null;
 
       // Функция для форматирования ФИО в формат "Фамилия И. О."
       function formatFullName(surname, name, patronymic) {
@@ -590,7 +583,6 @@
         const timeScale = document.createElement("div");
         timeScale.className = "time-scale";
 
-        // Время с 08:00 до 22:00 с шагом 10 минут
         const startHour = 8;
         const endHour = 22;
 
@@ -639,11 +631,11 @@
         }
       }
 
-      // Функция для получения клиентов по specialistId
-      async function getClientsBySpecialistId(specialistId) {
+      // Функция для получения записей по specialistId
+      async function getAppointmentsBySpecialistId(specialistId) {
         try {
           const response = await fetch(
-            `${API_BASE}/clients/by-specialist-id/${encodeURIComponent(
+            `${API_BASE}/appointments/by-specialist-id/${encodeURIComponent(
               specialistId
             )}`
           );
@@ -652,34 +644,51 @@
             if (response.status === 404) {
               return [];
             }
-            throw new Error("Failed to load CLIENTS: " + response.status);
+            throw new Error("Failed to load appointments: " + response.status);
           }
 
           return await response.json();
         } catch (error) {
-          console.error("Error loading clients by specialistId:", error);
+          console.error("Error loading appointments by specialistId:", error);
           throw error;
         }
       }
 
-      // Частичное обновление клиента
-      async function patchClient(clientId, updates) {
+      // Функция для получения клиента по ID
+      async function getClientById(clientId) {
         try {
-          const response = await fetch(`${API_BASE}/clients/${clientId}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updates),
-          });
+          const response = await fetch(
+            `${API_BASE}/clients/${encodeURIComponent(clientId)}`
+          );
 
           if (!response.ok) {
-            throw new Error("Failed to update client: " + response.status);
+            throw new Error("Failed to load client: " + response.status);
           }
 
           return await response.json();
         } catch (error) {
-          console.error("Error patching client:", error);
+          console.error("Error loading client by ID:", error);
+          throw error;
+        }
+      }
+
+      // Функция для получения клиентов по ownerId
+      async function getClientsByOwnerId(ownerId) {
+        try {
+          const response = await fetch(
+            `${API_BASE}/clients/by-owner-id/${encodeURIComponent(ownerId)}`
+          );
+
+          if (!response.ok) {
+            if (response.status === 404) {
+              return [];
+            }
+            throw new Error("Failed to load clients: " + response.status);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading clients by ownerId:", error);
           throw error;
         }
       }
@@ -693,7 +702,6 @@
 
         if (dateTimeInput) {
           const startTime = new Date(dateTimeInput);
-          // Добавляем 30 минут по умолчанию
           const endTime = new Date(startTime.getTime() + 30 * 60000);
           const formattedEndTime = endTime.toTimeString().slice(0, 5);
           endTimeDisplay.value = formattedEndTime;
@@ -710,15 +718,21 @@
             const tgSpecialist = await responseSpecialist.json();
 
             // Логика для специалиста
+            currentUser = tgSpecialist;
             currentSpecialist = tgSpecialist;
             showSpecialistHeader();
-            await loadAndDisplayClients(tgSpecialist);
+
+            // Загружаем клиентов по ownerId специалиста
+            currentClients = await getClientsByOwnerId(tgSpecialist.ownerId);
+            await loadAndDisplayAppointments(tgSpecialist);
           } else {
             const responseAdmin = await fetch(
               `${API_BASE}/administrators/${tgUserId}`
             );
             if (responseAdmin.ok) {
               const tgAdministrator = await responseAdmin.json();
+              currentUser = tgAdministrator;
+
               const specialistsIdList = tgAdministrator.specialistIdList
                 .split("/")
                 .filter((id) => id.length > 1)
@@ -734,7 +748,12 @@
                 createSpecialistButtons(specialists);
                 if (specialists.length > 0) {
                   currentSpecialist = specialists[0];
-                  await loadAndDisplayClients(specialists[0]);
+
+                  // Загружаем клиентов по ownerId администратора
+                  currentClients = await getClientsByOwnerId(
+                    tgAdministrator.ownerId
+                  );
+                  await loadAndDisplayAppointments(specialists[0]);
                 }
               } catch (error) {
                 alert("Error loading SPECIALISTS: " + error.message);
@@ -785,81 +804,104 @@
           keyButton.textContent = `${specialist.surname} ${specialist.name} ${specialist.patronymic}`;
           keyButton.setAttribute("data-specialist-id", specialist.id);
 
-          // Проверяем, является ли этот специалист текущим
           if (currentSpecialist && currentSpecialist.id === specialist.id) {
             keyButton.classList.add("active");
           }
 
           keyButton.addEventListener("click", async function () {
-            // Убираем активный класс у всех кнопок
             document.querySelectorAll(".key-button").forEach((btn) => {
               btn.classList.remove("active");
             });
-            // Добавляем активный класс к нажатой кнопке
             keyButton.classList.add("active");
 
             currentSpecialist = specialist;
-            await loadAndDisplayClients(specialist);
+            await loadAndDisplayAppointments(specialist);
           });
 
           keysContainer.appendChild(keyButton);
         });
       }
 
-      // Загрузка и отображение клиентов специалиста
-      async function loadAndDisplayClients(specialist) {
+      // Загрузка и отображение записей специалиста
+      async function loadAndDisplayAppointments(specialist) {
         try {
-          currentClients = await getClientsBySpecialistId(specialist.id);
-          createColumnsWithAppointments(currentClients);
+          const appointments = await getAppointmentsBySpecialistId(
+            specialist.id
+          );
+
+          // Загружаем данные клиентов для каждой записи
+          const appointmentsWithClients = await Promise.all(
+            appointments.map(async (appointment) => {
+              try {
+                const client = await getClientById(appointment.clientId);
+                return {
+                  appointment: appointment,
+                  client: client,
+                };
+              } catch (error) {
+                console.error(
+                  `Error loading client ${appointment.clientId}:`,
+                  error
+                );
+                return null;
+              }
+            })
+          );
+
+          // Фильтруем записи, для которых удалось загрузить клиентов
+          const validAppointments = appointmentsWithClients.filter(
+            (appointment) => appointment !== null
+          );
+
+          createColumnsWithAppointments(validAppointments);
         } catch (error) {
-          console.error("Error loading clients:", error);
-          alert("Error loading clients: " + error.message);
+          console.error("Error loading appointments:", error);
+          alert("Error loading appointments: " + error.message);
         }
       }
 
       // Создание столбцов с записями
-      function createColumnsWithAppointments(clients) {
+      function createColumnsWithAppointments(appointmentsWithClients) {
         const container = document.getElementById("columnsContainer");
         container.innerHTML = "";
 
-        // Собираем все даты приемов
+        // Обрабатываем записи с клиентами
         const allAppointments = [];
-        clients.forEach((client) => {
-          if (client.appointmentDateTime) {
-            const appointments = client.appointmentDateTime
-              .split("#")
-              .filter((app) => app.trim());
 
-            appointments.forEach((appointment, index) => {
-              // Новый формат: "dd.MM.yyyy - HH:mm/HH:mm"
-              const [dateTimePart, timeRange] = appointment.split(" - ");
-              if (timeRange && timeRange.includes("/")) {
-                const [startTimeStr, endTimeStr] = timeRange.split("/");
+        appointmentsWithClients.forEach((item) => {
+          const appointment = item.appointment;
+          const client = item.client;
 
-                const startTime = new Date(
-                  `${dateTimePart
-                    .split(".")
-                    .reverse()
-                    .join("-")}T${startTimeStr}`
-                );
-                const endTime = new Date(
-                  `${dateTimePart.split(".").reverse().join("-")}T${endTimeStr}`
-                );
+          // Парсим формат: "dd.MM.yyyy - HH:mm/HH:mm#dd.MM.yyyy - HH:mm/HH:mm#"
+          const appointmentParts = appointment.appointmentDateTime
+            .split("#")
+            .filter((part) => part.trim());
 
-                // Вычисляем продолжительность в минутах
-                const duration = (endTime - startTime) / 60000;
+          appointmentParts.forEach((part) => {
+            if (part.includes(" - ") && part.includes("/")) {
+              const [dateTimePart, timeRange] = part.split(" - ");
+              const [startTimeStr, endTimeStr] = timeRange.split("/");
 
-                allAppointments.push({
-                  client: client,
-                  dateTime: startTime,
-                  duration: duration,
-                  appointmentIndex: index,
-                  endTime: endTime,
-                  appointmentString: appointment,
-                });
-              }
-            });
-          }
+              const startTime = new Date(
+                `${dateTimePart.split(".").reverse().join("-")}T${startTimeStr}`
+              );
+              const endTime = new Date(
+                `${dateTimePart.split(".").reverse().join("-")}T${endTimeStr}`
+              );
+
+              const duration = (endTime - startTime) / 60000;
+
+              allAppointments.push({
+                appointment: appointment,
+                client: client,
+                dateTime: startTime,
+                duration: duration,
+                endTime: endTime,
+                appointmentString: part,
+                appointmentId: appointment.id,
+              });
+            }
+          });
         });
 
         // Сортируем по дате
@@ -908,7 +950,6 @@
 
         const cardsContainer = column.querySelector(".cards-container");
 
-        // Сортируем записи по времени
         appointments.sort((a, b) => a.dateTime - b.dateTime);
 
         appointments.forEach((appointment) => {
@@ -930,20 +971,17 @@
       }
 
       // Создание карточки записи
-      function createAppointmentCard(appointment) {
+      function createAppointmentCard(appointmentData) {
         const card = document.createElement("div");
         card.className = "card";
 
-        // Высота карточки зависит от продолжительности приема (1.05px за минуту)
-        const height = appointment.duration * 1.05;
+        const height = appointmentData.duration * 1.05;
         card.style.height = `${height}px`;
 
-        // Позиционирование карточки относительно времени приема
-        const startTime = appointment.dateTime;
+        const startTime = appointmentData.dateTime;
         const hours = startTime.getHours();
         const minutes = startTime.getMinutes();
 
-        // Вычисление позиции карточки относительно верха столбца (0px = 08:00, 840px = 22:00)
         const totalMinutesFrom8 = (hours - 8) * 60 + minutes;
         const topPosition = (totalMinutesFrom8 / 840) * 900;
 
@@ -954,23 +992,21 @@
           minute: "2-digit",
         });
 
-        const endTimeStr = appointment.endTime.toLocaleTimeString("ru-RU", {
+        const endTimeStr = appointmentData.endTime.toLocaleTimeString("ru-RU", {
           hour: "2-digit",
           minute: "2-digit",
         });
 
-        // Форматируем ФИО в формат "Фамилия И.О."
         const formattedName = formatFullName(
-          appointment.client.surname,
-          appointment.client.name,
-          appointment.client.patronymic
+          appointmentData.client.surname,
+          appointmentData.client.name,
+          appointmentData.client.patronymic
         );
 
-        // Наполнение карточки контентом зависит от ее размера
         if (height > 50) {
           card.innerHTML = `
             <h3>${formattedName}</h3>
-            <p>${appointment.client.phoneNumber}</p> 
+            <p>${appointmentData.client.phoneNumber}</p> 
             <p>${startTimeStr} - ${endTimeStr}</p>
         `;
         } else if (height > 30) {
@@ -990,7 +1026,11 @@
 
         card.addEventListener("click", function (e) {
           e.stopPropagation();
-          openViewModal(appointment.client, appointment.appointmentIndex);
+          openViewModal(
+            appointmentData.client,
+            appointmentData.appointment,
+            appointmentData.appointmentString
+          );
         });
 
         return card;
@@ -1044,24 +1084,17 @@
       }
 
       // Открытие модального окна просмотра записи
-      function openViewModal(client, appointmentIndex) {
+      function openViewModal(client, appointment, appointmentString) {
         currentSelectedClient = client;
-        currentAppointmentIndex = appointmentIndex;
+        currentAppointmentId = appointment.id;
 
-        const appointments = client.appointmentDateTime
-          .split("#")
-          .filter((app) => app.trim());
-        const notes = client.appointmentNote
-          ? client.appointmentNote.split("#").filter((note) => note.trim())
-          : [];
-
-        const appointment = appointments[appointmentIndex];
-        const note = notes[appointmentIndex] || "";
-
-        // Парсим новый формат: "dd.MM.yyyy - HH:mm/HH:mm"
-        let displayText = appointment;
-        if (appointment.includes(" - ") && appointment.includes("/")) {
-          const [datePart, timePart] = appointment.split(" - ");
+        // Парсим формат: "dd.MM.yyyy - HH:mm/HH:mm"
+        let displayText = appointmentString;
+        if (
+          appointmentString.includes(" - ") &&
+          appointmentString.includes("/")
+        ) {
+          const [datePart, timePart] = appointmentString.split(" - ");
           const [startTime, endTime] = timePart.split("/");
           displayText = `${datePart} с ${startTime} до ${endTime}`;
         }
@@ -1077,7 +1110,9 @@
               client.birthdate || "Не указана"
             }</p>
             <p><strong>Дата и время приема:</strong> <p>${displayText}</p>
-            <p><strong>Комментарий:</strong> ${note}</p>
+            <p><strong>Комментарий:</strong> ${
+              appointment.appointmentNote || ""
+            }</p>
         `;
 
         document.getElementById("viewModal").style.display = "block";
@@ -1087,13 +1122,12 @@
       function closeViewModal() {
         document.getElementById("viewModal").style.display = "none";
         currentSelectedClient = null;
-        currentAppointmentIndex = null;
+        currentAppointmentId = null;
       }
 
       // Сохранение записи
       async function saveAppointment() {
         try {
-          // Получаем данные из формы
           const dateTimeInput = document.getElementById(
             "appointmentDateTime"
           ).value;
@@ -1101,7 +1135,6 @@
             document.getElementById("appointmentEndTime").value;
           const noteInput = document.getElementById("appointmentNote").value;
 
-          // Проверка обязательных полей
           if (!currentSelectedClient) {
             alert("Пожалуйста, выберите клиента");
             return;
@@ -1117,17 +1150,14 @@
             return;
           }
 
-          // Извлекаем время начала из datetime-local
           const startDateTime = new Date(dateTimeInput);
           const startTimeStr = startDateTime.toTimeString().slice(0, 5);
 
-          // Проверяем что время окончания больше времени начала
           if (startTimeStr >= endTimeInput) {
             alert("Время окончания должно быть позже времени начала");
             return;
           }
 
-          // Преобразование формата даты из "YYYY-MM-DD" в "dd.MM.yyyy"
           const formattedDate = `${startDateTime
             .getDate()
             .toString()
@@ -1135,10 +1165,9 @@
             .toString()
             .padStart(2, "0")}.${startDateTime.getFullYear()}`;
 
-          // Формируем запись в новом формате: "dd.MM.yyyy - HH:mm/HH:mm"
-          const newAppointment = `${formattedDate} - ${startTimeStr}/${endTimeInput}`;
+          // Формируем строку в формате "dd.MM.yyyy - HH:mm/HH:mm#"
+          const newAppointmentDateTime = `${formattedDate} - ${startTimeStr}/${endTimeInput}#`;
 
-          // Проверка времени (не ранее 08:00 и не позже 22:00)
           const startHours = parseInt(startTimeStr.split(":")[0]);
           const startMinutes = parseInt(startTimeStr.split(":")[1]);
           const endHours = parseInt(endTimeInput.split(":")[0]);
@@ -1158,15 +1187,15 @@
             return;
           }
 
-          // Проверка что дата не ранее текущей
           const now = new Date();
           if (startDateTime < now) {
             alert("Нельзя записать на прошедшую дату");
             return;
           }
 
-          // Проверка наложения на существующие записи
-          const hasOverlap = await checkAppointmentOverlap(newAppointment);
+          const hasOverlap = await checkAppointmentOverlap(
+            newAppointmentDateTime
+          );
           if (hasOverlap) {
             alert(
               "Выбранное время накладывается на существующую запись. Пожалуйста, выберите другое время."
@@ -1174,50 +1203,29 @@
             return;
           }
 
-          // Подготовка данных для обновления
-          const updates = {};
+          // Создаем новую запись в таблице Appointment
+          const appointmentData = {
+            specialistId: currentSpecialist.id.toString(),
+            ownerId: currentSpecialist.ownerId,
+            clientId: currentSelectedClient.id,
+            appointmentDateTime: newAppointmentDateTime,
+            appointmentNote: noteInput.trim(),
+          };
 
-          // Обновление appointmentDateTime в новом формате
-          const currentAppointments = currentSelectedClient.appointmentDateTime
-            ? currentSelectedClient.appointmentDateTime
-                .split("#")
-                .filter((app) => app.trim())
-            : [];
-          currentAppointments.push(newAppointment);
-          updates.appointmentDateTime = currentAppointments.join("#") + "#";
-
-          // Обновление appointmentNote (если есть комментарий)
-          if (noteInput.trim()) {
-            const currentNotes = currentSelectedClient.appointmentNote
-              ? currentSelectedClient.appointmentNote
-                  .split("#")
-                  .filter((note) => note.trim())
-              : [];
-            currentNotes.push(noteInput.trim());
-            updates.appointmentNote = currentNotes.join("#") + "#";
-          }
-
-          // Отправка PATCH запроса
-          const response = await fetch(
-            `${API_BASE}/clients/${currentSelectedClient.id}`,
-            {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(updates),
-            }
-          );
+          const response = await fetch(`${API_BASE}/appointments`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(appointmentData),
+          });
 
           if (!response.ok) {
             throw new Error("Ошибка при сохранении записи: " + response.status);
           }
 
-          // Обновление интерфейса
           closeAddModal();
-
-          // Перезагрузка данных
-          await loadAndDisplayClients(currentSpecialist);
+          await loadAndDisplayAppointments(currentSpecialist);
         } catch (error) {
           console.error("Error saving appointment:", error);
           alert("Ошибка при сохранении записи: " + error.message);
@@ -1226,60 +1234,18 @@
 
       // Отмена записи
       async function cancelAppointment() {
-        if (currentSelectedClient && currentAppointmentIndex !== null) {
+        if (currentAppointmentId) {
           try {
-            // Подтверждение отмены
             const isConfirmed = confirm("Подтвердите отмену записи");
             if (!isConfirmed) {
               closeViewModal();
               return;
             }
 
-            // Получение текущих данных
-            const currentAppointments =
-              currentSelectedClient.appointmentDateTime
-                ? currentSelectedClient.appointmentDateTime
-                    .split("#")
-                    .filter((app) => app.trim())
-                : [];
-
-            const currentNotes = currentSelectedClient.appointmentNote
-              ? currentSelectedClient.appointmentNote
-                  .split("#")
-                  .filter((note) => note.trim())
-              : [];
-
-            // Удаление записи по индексу
-            if (currentAppointmentIndex < currentAppointments.length) {
-              currentAppointments.splice(currentAppointmentIndex, 1);
-              if (currentNotes.length > currentAppointmentIndex) {
-                currentNotes.splice(currentAppointmentIndex, 1);
-              }
-            }
-
-            // Подготовка данных для обновления
-            const updates = {
-              appointmentDateTime:
-                currentAppointments.join("#") +
-                (currentAppointments.length > 0 ? "#" : ""),
-            };
-
-            // Сохранение заметок только если они есть
-            if (currentNotes.length > 0) {
-              updates.appointmentNote = currentNotes.join("#") + "#";
-            } else {
-              updates.appointmentNote = "";
-            }
-
-            // Отправка PATCH запроса
             const response = await fetch(
-              `${API_BASE}/clients/${currentSelectedClient.id}`,
+              `${API_BASE}/appointments/${currentAppointmentId}`,
               {
-                method: "PATCH",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updates),
+                method: "DELETE",
               }
             );
 
@@ -1287,11 +1253,8 @@
               throw new Error("Ошибка при отмене записи: " + response.status);
             }
 
-            // Обновление интерфейса
             closeViewModal();
-
-            // Перезагрузка данных
-            await loadAndDisplayClients(currentSpecialist);
+            await loadAndDisplayAppointments(currentSpecialist);
           } catch (error) {
             console.error("Error canceling appointment:", error);
             alert("Ошибка при отмене записи: " + error.message);
@@ -1300,13 +1263,15 @@
       }
 
       // Вспомогательная функция для проверки наложения записей
-      async function checkAppointmentOverlap(newAppointment) {
+      async function checkAppointmentOverlap(newAppointmentDateTime) {
         try {
-          // Получаем всех клиентов текущего специалиста
-          const clients = await getClientsBySpecialistId(currentSpecialist.id);
+          const appointments = await getAppointmentsBySpecialistId(
+            currentSpecialist.id
+          );
 
-          // Парсим новую запись в новом формате: "dd.MM.yyyy - HH:mm/HH:mm"
-          const [newDatePart, newTimePart] = newAppointment.split(" - ");
+          // Парсим новую запись
+          const newPart = newAppointmentDateTime.replace("#", "");
+          const [newDatePart, newTimePart] = newPart.split(" - ");
           const [newStartTimeStr, newEndTimeStr] = newTimePart.split("/");
           const [day, month, year] = newDatePart.split(".");
 
@@ -1315,46 +1280,40 @@
           );
           const newEnd = new Date(`${year}-${month}-${day}T${newEndTimeStr}`);
 
-          // Проверяем все существующие записи
-          for (const client of clients) {
-            if (client.appointmentDateTime) {
-              const appointments = client.appointmentDateTime
-                .split("#")
-                .filter((app) => app.trim());
+          for (const appointment of appointments) {
+            // Парсим существующие записи (могут содержать несколько приемов через #)
+            const appointmentParts = appointment.appointmentDateTime
+              .split("#")
+              .filter((part) => part.trim());
 
-              for (let i = 0; i < appointments.length; i++) {
-                const appointment = appointments[i];
+            for (const part of appointmentParts) {
+              if (part.includes(" - ") && part.includes("/")) {
+                const [datePart, timePart] = part.split(" - ");
+                const [startTimeStr, endTimeStr] = timePart.split("/");
+                const [day, month, year] = datePart.split(".");
 
-                // Парсим существующую запись в новом формате
-                if (appointment.includes(" - ") && appointment.includes("/")) {
-                  const [datePart, timePart] = appointment.split(" - ");
-                  const [startTimeStr, endTimeStr] = timePart.split("/");
-                  const [day, month, year] = datePart.split(".");
+                const existingStart = new Date(
+                  `${year}-${month}-${day}T${startTimeStr}`
+                );
+                const existingEnd = new Date(
+                  `${year}-${month}-${day}T${endTimeStr}`
+                );
 
-                  const existingStart = new Date(
-                    `${year}-${month}-${day}T${startTimeStr}`
-                  );
-                  const existingEnd = new Date(
-                    `${year}-${month}-${day}T${endTimeStr}`
-                  );
-
-                  // Проверка пересечения временных интервалов
-                  if (
-                    (newStart >= existingStart && newStart < existingEnd) ||
-                    (newEnd > existingStart && newEnd <= existingEnd) ||
-                    (newStart <= existingStart && newEnd >= existingEnd)
-                  ) {
-                    return true; // Найдено пересечение
-                  }
+                if (
+                  (newStart >= existingStart && newStart < existingEnd) ||
+                  (newEnd > existingStart && newEnd <= existingEnd) ||
+                  (newStart <= existingStart && newEnd >= existingEnd)
+                ) {
+                  return true;
                 }
               }
             }
           }
 
-          return false; // Пересечений нет
+          return false;
         } catch (error) {
           console.error("Error checking appointment overlap:", error);
-          return true; // В случае ошибки считаем что есть пересечение (для безопасности)
+          return true;
         }
       }
 
