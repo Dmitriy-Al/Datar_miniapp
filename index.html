@@ -872,36 +872,34 @@
           const appointment = item.appointment;
           const client = item.client;
 
-          // Парсим формат: "dd.MM.yyyy - HH:mm/HH:mm#dd.MM.yyyy - HH:mm/HH:mm#"
-          const appointmentParts = appointment.appointmentDateTime
-            .split("#")
-            .filter((part) => part.trim());
+          // Парсим формат: "dd.MM.yyyy - HH:mm/HH:mm"
+          if (
+            appointment.appointmentDateTime.includes(" - ") &&
+            appointment.appointmentDateTime.includes("/")
+          ) {
+            const [dateTimePart, timeRange] =
+              appointment.appointmentDateTime.split(" - ");
+            const [startTimeStr, endTimeStr] = timeRange.split("/");
 
-          appointmentParts.forEach((part) => {
-            if (part.includes(" - ") && part.includes("/")) {
-              const [dateTimePart, timeRange] = part.split(" - ");
-              const [startTimeStr, endTimeStr] = timeRange.split("/");
+            const startTime = new Date(
+              `${dateTimePart.split(".").reverse().join("-")}T${startTimeStr}`
+            );
+            const endTime = new Date(
+              `${dateTimePart.split(".").reverse().join("-")}T${endTimeStr}`
+            );
 
-              const startTime = new Date(
-                `${dateTimePart.split(".").reverse().join("-")}T${startTimeStr}`
-              );
-              const endTime = new Date(
-                `${dateTimePart.split(".").reverse().join("-")}T${endTimeStr}`
-              );
+            const duration = (endTime - startTime) / 60000;
 
-              const duration = (endTime - startTime) / 60000;
-
-              allAppointments.push({
-                appointment: appointment,
-                client: client,
-                dateTime: startTime,
-                duration: duration,
-                endTime: endTime,
-                appointmentString: part,
-                appointmentId: appointment.id,
-              });
-            }
-          });
+            allAppointments.push({
+              appointment: appointment,
+              client: client,
+              dateTime: startTime,
+              duration: duration,
+              endTime: endTime,
+              appointmentString: appointment.appointmentDateTime,
+              appointmentId: appointment.id,
+            });
+          }
         });
 
         // Сортируем по дате
@@ -1165,8 +1163,8 @@
             .toString()
             .padStart(2, "0")}.${startDateTime.getFullYear()}`;
 
-          // Формируем строку в формате "dd.MM.yyyy - HH:mm/HH:mm#"
-          const newAppointmentDateTime = `${formattedDate} - ${startTimeStr}/${endTimeInput}#`;
+          // Формируем строку в формате "dd.MM.yyyy - HH:mm/HH:mm"
+          const newAppointmentDateTime = `${formattedDate} - ${startTimeStr}/${endTimeInput}`;
 
           const startHours = parseInt(startTimeStr.split(":")[0]);
           const startMinutes = parseInt(startTimeStr.split(":")[1]);
@@ -1270,8 +1268,8 @@
           );
 
           // Парсим новую запись
-          const newPart = newAppointmentDateTime.replace("#", "");
-          const [newDatePart, newTimePart] = newPart.split(" - ");
+          const [newDatePart, newTimePart] =
+            newAppointmentDateTime.split(" - ");
           const [newStartTimeStr, newEndTimeStr] = newTimePart.split("/");
           const [day, month, year] = newDatePart.split(".");
 
@@ -1281,31 +1279,27 @@
           const newEnd = new Date(`${year}-${month}-${day}T${newEndTimeStr}`);
 
           for (const appointment of appointments) {
-            // Парсим существующие записи (могут содержать несколько приемов через #)
-            const appointmentParts = appointment.appointmentDateTime
-              .split("#")
-              .filter((part) => part.trim());
+            // Парсим существующие записи
+            const ap = appointment.appointmentDateTime;
 
-            for (const part of appointmentParts) {
-              if (part.includes(" - ") && part.includes("/")) {
-                const [datePart, timePart] = part.split(" - ");
-                const [startTimeStr, endTimeStr] = timePart.split("/");
-                const [day, month, year] = datePart.split(".");
+            if (ap.includes(" - ") && ap.includes("/")) {
+              const [datePart, timePart] = ap.split(" - ");
+              const [startTimeStr, endTimeStr] = timePart.split("/");
+              const [day, month, year] = datePart.split(".");
 
-                const existingStart = new Date(
-                  `${year}-${month}-${day}T${startTimeStr}`
-                );
-                const existingEnd = new Date(
-                  `${year}-${month}-${day}T${endTimeStr}`
-                );
+              const existingStart = new Date(
+                `${year}-${month}-${day}T${startTimeStr}`
+              );
+              const existingEnd = new Date(
+                `${year}-${month}-${day}T${endTimeStr}`
+              );
 
-                if (
-                  (newStart >= existingStart && newStart < existingEnd) ||
-                  (newEnd > existingStart && newEnd <= existingEnd) ||
-                  (newStart <= existingStart && newEnd >= existingEnd)
-                ) {
-                  return true;
-                }
+              if (
+                (newStart >= existingStart && newStart < existingEnd) ||
+                (newEnd > existingStart && newEnd <= existingEnd) ||
+                (newStart <= existingStart && newEnd >= existingEnd)
+              ) {
+                return true;
               }
             }
           }
