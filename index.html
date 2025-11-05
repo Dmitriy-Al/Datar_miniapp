@@ -334,22 +334,17 @@
       }
 
       .modal-button.ok {
-        background-color: #56bd3c;
+        background-color: #6cc556;
         color: white;
       }
 
       .modal-button.cancel {
-        background-color: #ffb223;
-        color: white;
-      }
-
-      .modal-button.schedule {
-        background-color: #3498db;
+        background-color: #ffbe44;
         color: white;
       }
 
       .modal-button.cancelAppointment {
-        background-color: #ff6e5b;
+        background-color: #ff7b6a;
         color: white;
       }
 
@@ -524,22 +519,14 @@
           id="searchResults"
           style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
         ></div>
-        <div style="margin: 5px">
-          <small>Время начала приема</small>
-          <button
-            class="modal-button schedule"
-            style="margin-left: 10px"
-            onclick="saveAppointment()"
-          >
-            Расписание
-          </button>
-        </div>
+        <small>Дата и время начала</small>
         <input type="datetime-local" id="appointmentDateTime" />
 
         <div class="time-inputs-container">
           <small>Время окончания</small>
           <input type="time" id="appointmentEndTime" class="time-input" />
         </div>
+
         <textarea
           id="appointmentNote"
           placeholder="Добавить комментарий"
@@ -814,7 +801,7 @@
         specialists.forEach((specialist) => {
           const keyButton = document.createElement("button");
           keyButton.className = "key-button";
-          keyButton.textContent = `${specialist.surname} ${specialist.name} ${specialist.patronymic}`; // Можно добавить символ обновления страницы ↻
+          keyButton.textContent = `${specialist.surname} ${specialist.name} ${specialist.patronymic}`;
           keyButton.setAttribute("data-specialist-id", specialist.id);
 
           if (currentSpecialist && currentSpecialist.id === specialist.id) {
