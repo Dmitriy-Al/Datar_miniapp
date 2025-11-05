@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
   <head>
+    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Система записи на прием</title>
@@ -510,7 +511,7 @@
       <!-- Столбцы будут созданы через JavaScript -->
     </div>
 
-    <!-- Модальное окно для добавления новой записи style="margin-left: 3px"-->
+    <!-- Модальное окно для добавления новой записи -->
     <div class="modal" id="addModal">
       <div class="modal-content">
         <h2>Записать</h2>
@@ -574,9 +575,9 @@
     </div>
 
     <script>
-      // let tg = window.Telegram.WebApp;
-      let tgUserId = 2041024245; // tg.initDataUnsafe.user.id;
-      const API_BASE = "http://localhost:8080/api";
+      let tg = window.Telegram.WebApp;
+      let tgUserId = tg.initDataUnsafe.user.id;
+      const API_BASE = "https://alimovdev.ru/api";
       let currentSpecialist = null;
       let currentUser = null; // Может быть Specialist или Administrator
       let currentClients = [];
