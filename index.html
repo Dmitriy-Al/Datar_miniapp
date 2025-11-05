@@ -527,6 +527,8 @@
       .selectable-day {
         cursor: pointer;
         transition: all 0.3s ease;
+        -webkit-tap-highlight-color: transparent; /* Убирает подсветку при тапе на iOS */
+        touch-action: manipulation; /* Улучшает отзывчивость на касания */
       }
 
       .selectable-day:hover {
@@ -705,6 +707,50 @@
           padding: 3px 6px;
         }
       }
+
+      /* Улучшенные стили для мобильных устройств */
+      @media (max-width: 767px) {
+        .selectable-day {
+          min-height: 80px; /* Увеличиваем область касания */
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .day-card.selectable-day:active {
+          background: #d4edff !important;
+        }
+
+        .day-card.weekend.selectable-day:active {
+          background: #ffebcc !important;
+        }
+      }
+
+      /* Стили для уведомления о выборе даты */
+      .date-selection-notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      @media (max-width: 767px) {
+        .date-selection-notification {
+          top: 80px;
+          right: 10px;
+          left: 10px;
+          text-align: center;
+        }
+      }
+
       /* Calendar */
     </style>
   </head>
@@ -954,6 +1000,13 @@
 
         if (dateTimeInput) {
           const startTime = new Date(dateTimeInput);
+
+          // Для мобильных устройств добавляем проверку валидности даты
+          if (isNaN(startTime.getTime())) {
+            console.error("Invalid date selected");
+            return;
+          }
+
           const dateString = formatDateForInput(startTime);
 
           // Пытаемся найти рабочие часы для выбранной даты
@@ -970,9 +1023,11 @@
 
             // Устанавливаем время начала приема на начало рабочего дня
             startTime.setHours(startHour, startMinute);
-            document.getElementById("appointmentDateTime").value = startTime
-              .toISOString()
-              .slice(0, 16);
+
+            // Форматируем дату для input
+            const formattedDate = startTime.toISOString().slice(0, 16);
+            document.getElementById("appointmentDateTime").value =
+              formattedDate;
 
             // Устанавливаем время окончания на конец рабочего дня
             const endTime = new Date(startTime);
@@ -981,6 +1036,13 @@
           } else {
             // Стандартная логика: добавляем 30 минут
             const endTime = new Date(startTime.getTime() + 30 * 60000);
+
+            // Для мобильных устройств проверяем валидность
+            if (isNaN(endTime.getTime())) {
+              console.error("Invalid end time calculated");
+              return;
+            }
+
             const formattedEndTime = endTime.toTimeString().slice(0, 5);
             endTimeDisplay.value = formattedEndTime;
           }
@@ -1716,35 +1778,17 @@
         const selectableDays = document.querySelectorAll(".selectable-day");
 
         selectableDays.forEach((dayElement) => {
-          dayElement.addEventListener("click", function () {
-            const dateString = this.getAttribute("data-date");
-            const isWorking = this.getAttribute("data-is-working") === "true";
-            const workingHours = this.getAttribute("data-working-hours");
+          // Удаляем предыдущие обработчики, чтобы избежать дублирования
+          dayElement.removeEventListener("click", handleDayClick);
+          dayElement.removeEventListener("touchstart", handleDayTouch);
 
-            // Если день рабочий, устанавливаем время начала по умолчанию
-            if (isWorking && workingHours) {
-              const [startTime] = workingHours.split("-");
-              const dateTimeValue = `${dateString}T${startTime}`;
-              document.getElementById("appointmentDateTime").value =
-                dateTimeValue;
-
-              // Автоматически рассчитываем время окончания
-              calculateEndTime();
-            } else {
-              // Для выходных дней устанавливаем только дату, время по умолчанию
-              const dateTimeValue = `${dateString}T08:00`;
-              document.getElementById("appointmentDateTime").value =
-                dateTimeValue;
-            }
-
-            // Закрываем модальное окно расписания
-            closeScheduleModal();
-
-            // Показываем уведомление о выборе даты
-            showDateSelectionNotification(dateString, isWorking);
+          // Добавляем обработчики для клика и касания
+          dayElement.addEventListener("click", handleDayClick);
+          dayElement.addEventListener("touchstart", handleDayTouch, {
+            passive: true,
           });
 
-          // Добавляем эффект при наведении
+          // Добавляем эффект при наведении (только для десктопа)
           dayElement.addEventListener("mouseenter", function () {
             this.style.transform = "scale(1.05)";
             this.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.2)";
@@ -1755,6 +1799,80 @@
             this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
           });
         });
+      }
+
+      // Отдельная функция для обработки клика (десктоп)
+      function handleDayClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        selectDateFromCalendar(this);
+      }
+
+      // Отдельная функция для обработки касания (мобильные устройства)
+      function handleDayTouch(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        selectDateFromCalendar(this);
+      }
+
+      // Общая функция для выбора даты из календаря
+      function selectDateFromCalendar(dayElement) {
+        const dateString = dayElement.getAttribute("data-date");
+        const isWorking = dayElement.getAttribute("data-is-working") === "true";
+        const workingHours = dayElement.getAttribute("data-working-hours");
+
+        // Добавляем визуальную обратную связь
+        dayElement.style.backgroundColor = "#e6f7ff";
+        dayElement.style.borderColor = "#1890ff";
+        setTimeout(() => {
+          dayElement.style.backgroundColor = "";
+          dayElement.style.borderColor = "";
+        }, 300);
+
+        // Если день рабочий, устанавливаем время начала по умолчанию
+        if (isWorking && workingHours) {
+          const [startTime] = workingHours.split("-");
+
+          // Форматируем время для корректного отображения в datetime-local
+          const formattedTime = formatTimeForInput(startTime);
+          const dateTimeValue = `${dateString}T${formattedTime}`;
+
+          document.getElementById("appointmentDateTime").value = dateTimeValue;
+
+          // Автоматически рассчитываем время окончания
+          setTimeout(() => {
+            calculateEndTime();
+          }, 100);
+        } else {
+          // Для выходных дней устанавливаем только дату, время по умолчанию
+          const dateTimeValue = `${dateString}T08:00`;
+          document.getElementById("appointmentDateTime").value = dateTimeValue;
+
+          // Устанавливаем время окончания по умолчанию
+          setTimeout(() => {
+            document.getElementById("appointmentEndTime").value = "08:30";
+          }, 100);
+        }
+
+        // Закрываем модальное окно расписания с небольшой задержкой
+        setTimeout(() => {
+          closeScheduleModal();
+        }, 300);
+
+        // Показываем уведомление о выборе даты
+        showDateSelectionNotification(dateString, isWorking);
+      }
+
+      // Функция для форматирования времени в корректный формат для input[type="datetime-local"]
+      function formatTimeForInput(timeStr) {
+        if (!timeStr) return "08:00";
+
+        // Убеждаемся, что время в формате HH:MM
+        const [hours, minutes] = timeStr.split(":");
+        const formattedHours = hours.padStart(2, "0");
+        const formattedMinutes = (minutes || "00").padStart(2, "0");
+
+        return `${formattedHours}:${formattedMinutes}`;
       }
 
       // Функция для показа уведомления о выборе даты
