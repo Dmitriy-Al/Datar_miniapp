@@ -319,7 +319,7 @@
         padding: 20px;
         display: flex;
         gap: 10px;
-        justify-content: center;
+        justify-content: space-between;
       }
 
       .modal-button {
@@ -410,7 +410,7 @@
       }
 
       .month-title {
-        background: linear-gradient(135deg, #2689ca, #2c3e50);
+        background: #2c3e50;
         color: white;
         padding: 15px 20px;
         font-weight: bold;
@@ -466,8 +466,9 @@
         margin-bottom: 8px;
       }
 
+      /* #ffa500 */
       .weekend .day-name {
-        color: #ffa500;
+        color: #ffc14e;
       }
 
       .work-time {
@@ -480,8 +481,9 @@
         display: inline-block;
       }
 
+      /* #ffa500 */
       .weekend .work-time {
-        background: #ffa500;
+        background: #ffc14e;
       }
 
       /* Schedule Modal Specific Styles */
@@ -492,6 +494,7 @@
         padding: 0;
       }
 
+      /* background: linear-gradient(135deg, #2689ca, #2c3e50); */
       #scheduleModal .modal-header {
         background: linear-gradient(135deg, #2689ca, #2c3e50);
         color: white;
@@ -514,6 +517,24 @@
         border: none;
         color: white;
         font-size: 24px;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s;
+      }
+
+      .close-button-modal {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: rgb(0, 74, 134);
+        font-size: 30px;
         cursor: pointer;
         width: 30px;
         height: 30px;
@@ -765,11 +786,15 @@
     <div class="container" id="columnsContainer">
       <!-- Столбцы будут созданы через JavaScript -->
     </div>
-
     <!-- Модальное окно для добавления новой записи -->
     <div class="modal" id="addModal">
       <div class="modal-content">
+        <button class="close-button-modal" onclick="closeAddModal()">×</button>
         <h2>Записать</h2>
+        <textarea
+          id="appointmentNote"
+          placeholder="Добавить комментарий"
+        ></textarea>
         <input
           type="text"
           id="searchClient"
@@ -780,28 +805,20 @@
           style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
         ></div>
         <div style="margin: 5px">
-          <small>Время начала приема</small>
-          <button
-            class="modal-button schedule"
-            style="margin-left: 10px"
-            onclick="generateCompactSchedule()"
-          >
-            Расписание
-          </button>
+          <small>Дата и время начала приема</small>
         </div>
         <input type="datetime-local" id="appointmentDateTime" />
 
         <div class="time-inputs-container">
-          <small>Время окончания</small>
+          <small>Время окончания приема</small>
           <input type="time" id="appointmentEndTime" class="time-input" />
         </div>
-        <textarea
-          id="appointmentNote"
-          placeholder="Добавить комментарий"
-        ></textarea>
         <div class="modal-buttons">
-          <button class="modal-button cancel" onclick="closeAddModal()">
-            Отмена
+          <button
+            class="modal-button schedule"
+            onclick="generateCompactSchedule()"
+          >
+            Расписание
           </button>
           <button class="modal-button ok" onclick="saveAppointment()">
             Записать
@@ -833,7 +850,7 @@
     <div class="modal" id="scheduleModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>График приема специалиста</h2>
+          <h2>Расписание приема</h2>
           <button class="close-button" onclick="closeScheduleModal()">×</button>
         </div>
         <div class="months-container" id="monthsContainer">
@@ -1012,29 +1029,19 @@
           // Пытаемся найти рабочие часы для выбранной даты
           const workingHours = getWorkingHours(startTime);
 
-          if (workingHours) {
-            // Если нашли рабочие часы, устанавливаем время окончания на основе рабочего дня
-            const [startHour, startMinute] = workingHours.start
-              .split(":")
-              .map(Number);
+          if (workingHours && workingHours.end) {
+            // Если нашли рабочие часы, предлагаем время окончания на основе рабочего дня,
+            // но не перезаписываем время начала
             const [endHour, endMinute] = workingHours.end
               .split(":")
               .map(Number);
-
-            // Устанавливаем время начала приема на начало рабочего дня
-            startTime.setHours(startHour, startMinute);
-
-            // Форматируем дату для input
-            const formattedDate = startTime.toISOString().slice(0, 16);
-            document.getElementById("appointmentDateTime").value =
-              formattedDate;
 
             // Устанавливаем время окончания на конец рабочего дня
             const endTime = new Date(startTime);
             endTime.setHours(endHour, endMinute);
             endTimeDisplay.value = endTime.toTimeString().slice(0, 5);
           } else {
-            // Стандартная логика: добавляем 30 минут
+            // Стандартная логика: добавляем 30 минут к текущему времени начала
             const endTime = new Date(startTime.getTime() + 30 * 60000);
 
             // Для мобильных устройств проверяем валидность
@@ -1829,28 +1836,42 @@
           dayElement.style.borderColor = "";
         }, 300);
 
-        // Если день рабочий, устанавливаем время начала по умолчанию
-        if (isWorking && workingHours) {
-          const [startTime] = workingHours.split("-");
+        // Получаем текущее значение поля appointmentDateTime
+        const currentDateTimeValue = document.getElementById(
+          "appointmentDateTime"
+        ).value;
 
-          // Форматируем время для корректного отображения в datetime-local
-          const formattedTime = formatTimeForInput(startTime);
-          const dateTimeValue = `${dateString}T${formattedTime}`;
+        let newDateTimeValue;
 
-          document.getElementById("appointmentDateTime").value = dateTimeValue;
+        if (currentDateTimeValue) {
+          // Если уже есть значение, сохраняем время и меняем только дату
+          const currentDate = new Date(currentDateTimeValue);
+          const newDate = new Date(dateString);
 
-          // Автоматически рассчитываем время окончания
+          // Сохраняем часы и минуты из текущего значения
+          const hours = currentDate.getHours();
+          const minutes = currentDate.getMinutes();
+
+          newDate.setHours(hours, minutes);
+          newDateTimeValue = newDate.toISOString().slice(0, 16);
+        } else {
+          // Если значения нет, устанавливаем время по умолчанию
+          if (isWorking && workingHours) {
+            const [startTime] = workingHours.split("-");
+            const formattedTime = formatTimeForInput(startTime);
+            newDateTimeValue = `${dateString}T${formattedTime}`;
+          } else {
+            // Для выходных дней устанавливаем разумное время по умолчанию
+            newDateTimeValue = `${dateString}T09:00`;
+          }
+        }
+
+        document.getElementById("appointmentDateTime").value = newDateTimeValue;
+
+        // Автоматически рассчитываем время окончания только если время было установлено по умолчанию
+        if (!currentDateTimeValue) {
           setTimeout(() => {
             calculateEndTime();
-          }, 100);
-        } else {
-          // Для выходных дней устанавливаем только дату, время по умолчанию
-          const dateTimeValue = `${dateString}T08:00`;
-          document.getElementById("appointmentDateTime").value = dateTimeValue;
-
-          // Устанавливаем время окончания по умолчанию
-          setTimeout(() => {
-            document.getElementById("appointmentEndTime").value = "08:30";
           }, 100);
         }
 
@@ -1910,6 +1931,12 @@
             }
           }, 300);
         }, 3000);
+      }
+
+      // Вспомогательная функция для проверки, можно ли редактировать время
+      function isTimeEditable() {
+        const dateTimeInput = document.getElementById("appointmentDateTime");
+        return dateTimeInput && !dateTimeInput.readOnly;
       }
 
       // Функция для парсинга и расчета расписания на 120 дней
@@ -2153,6 +2180,23 @@
       document
         .getElementById("appointmentDateTime")
         .addEventListener("change", calculateEndTime);
+
+      // Обработчик для ручного ввода времени
+      document
+        .getElementById("appointmentDateTime")
+        .addEventListener("input", function () {
+          // При ручном изменении даты/времени автоматически пересчитываем время окончания
+          setTimeout(() => {
+            calculateEndTime();
+          }, 100);
+        });
+
+      // Обработчик для ручного ввода времени окончания
+      document
+        .getElementById("appointmentEndTime")
+        .addEventListener("input", function () {
+          // При ручном изменении времени окончания ничего не делаем - оставляем как есть
+        });
 
       // Закрытие модальных окон при клике вне их
       window.addEventListener("click", function (e) {
