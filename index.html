@@ -524,6 +524,46 @@
         transition: background-color 0.3s;
       }
 
+      .selectable-day {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .selectable-day:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        z-index: 2;
+      }
+
+      .selectable-day:active {
+        transform: scale(0.95);
+      }
+
+      .day-card.weekend.selectable-day:hover {
+        background: #ffd699 !important;
+        border-color: #ff8c00 !important;
+      }
+
+      .day-card.selectable-day:hover {
+        background: #e6f7ff !important;
+        border-color: #1890ff !important;
+      }
+
+      /* Стили для уведомления о выборе даты */
+      .date-selection-notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
       #scheduleModal .close-button:hover {
         background-color: rgba(255, 255, 255, 0.2);
       }
@@ -765,6 +805,7 @@
       let currentClients = [];
       let currentSelectedClient = null;
       let currentAppointmentId = null;
+      let specialistScheduleData = []; // переменная для хранения данных расписания
 
       // Функция для форматирования ФИО в формат "Фамилия И. О."
       function formatFullName(surname, name, patronymic) {
@@ -887,7 +928,7 @@
           throw error;
         }
       }
-
+      /*
       // Функция для расчета времени окончания приема
       function calculateEndTime() {
         const dateTimeInput = document.getElementById(
@@ -900,6 +941,49 @@
           const endTime = new Date(startTime.getTime() + 30 * 60000);
           const formattedEndTime = endTime.toTimeString().slice(0, 5);
           endTimeDisplay.value = formattedEndTime;
+        }
+      }
+      */
+
+      // Функция для расчета времени окончания приема
+      function calculateEndTime() {
+        const dateTimeInput = document.getElementById(
+          "appointmentDateTime"
+        ).value;
+        const endTimeDisplay = document.getElementById("appointmentEndTime");
+
+        if (dateTimeInput) {
+          const startTime = new Date(dateTimeInput);
+          const dateString = formatDateForInput(startTime);
+
+          // Пытаемся найти рабочие часы для выбранной даты
+          const workingHours = getWorkingHours(startTime);
+
+          if (workingHours) {
+            // Если нашли рабочие часы, устанавливаем время окончания на основе рабочего дня
+            const [startHour, startMinute] = workingHours.start
+              .split(":")
+              .map(Number);
+            const [endHour, endMinute] = workingHours.end
+              .split(":")
+              .map(Number);
+
+            // Устанавливаем время начала приема на начало рабочего дня
+            startTime.setHours(startHour, startMinute);
+            document.getElementById("appointmentDateTime").value = startTime
+              .toISOString()
+              .slice(0, 16);
+
+            // Устанавливаем время окончания на конец рабочего дня
+            const endTime = new Date(startTime);
+            endTime.setHours(endHour, endMinute);
+            endTimeDisplay.value = endTime.toTimeString().slice(0, 5);
+          } else {
+            // Стандартная логика: добавляем 30 минут
+            const endTime = new Date(startTime.getTime() + 30 * 60000);
+            const formattedEndTime = endTime.toTimeString().slice(0, 5);
+            endTimeDisplay.value = formattedEndTime;
+          }
         }
       }
 
@@ -1518,16 +1602,32 @@
 
       // Календарь с графиком приема специалиста
       function generateCompactSchedule() {
+        if (!currentSpecialist) {
+          alert("Специалист не выбран");
+          return;
+        }
+
+        // Рассчитываем расписание
+        specialistScheduleData = calculateSpecialistSchedule(currentSpecialist);
+
         openScheduleModal();
         const container = document.getElementById("monthsContainer");
         const today = new Date();
-        const months = [];
 
-        // Создаем массив из 4 месяцев
-        for (let i = 0; i < 4; i++) {
-          const month = new Date(today.getFullYear(), today.getMonth() + i, 1);
-          months.push(month);
-        }
+        // Группируем дни по месяцам
+        const monthsMap = new Map();
+
+        specialistScheduleData.forEach((dayData) => {
+          const date = dayData.date;
+          const year = date.getFullYear();
+          const month = date.getMonth();
+          const key = `${year}-${month}`;
+
+          if (!monthsMap.has(key)) {
+            monthsMap.set(key, []);
+          }
+          monthsMap.get(key).push(dayData);
+        });
 
         const daysOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
         const monthsNames = [
@@ -1547,47 +1647,344 @@
 
         let html = "";
 
-        months.forEach((month, monthIndex) => {
-          const year = month.getFullYear();
-          const monthNum = month.getMonth();
-          const daysInMonth = new Date(year, monthNum + 1, 0).getDate();
+        // Сортируем месяцы по дате
+        const sortedMonths = Array.from(monthsMap.entries()).sort(
+          ([keyA], [keyB]) => {
+            return keyA.localeCompare(keyB);
+          }
+        );
 
-          let workingDaysCount = 0;
-          let weekendDaysCount = 0;
+        sortedMonths.forEach(([key, days]) => {
+          const [year, month] = key.split("-").map(Number);
+          const monthName = monthsNames[month];
 
           let daysHtml = "";
 
-          for (let day = 1; day <= daysInMonth; day++) {
-            const currentDate = new Date(year, monthNum, day);
-
-            // Пропускаем дни раньше сегодняшней даты для первого месяца
-            if (monthIndex === 0 && day < today.getDate()) {
-              continue;
-            }
-
-            const dayOfWeek = currentDate.getDay();
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-            const isToday = currentDate.toDateString() === today.toDateString();
+          days.forEach((dayData) => {
+            const date = dayData.date;
+            const day = date.getDate();
+            const dayOfWeek = date.getDay();
+            const isToday = date.toDateString() === today.toDateString();
+            const isWeekend = !dayData.isWorking;
 
             const dayClass = isWeekend ? "day-card weekend" : "day-card";
             const todayClass = isToday ? "today" : "";
 
-            daysHtml += `<div class="${dayClass} ${todayClass}">
+            // Добавляем data-атрибуты для выбора даты
+            const dateString = formatDateForInput(date);
+            const timeString = dayData.isWorking
+              ? ` с ${dayData.workingHours.start} до ${dayData.workingHours.end}`
+              : " - выходной";
+
+            daysHtml += `<div class="${dayClass} ${todayClass} selectable-day" 
+                            data-date="${dateString}"
+                            data-is-working="${dayData.isWorking}"
+                            data-working-hours="${
+                              dayData.isWorking
+                                ? `${dayData.workingHours.start}-${dayData.workingHours.end}`
+                                : ""
+                            }"
+                            title="Выбрать ${dateString}${timeString}">
                         <div class="day-number">${day}</div>
                         <div class="day-name">${daysOfWeek[dayOfWeek]}</div>
-                        <div class="work-time">${
-                          isWeekend ? "Выходной" : "8:00-16:00"
-                        }</div>
+                        <div class="work-time">${dayData.displayText}</div>
                     </div>`;
-          }
+          });
 
           html += `<div class="month-section">
-                    <div class="month-title">${monthsNames[monthNum]} ${year}</div>
+                    <div class="month-title">${monthName} ${year}</div>
                     <div class="days-grid">${daysHtml}</div>
                 </div>`;
         });
 
         container.innerHTML = html;
+
+        // Добавляем обработчики событий для выбора даты
+        addDateSelectionHandlers();
+      }
+
+      // Функция для форматирования даты в формат для input[type="datetime-local"]
+      function formatDateForInput(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      // Функция для добавления обработчиков выбора даты
+      function addDateSelectionHandlers() {
+        const selectableDays = document.querySelectorAll(".selectable-day");
+
+        selectableDays.forEach((dayElement) => {
+          dayElement.addEventListener("click", function () {
+            const dateString = this.getAttribute("data-date");
+            const isWorking = this.getAttribute("data-is-working") === "true";
+            const workingHours = this.getAttribute("data-working-hours");
+
+            // Если день рабочий, устанавливаем время начала по умолчанию
+            if (isWorking && workingHours) {
+              const [startTime] = workingHours.split("-");
+              const dateTimeValue = `${dateString}T${startTime}`;
+              document.getElementById("appointmentDateTime").value =
+                dateTimeValue;
+
+              // Автоматически рассчитываем время окончания
+              calculateEndTime();
+            } else {
+              // Для выходных дней устанавливаем только дату, время по умолчанию
+              const dateTimeValue = `${dateString}T08:00`;
+              document.getElementById("appointmentDateTime").value =
+                dateTimeValue;
+            }
+
+            // Закрываем модальное окно расписания
+            closeScheduleModal();
+
+            // Показываем уведомление о выборе даты
+            showDateSelectionNotification(dateString, isWorking);
+          });
+
+          // Добавляем эффект при наведении
+          dayElement.addEventListener("mouseenter", function () {
+            this.style.transform = "scale(1.05)";
+            this.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.2)";
+          });
+
+          dayElement.addEventListener("mouseleave", function () {
+            this.style.transform = "scale(1)";
+            this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+          });
+        });
+      }
+
+      // Функция для показа уведомления о выборе даты
+      function showDateSelectionNotification(dateString, isWorking) {
+        // Создаем временное уведомление
+        const notification = document.createElement("div");
+        notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: ${isWorking ? "#4CAF50" : "#FF9800"};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    `;
+
+        const formattedDate = new Date(dateString).toLocaleDateString("ru-RU");
+        notification.textContent = `Выбрана дата: ${formattedDate}${
+          isWorking ? "" : " (выходной)"
+        }`;
+
+        document.body.appendChild(notification);
+
+        // Автоматически скрываем уведомление через 3 секунды
+        setTimeout(() => {
+          notification.style.opacity = "0";
+          notification.style.transform = "translateX(100px)";
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 300);
+        }, 3000);
+      }
+
+      // Функция для парсинга и расчета расписания на 120 дней
+      function calculateSpecialistSchedule(specialist) {
+        const scheduleData = [];
+        const today = new Date();
+        const daysCount = 120;
+
+        if (!specialist || !specialist.receptionSchedule) {
+          // Пустая строка - стандартный график (5 рабочих, 2 выходных)
+          for (let i = 0; i < daysCount; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            const dayOfWeek = date.getDay(); // 0 - воскресенье, 6 - суббота
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+            scheduleData.push({
+              date: new Date(date),
+              isWorking: !isWeekend,
+              workingHours: !isWeekend ? { start: "8:00", end: "16:00" } : null,
+              displayText: !isWeekend ? "8:00-16:00" : "Выходной",
+            });
+          }
+        } else if (specialist.receptionSchedule.includes("FIX_DAYS")) {
+          // FIX_DAYS - фиксированные дни недели
+          const scheduleString = specialist.receptionSchedule.replace(
+            "FIX_DAYS",
+            ""
+          );
+          const days = scheduleString.split("/").filter((day) => day.trim());
+
+          if (days.length === 7) {
+            for (let i = 0; i < daysCount; i++) {
+              const date = new Date(today);
+              date.setDate(today.getDate() + i);
+              const dayOfWeek = date.getDay();
+              // Преобразование: 0=воскресенье, 1=понедельник...6=суббота
+              const scheduleIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+              const daySchedule = days[scheduleIndex];
+
+              if (daySchedule === "*") {
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: false,
+                  workingHours: null,
+                  displayText: "Выходной",
+                });
+              } else if (daySchedule.includes("#")) {
+                const [start, end] = daySchedule.split("#");
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: true,
+                  workingHours: { start: `${start}:00`, end: `${end}:00` },
+                  displayText: `${start}:00-${end}:00`,
+                });
+              }
+            }
+          }
+        } else if (specialist.receptionSchedule.includes("EVEN_ODD_DAYS")) {
+          // EVEN_ODD_DAYS - четные/нечетные дни
+          const scheduleString = specialist.receptionSchedule.replace(
+            "EVEN_ODD_DAYS",
+            ""
+          );
+          const parts = scheduleString.split("/").filter((part) => part.trim());
+
+          if (parts.length >= 2) {
+            const oddHours = parts[0].split("#"); // нечетные дни
+            const evenHours = parts[1].split("#"); // четные дни
+            const weekendDays = parts.slice(2).map((day) => parseInt(day)); // выходные дни недели
+
+            for (let i = 0; i < daysCount; i++) {
+              const date = new Date(today);
+              date.setDate(today.getDate() + i);
+              const dayOfMonth = date.getDate();
+              const dayOfWeek = date.getDay();
+              const isWeekendDay = weekendDays.includes(dayOfWeek);
+
+              if (isWeekendDay) {
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: false,
+                  workingHours: null,
+                  displayText: "Выходной",
+                });
+              } else if (dayOfMonth % 2 === 1) {
+                // Нечетный день
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: true,
+                  workingHours: {
+                    start: `${oddHours[0]}:00`,
+                    end: `${oddHours[1]}:00`,
+                  },
+                  displayText: `${oddHours[0]}:00-${oddHours[1]}:00`,
+                });
+              } else {
+                // Четный день
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: true,
+                  workingHours: {
+                    start: `${evenHours[0]}:00`,
+                    end: `${evenHours[1]}:00`,
+                  },
+                  displayText: `${evenHours[0]}:00-${evenHours[1]}:00`,
+                });
+              }
+            }
+          }
+        } else if (specialist.receptionSchedule.includes("ROLLING_CHART")) {
+          // ROLLING_CHART - скользящий график
+          const scheduleString = specialist.receptionSchedule.replace(
+            "ROLLING_CHART",
+            ""
+          );
+          const parts = scheduleString.split("/").filter((part) => part.trim());
+
+          if (parts.length === 3) {
+            const workHours = parts[0].split("#");
+            const pattern = parseInt(parts[1]); // количество рабочих/выходных дней
+            const startDate = new Date(parts[2]); // дата начала отсчета
+
+            for (let i = 0; i < daysCount; i++) {
+              const date = new Date(today);
+              date.setDate(today.getDate() + i);
+
+              // Расчет разницы в днях от начальной даты
+              const diffTime = date - startDate;
+              const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+              // Определение типа дня (рабочий/выходной)
+              const cycleLength = pattern * 2; // полный цикл: рабочие + выходные
+              const dayInCycle =
+                ((diffDays % cycleLength) + cycleLength) % cycleLength;
+              const isWorkingDay = dayInCycle < pattern;
+
+              if (isWorkingDay) {
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: true,
+                  workingHours: {
+                    start: `${workHours[0]}:00`,
+                    end: `${workHours[1]}:00`,
+                  },
+                  displayText: `${workHours[0]}:00-${workHours[1]}:00`,
+                });
+              } else {
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: false,
+                  workingHours: null,
+                  displayText: "Выходной",
+                });
+              }
+            }
+          }
+        } else {
+          // Неизвестный формат - стандартный график
+          for (let i = 0; i < daysCount; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            const dayOfWeek = date.getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+            scheduleData.push({
+              date: new Date(date),
+              isWorking: !isWeekend,
+              workingHours: !isWeekend ? { start: "8:00", end: "16:00" } : null,
+              displayText: !isWeekend ? "8:00-16:00" : "Выходной",
+            });
+          }
+        }
+
+        return scheduleData;
+      }
+
+      // Функция для проверки, является ли дата рабочим днем
+      function isWorkingDay(date) {
+        const dateString = date.toDateString();
+        const scheduleDay = specialistScheduleData.find(
+          (day) => day.date.toDateString() === dateString
+        );
+        return scheduleDay ? scheduleDay.isWorking : false;
+      }
+
+      // Функция для получения рабочих часов на указанную дату
+      function getWorkingHours(date) {
+        const dateString = date.toDateString();
+        const scheduleDay = specialistScheduleData.find(
+          (day) => day.date.toDateString() === dateString
+        );
+        return scheduleDay ? scheduleDay.workingHours : null;
       }
 
       // Поиск клиента
