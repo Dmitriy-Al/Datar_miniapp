@@ -412,12 +412,13 @@
         border-bottom: 1px solid #ecf0f1;
       }
 
+      /* text-align: match-parent; font-size: 1.2em;    max-height: 50px;*/
       .month-title {
         background: #2c3e50;
         color: white;
-        padding: 15px 20px;
+        padding: 5px 20px;
         font-weight: bold;
-        font-size: 1.2em;
+        font-size: 1em;
         position: sticky;
         top: 0;
         z-index: 10;
@@ -498,12 +499,21 @@
         -webkit-overflow-scrolling: touch; /* добавил */
       }
 
-      /* background: linear-gradient(135deg, #2689ca, #2c3e50); */
+      /* background: linear-gradient(135deg, #2689ca, #2c3e50); padding: 20px; */
       #scheduleModal .modal-header {
         background: linear-gradient(135deg, #2689ca, #2c3e50);
         color: white;
-        padding: 20px;
+        padding: 15px;
         border-radius: 15px 15px 0 0;
+        text-align: center;
+        position: relative;
+      }
+
+      /*  */
+      .modal-card-header {
+        background: linear-gradient(135deg, #2689ca, #2c3e50);
+        color: white;
+        padding: 5px;
         text-align: center;
         position: relative;
       }
@@ -816,10 +826,12 @@
       <!-- Столбцы будут созданы через JavaScript -->
     </div>
     <!-- Модальное окно для добавления новой записи -->
+    <!--  <div class="modal-card-header"></div> -->
     <div class="modal" id="addModal">
       <div class="modal-content">
         <button class="close-button-modal" onclick="closeAddModal()">×</button>
         <h2>Записать</h2>
+
         <textarea
           id="appointmentNote"
           placeholder="Добавить комментарий"
