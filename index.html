@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Система записи на прием</title>
     <style>
-      /* Все предыдущие стили остаются без изменений */
       * {
         margin: 0;
         padding: 0;
@@ -96,8 +95,8 @@
         width: 100%;
         max-width: 100%;
       }
-
-      .column {
+      /*
+        .column {
         background-color: #fcf8e1;
         border-radius: 5px;
         padding: 25px;
@@ -109,12 +108,26 @@
         flex-direction: column;
         position: relative;
       }
+      */
+      .column {
+        background-color: #fcf8e1;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        /* min-height будет устанавливаться динамически через JS */
+        position: relative;
+      }
 
       .time-scale {
+        /* height будет устанавливаться динамически через JS */
         position: absolute;
         left: 0;
-        top: 60px;
-        bottom: 0px;
+        top: 60px; /* Высота заголовка */
+        bottom: 0;
         width: 15px;
         background: linear-gradient(to bottom, #fff5e4, #fae4bd);
         border-right: 2px solid #3498db;
@@ -195,6 +208,7 @@
         justify-content: center;
       }
 
+      /*
       .cards-container {
         display: flex;
         flex-direction: column;
@@ -202,6 +216,12 @@
         flex-grow: 1;
         position: relative;
         height: 840px;
+      }
+        */
+
+      .cards-container {
+        /* height будет устанавливаться динамически через JS */
+        position: relative;
       }
 
       .card {
@@ -548,7 +568,8 @@
         background: none;
         border: none;
         color: rgb(0, 74, 134);
-        font-size: 30px;
+        font-size: 18px;
+        font-weight: bold;
         cursor: pointer;
         width: 30px;
         height: 30px;
@@ -654,12 +675,11 @@
 
         .column {
           padding: 5px;
-          min-height: 900px;
+          /*min-height: 900px;*/
         }
 
         .time-scale {
-          width: 15px;
-          top: 40px;
+          top: 40px; /* Меньшая высота заголовка на мобильных */
         }
 
         .time-label {
@@ -829,7 +849,7 @@
     <!--  <div class="modal-card-header"></div> -->
     <div class="modal" id="addModal">
       <div class="modal-content">
-        <button class="close-button-modal" onclick="closeAddModal()">×</button>
+        <button class="close-button-modal" onclick="closeAddModal()">✖</button>
         <h2>Записать</h2>
 
         <textarea
@@ -871,7 +891,7 @@
     <!-- Модальное окно для просмотра записи -->
     <div class="modal" id="viewModal">
       <div class="modal-content">
-        <button class="close-button-modal" onclick="closeViewModal()">×</button>
+        <button class="close-button-modal" onclick="closeViewModal()">✖</button>
         <h2>Информация о записи</h2>
         <div id="clientInfo"></div>
         <div class="modal-buttons">
@@ -918,12 +938,21 @@
 
       // Функция для создания шкалы времени
       function createTimeScale(columnElement) {
+        const workTime = getWorkTime();
+        const startHour = workTime.start;
+        const endHour = workTime.end;
+
         const timeScale = document.createElement("div");
         timeScale.className = "time-scale";
 
-        const startHour = 8;
-        const endHour = 22;
+        // Рассчитываем высоту шкалы времени на основе рабочего времени
+        const workDuration = endHour - startHour;
+        const scaleHeight = workDuration * 60; // 60px в час
 
+        // Устанавливаем высоту шкалы времени
+        timeScale.style.height = `${scaleHeight}px`;
+
+        // Создаем метки времени от startHour до endHour
         for (let hour = startHour; hour <= endHour; hour++) {
           for (let minute = 0; minute < 60; minute += 10) {
             if (hour === endHour && minute > 0) break;
@@ -946,7 +975,6 @@
 
         columnElement.appendChild(timeScale);
       }
-
       // Функция для получения специалистов по массиву ID
       async function loadSpecialistsByIds(specialistIds) {
         try {
@@ -1320,16 +1348,24 @@
       // Создание столбца с записями
       function createColumn(date, appointments) {
         const container = document.getElementById("columnsContainer");
+        const workTime = getWorkTime();
+        const workDuration = workTime.end - workTime.start;
+
+        // Рассчитываем высоту столбца на основе рабочего времени
+        const columnHeight = workDuration * 60 + 60; // 60px на заголовок
+        const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
         column.className = "column";
+        column.style.minHeight = `${columnHeight}px`;
+
         column.innerHTML = `
-            <div class="column-content">
-                <h2>${date}</h2>
-                <div class="cards-container" id="cards-${date}">
-                </div>
+        <div class="column-content">
+            <h2>${date}</h2>
+            <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;">
             </div>
-        `;
+        </div>
+    `;
 
         createTimeScale(column);
 
@@ -1338,7 +1374,11 @@
         appointments.sort((a, b) => a.dateTime - b.dateTime);
 
         appointments.forEach((appointment) => {
-          const card = createAppointmentCard(appointment);
+          const card = createAppointmentCard(
+            appointment,
+            workTime.start,
+            cardsContainerHeight
+          );
           cardsContainer.appendChild(card);
         });
 
@@ -1356,7 +1396,11 @@
       }
 
       // Создание карточки записи
-      function createAppointmentCard(appointmentData) {
+      function createAppointmentCard(
+        appointmentData,
+        workStartHour,
+        containerHeight
+      ) {
         const card = document.createElement("div");
         card.className = "card";
 
@@ -1367,9 +1411,13 @@
         const hours = startTime.getHours();
         const minutes = startTime.getMinutes();
 
-        const totalMinutesFrom8 = (hours - 8) * 60 + minutes;
-        const topPosition = (totalMinutesFrom8 / 840) * 900;
+        // Пересчитываем позиционирование относительно начала рабочего дня
+        const totalMinutesFromStart = (hours - workStartHour) * 60 + minutes;
+        const workDurationMinutes = containerHeight; // containerHeight в пикселях равен количеству минут
 
+        // Точное позиционирование карточки
+        const topPosition =
+          (totalMinutesFromStart / workDurationMinutes) * containerHeight;
         card.style.top = `${topPosition}px`;
 
         const startTimeStr = startTime.toLocaleTimeString("ru-RU", {
@@ -1424,17 +1472,25 @@
       // Создание пустого столбца
       function createEmptyColumn() {
         const container = document.getElementById("columnsContainer");
+        const workTime = getWorkTime();
+        const workDuration = workTime.end - workTime.start;
+
+        // Рассчитываем высоту столбца на основе рабочего времени
+        const columnHeight = workDuration * 60 + 60; // 60px на заголовок
+        const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
         column.className = "column";
+        column.style.minHeight = `${columnHeight}px`;
+
         column.innerHTML = `
-            <div class="column-content">
-                <h2>Новая запись</h2>
-                <div class="cards-container">
-                    <div class="empty-column">Кликните для записи</div>
-                </div>
+        <div class="column-content">
+            <h2>Новая запись</h2>
+            <div class="cards-container" style="height: ${cardsContainerHeight}px;">
+                <div class="empty-column">Кликните для записи</div>
             </div>
-        `;
+        </div>
+    `;
 
         createTimeScale(column);
 
@@ -1706,6 +1762,18 @@
           console.error("Error checking appointment overlap:", error);
           return true;
         }
+      }
+
+      // Функция для получения рабочего времени специалиста
+      function getWorkTime() {
+        if (!currentSpecialist || !currentSpecialist.workTimeLength) {
+          return { start: 8, end: 22 }; // Значения по умолчанию
+        }
+
+        const [start, end] = currentSpecialist.workTimeLength
+          .split("#")
+          .map(Number);
+        return { start, end };
       }
 
       // Календарь с графиком приема специалиста
