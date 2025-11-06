@@ -830,6 +830,7 @@
     <!-- Модальное окно для просмотра записи -->
     <div class="modal" id="viewModal">
       <div class="modal-content">
+        <button class="close-button-modal" onclick="closeViewModal()">×</button>
         <h2>Информация о записи</h2>
         <div id="clientInfo"></div>
         <div class="modal-buttons">
@@ -838,9 +839,6 @@
             onclick="cancelAppointment()"
           >
             Отменить запись
-          </button>
-          <button class="modal-button ok" onclick="closeViewModal()">
-            Закрыть
           </button>
         </div>
       </div>
