@@ -404,6 +404,7 @@
         max-height: 600px;
         overflow-y: auto;
         padding: 0;
+        -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
       }
 
       .month-section {
@@ -494,6 +495,7 @@
         max-height: 90vh;
         overflow-y: auto;
         padding: 0;
+        -webkit-overflow-scrolling: touch; /* добавил */
       }
 
       /* background: linear-gradient(135deg, #2689ca, #2c3e50); */
@@ -547,11 +549,14 @@
         transition: background-color 0.3s;
       }
 
+      /* -webkit-tap-highlight-color: transparent; Убирает подсветку при тапе на iOS */
+      /*     touch-action: manipulation; Улучшает отзывчивость на касания */
+      /* */
       .selectable-day {
         cursor: pointer;
         transition: all 0.3s ease;
-        -webkit-tap-highlight-color: transparent; /* Убирает подсветку при тапе на iOS */
-        /*   touch-action: manipulation; Улучшает отзывчивость на касания */
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
       }
 
       .selectable-day:hover {
@@ -595,6 +600,27 @@
       /* Calendar */
 
       @media (max-width: 767px) {
+        /* Улучшаем область скролла для мобильных устройств */
+        .months-container {
+          max-height: 70vh;
+          touch-action: pan-y; /* Разрешаем только вертикальный скролл */
+        }
+
+        /* Добавил в рамках решения проблемы мгновенного клика */
+        .selectable-day {
+          min-height: 80px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          /* Убираем выделение при тапе */
+          -webkit-tap-highlight-color: transparent;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+
         body {
           padding-top: 45px;
         }
@@ -672,6 +698,7 @@
         #scheduleModal .modal-content {
           width: 95%;
           max-height: 85vh;
+          margin: 5vh auto; /* добавил */
         }
 
         .days-grid {
@@ -840,7 +867,7 @@
             class="modal-button cancelAppointment"
             onclick="cancelAppointment()"
           >
-            Отменить запись!
+            Отменить запись
           </button>
         </div>
       </div>
@@ -1780,30 +1807,80 @@
         return `${year}-${month}-${day}`;
       }
 
-      // Функция для добавления обработчиков выбора даты
       function addDateSelectionHandlers() {
         const selectableDays = document.querySelectorAll(".selectable-day");
 
         selectableDays.forEach((dayElement) => {
-          // Удаляем предыдущие обработчики, чтобы избежать дублирования
-          dayElement.removeEventListener("click", handleDayClick);
-          dayElement.removeEventListener("touchstart", handleDayTouch);
+          let touchStartX = 0;
+          let touchStartY = 0;
+          let isScrolling = false;
+          const scrollThreshold = 10; // Порог в пикселях для определения скролла
 
-          // Добавляем обработчики для клика и касания
-          dayElement.addEventListener("click", handleDayClick);
-          dayElement.addEventListener("touchstart", handleDayTouch, {
+          // Обработчик начала касания
+          function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            isScrolling = false;
+          }
+
+          // Обработчик движения касания
+          function handleTouchMove(e) {
+            if (!touchStartX || !touchStartY) return;
+
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+
+            const diffX = Math.abs(touchX - touchStartX);
+            const diffY = Math.abs(touchY - touchStartY);
+
+            // Если движение по вертикали больше порога - это скролл
+            if (diffY > scrollThreshold && diffY > diffX) {
+              isScrolling = true;
+            }
+          }
+
+          // Обработчик окончания касания
+          function handleTouchEnd(e) {
+            if (!isScrolling) {
+              // Если не было скролла - это выбор даты
+              selectDateFromCalendar(dayElement);
+            }
+
+            // Сбрасываем значения
+            touchStartX = 0;
+            touchStartY = 0;
+            isScrolling = false;
+          }
+
+          // Удаляем предыдущие обработчики
+          dayElement.removeEventListener("touchstart", handleTouchStart);
+          dayElement.removeEventListener("touchmove", handleTouchMove);
+          dayElement.removeEventListener("touchend", handleTouchEnd);
+          dayElement.removeEventListener("click", handleDayClick);
+
+          // Добавляем новые обработчики
+          dayElement.addEventListener("touchstart", handleTouchStart, {
             passive: true,
           });
+          dayElement.addEventListener("touchmove", handleTouchMove, {
+            passive: true,
+          });
+          dayElement.addEventListener("touchend", handleTouchEnd);
+          dayElement.addEventListener("click", handleDayClick);
 
-          // Добавляем эффект при наведении (только для десктопа)
+          // Эффекты при наведении (только для десктопа)
           dayElement.addEventListener("mouseenter", function () {
-            this.style.transform = "scale(1.05)";
-            this.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.2)";
+            if (!isTouchDevice()) {
+              this.style.transform = "scale(1.05)";
+              this.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.2)";
+            }
           });
 
           dayElement.addEventListener("mouseleave", function () {
-            this.style.transform = "scale(1)";
-            this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+            if (!isTouchDevice()) {
+              this.style.transform = "scale(1)";
+              this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+            }
           });
         });
       }
@@ -1820,6 +1897,11 @@
         event.preventDefault();
         event.stopPropagation();
         selectDateFromCalendar(this);
+      }
+
+      // Функция для определения touch-устройства
+      function isTouchDevice() {
+        return "ontouchstart" in window || navigator.maxTouchPoints > 0;
       }
 
       // Общая функция для выбора даты из календаря
