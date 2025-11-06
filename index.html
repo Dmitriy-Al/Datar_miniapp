@@ -112,18 +112,16 @@
       .column {
         background-color: #fcf8e1;
         border-radius: 5px;
+        padding: 25px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
         display: flex;
         flex-direction: column;
         position: relative;
-        /* min-height будет устанавливаться динамически через JS */
-        position: relative;
       }
 
       .time-scale {
-        /* height будет устанавливаться динамически через JS */
         position: absolute;
         left: 0;
         top: 60px; /* Высота заголовка */
@@ -221,6 +219,10 @@
 
       .cards-container {
         /* height будет устанавливаться динамически через JS */
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex-grow: 1;
         position: relative;
       }
 
@@ -675,11 +677,11 @@
 
         .column {
           padding: 5px;
-          /*min-height: 900px;*/
         }
 
         .time-scale {
-          top: 40px; /* Меньшая высота заголовка на мобильных */
+          width: 15px;
+          top: 40px;
         }
 
         .time-label {
@@ -947,7 +949,7 @@
 
         // Рассчитываем высоту шкалы времени на основе рабочего времени
         const workDuration = endHour - startHour;
-        const scaleHeight = workDuration * 60; // 60px в час
+        const scaleHeight = workDuration * 60 + 30; //60px в час + 30px на заголовок
 
         // Устанавливаем высоту шкалы времени
         timeScale.style.height = `${scaleHeight}px`;
@@ -1404,7 +1406,7 @@
         const card = document.createElement("div");
         card.className = "card";
 
-        const height = appointmentData.duration * 1.05;
+        const height = appointmentData.duration * 1;
         card.style.height = `${height}px`;
 
         const startTime = appointmentData.dateTime;
