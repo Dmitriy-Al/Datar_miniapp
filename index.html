@@ -110,7 +110,8 @@
       }
       */
       .column {
-        background-color: #fcf8e1;
+        /* background-color: #fcf8e1; */
+        background-color: #fff9d4;
         border-radius: 5px;
         padding: 25px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -217,6 +218,17 @@
       }
         */
 
+      .non-working-overlay {
+        position: absolute;
+        left: 0;
+        right: 0;
+        background-color: rgb(243, 241, 235);
+        border: none;
+        border-radius: 0;
+        pointer-events: none;
+        z-index: 1;
+      }
+
       .cards-container {
         /* height будет устанавливаться динамически через JS */
         display: flex;
@@ -239,6 +251,7 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         text-align: center;
         word-break: break-word;
+        z-index: 2; /* z-index: 2; Карточки поверх блоков нерабочего времени */
         position: absolute;
         left: 0;
         right: 0;
@@ -1242,6 +1255,19 @@
       // Загрузка и отображение записей специалиста
       async function loadAndDisplayAppointments(specialist) {
         try {
+          // Рассчитываем расписание специалиста при загрузке
+          specialistScheduleData = calculateSpecialistSchedule(specialist);
+
+          const appointments = await getAppointmentsBySpecialistId(
+            specialist.id
+          );
+          // ... остальной код
+        } catch (error) {
+          console.error("Error loading appointments:", error);
+          alert("Error loading appointments: " + error.message);
+        }
+
+        try {
           const appointments = await getAppointmentsBySpecialistId(
             specialist.id
           );
@@ -1354,7 +1380,7 @@
         const workDuration = workTime.end - workTime.start;
 
         // Рассчитываем высоту столбца на основе рабочего времени
-        const columnHeight = workDuration * 60 + 60; // 60px на заголовок
+        const columnHeight = workDuration * 60 + 60;
         const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
@@ -1372,6 +1398,15 @@
         createTimeScale(column);
 
         const cardsContainer = column.querySelector(".cards-container");
+
+        // Добавляем блоки нерабочего времени специалиста (передаем cardsContainer)
+        createNonWorkingTimeOverlay(
+          date,
+          workTime,
+          specialistScheduleData,
+          cardsContainerHeight,
+          cardsContainer
+        );
 
         appointments.sort((a, b) => a.dateTime - b.dateTime);
 
@@ -1406,7 +1441,7 @@
         const card = document.createElement("div");
         card.className = "card";
 
-        const height = appointmentData.duration * 0.998;
+        const height = appointmentData.duration * 0.998; // ВАЖНО!!! const height = appointmentData.duration * 1.05
         card.style.height = `${height}px`;
 
         const startTime = appointmentData.dateTime;
@@ -2330,6 +2365,92 @@
             });
           }
         });
+
+      // Добавляем функцию для создания блоков нерабочего времени специалиста
+      function createNonWorkingTimeOverlay(
+        date,
+        workTime,
+        specialistSchedule,
+        cardsContainerHeight,
+        container
+      ) {
+        // Получаем рабочие часы специалиста для этой даты
+        const dateString = formatDateForSchedule(date);
+        const specialistWorkHours = getSpecialistWorkingHours(
+          dateString,
+          specialistSchedule
+        );
+
+        // Если специалист не работает в этот день - закрашиваем весь столбец
+        if (!specialistWorkHours || !specialistWorkHours.isWorking) {
+          const overlay = document.createElement("div");
+          overlay.className = "non-working-overlay";
+          overlay.style.top = "0";
+          overlay.style.height = "100%";
+          container.appendChild(overlay);
+          return;
+        }
+
+        // Если специалист работает, но не полный день
+        const workStartHour = workTime.start;
+        const workEndHour = workTime.end;
+        const specialistStartHour = parseHourString(
+          specialistWorkHours.workingHours.start
+        );
+        const specialistEndHour = parseHourString(
+          specialistWorkHours.workingHours.end
+        );
+
+        const totalWorkMinutes = (workEndHour - workStartHour) * 60;
+
+        // Создаем блоки для времени до начала работы специалиста
+        if (specialistStartHour > workStartHour) {
+          const beforeStartOverlay = document.createElement("div");
+          beforeStartOverlay.className = "non-working-overlay";
+          beforeStartOverlay.style.top = "0";
+          const beforeStartHeight =
+            (((specialistStartHour - workStartHour) * 60) / totalWorkMinutes) *
+            cardsContainerHeight;
+          beforeStartOverlay.style.height = `${beforeStartHeight}px`;
+          container.appendChild(beforeStartOverlay);
+        }
+
+        // Создаем блоки для времени после окончания работы специалиста
+        if (specialistEndHour < workEndHour) {
+          const afterEndOverlay = document.createElement("div");
+          afterEndOverlay.className = "non-working-overlay";
+          const afterEndTop =
+            (((specialistEndHour - workStartHour) * 60) / totalWorkMinutes) *
+            cardsContainerHeight;
+          afterEndOverlay.style.top = `${afterEndTop}px`;
+          const afterEndHeight =
+            (((workEndHour - specialistEndHour) * 60) / totalWorkMinutes) *
+            cardsContainerHeight;
+          afterEndOverlay.style.height = `${afterEndHeight}px`;
+          container.appendChild(afterEndOverlay);
+        }
+      }
+
+      // Вспомогательная функция для парсинга времени из строки "HH:MM"
+      function parseHourString(timeString) {
+        const [hours, minutes] = timeString.split(":").map(Number);
+        return hours + minutes / 60;
+      }
+
+      // Функция для получения рабочих часов специалиста на конкретную дату
+      function getSpecialistWorkingHours(dateString, specialistSchedule) {
+        const targetDate = new Date(dateString);
+        return specialistSchedule.find(
+          (day) => day.date.toDateString() === targetDate.toDateString()
+        );
+      }
+
+      // Функция для форматирования даты в строку для расписания
+      function formatDateForSchedule(dateString) {
+        const [day, month, year] = dateString.split(".");
+        // Преобразуем в формат, который понимает Date: "yyyy-mm-dd"
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      }
 
       // Обработка нажатия Enter в поле поиска
       document
