@@ -229,6 +229,7 @@
         border-radius: 0;
         pointer-events: none;
         z-index: 1;
+        margin-top: -10px;
       }
 
       .cards-container {
@@ -263,7 +264,8 @@
       }
 
       .card:hover {
-        transform: scale(1.05);
+        /* transform: scale(1.05); */
+        transform: scaleY(1.1);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
 
@@ -692,12 +694,12 @@
         }
 
         .column {
-          padding: 5px;
+          padding: 0px; /* padding: 5px; убрал, чтобы поле нерабочего времени заняло всю ширину колонки*/
         }
 
         .time-scale {
           width: 15px;
-          top: 40px;
+          top: 36px;
         }
 
         .time-label {
@@ -708,12 +710,13 @@
 
         .column-content {
           margin-left: 10px;
+          margin-bottom: 8px;
         }
 
         .column h2 {
           height: 50px;
           font-size: 14px;
-          margin-bottom: 10px;
+          margin-bottom: 10px; /* margin-bottom: 0px; изменил, чтобы поле нерабочего времени заняло всю ширину колонки*/
         }
 
         .cards-container {
@@ -2389,7 +2392,7 @@
           const overlay = document.createElement("div");
           overlay.className = "non-working-overlay";
           overlay.style.top = "0";
-          overlay.style.height = "100%";
+          overlay.style.height = "101.5%"; // "100%" Костыль для выравнивания блока до начала рабочего времени;
           container.appendChild(overlay);
           return;
         }
@@ -2414,6 +2417,7 @@
           const beforeStartHeight =
             (((specialistStartHour - workStartHour) * 60) / totalWorkMinutes) *
             cardsContainerHeight;
+
           beforeStartOverlay.style.height = `${beforeStartHeight}px`;
           container.appendChild(beforeStartOverlay);
         }
@@ -2428,7 +2432,9 @@
           afterEndOverlay.style.top = `${afterEndTop}px`;
           const afterEndHeight =
             (((workEndHour - specialistEndHour) * 60) / totalWorkMinutes) *
-            cardsContainerHeight;
+              cardsContainerHeight +
+            14; // cardsContainerHeight Костыль: +14 константа для выравнивания блока до начала рабочего времени;
+
           afterEndOverlay.style.height = `${afterEndHeight}px`;
           container.appendChild(afterEndOverlay);
         }
