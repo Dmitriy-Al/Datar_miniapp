@@ -1662,8 +1662,8 @@
 
           const startDateTime = new Date(dateTimeInput);
           const startTimeStr = startDateTime.toTimeString().slice(0, 5);
-          const specialistWorkTime =
-            currentSpecialist.workTimeLength.split("#");
+          const specialistWorkTime = "4#19";
+          //  currentSpecialist.workTimeLength.split("#");
 
           if (startTimeStr >= endTimeInput) {
             alert("Время окончания должно быть позже времени начала");
