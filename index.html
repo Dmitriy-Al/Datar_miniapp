@@ -96,20 +96,7 @@
         width: 100%;
         max-width: 100%;
       }
-      /*
-        .column {
-        background-color: #fcf8e1;
-        border-radius: 5px;
-        padding: 25px;
-        min-height: 900px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-      }
-      */
+
       .column {
         /* background-color: #fcf8e1; */
         background-color: #f8f2d0;
@@ -869,7 +856,6 @@
     <div class="container" id="columnsContainer">
       <!-- Столбцы будут созданы через JavaScript -->
     </div>
-
     <!-- Модальное окно для добавления новой записи -->
     <div class="modal" id="addModal">
       <div class="modal-content">
@@ -1095,22 +1081,6 @@
           throw error;
         }
       }
-      /*
-      // Функция для расчета времени окончания приема
-      function calculateEndTime() {
-        const dateTimeInput = document.getElementById(
-          "appointmentDateTime"
-        ).value;
-        const endTimeDisplay = document.getElementById("appointmentEndTime");
-
-        if (dateTimeInput) {
-          const startTime = new Date(dateTimeInput);
-          const endTime = new Date(startTime.getTime() + 30 * 60000);
-          const formattedEndTime = endTime.toTimeString().slice(0, 5);
-          endTimeDisplay.value = formattedEndTime;
-        }
-      }
-      */
 
       // Функция для расчета времени окончания приема
       function calculateEndTime() {
@@ -1283,7 +1253,6 @@
           const appointments = await getAppointmentsBySpecialistId(
             specialist.id
           );
-          // ... остальной код
         } catch (error) {
           console.error("Error loading appointments:", error);
           alert("Error loading appointments: " + error.message);
@@ -1546,7 +1515,7 @@
         <div class="column-content">
             <h2>Новая запись</h2>
             <div class="cards-container" style="height: ${cardsContainerHeight}px;">
-                <div class="empty-column">Кликните для записи</div>
+                <div class="empty-column">Нажмите для записи</div>
             </div>
         </div>
     `;
