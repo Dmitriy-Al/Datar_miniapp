@@ -96,7 +96,20 @@
         width: 100%;
         max-width: 100%;
       }
-
+      /*
+        .column {
+        background-color: #fcf8e1;
+        border-radius: 5px;
+        padding: 25px;
+        min-height: 900px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      */
       .column {
         /* background-color: #fcf8e1; */
         background-color: #f8f2d0;
@@ -930,7 +943,7 @@
     <div class="modal" id="scheduleModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>Расписание приема</h2>
+          <h2><div id="specialistName"></h2>
           <button class="modal-close-button" onclick="closeScheduleModal()">
             ✖
           </button>
@@ -1081,6 +1094,22 @@
           throw error;
         }
       }
+      /*
+      // Функция для расчета времени окончания приема
+      function calculateEndTime() {
+        const dateTimeInput = document.getElementById(
+          "appointmentDateTime"
+        ).value;
+        const endTimeDisplay = document.getElementById("appointmentEndTime");
+
+        if (dateTimeInput) {
+          const startTime = new Date(dateTimeInput);
+          const endTime = new Date(startTime.getTime() + 30 * 60000);
+          const formattedEndTime = endTime.toTimeString().slice(0, 5);
+          endTimeDisplay.value = formattedEndTime;
+        }
+      }
+      */
 
       // Функция для расчета времени окончания приема
       function calculateEndTime() {
@@ -1662,8 +1691,7 @@
             (endHours === specialistWorkTimeEnd && endMinutes > 0)
           ) {
             alert(
-              `Время начала должно быть установлено не ранее ${specialistWorkTimeBegin}
-              :00, а время окончания не позднее ${specialistWorkTimeEnd}:00`
+              `Время начала должно быть установлено не ранее ${specialistWorkTimeBegin}:00, а время окончания не позднее ${specialistWorkTimeEnd}:00`
             );
             return;
           }
@@ -1821,7 +1849,16 @@
         openScheduleModal();
         const container = document.getElementById("monthsContainer");
         const today = new Date();
+        const header = document.getElementById("specialistName");
 
+        // Фио специалиста в заголовке
+        const formattedName = formatFullName(
+          currentSpecialist.surname,
+          currentSpecialist.name,
+          currentSpecialist.patronymic
+        );
+        header.innerHTML = `График ${formattedName}`;
+        
         // Группируем дни по месяцам
         const monthsMap = new Map();
 
