@@ -229,7 +229,7 @@
         border-radius: 0;
         pointer-events: none;
         z-index: 1;
-        margin-top: -10px;
+        margin-top: -10px; /* убрал отступ сверху */
       }
 
       .cards-container {
@@ -300,7 +300,6 @@
         left: 50%;
         transform: translate(-50%, -50%);
         background-color: white;
-        padding: 25px;
         border-radius: 15px;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         width: 90%;
@@ -310,7 +309,7 @@
 
       .modal h2 {
         margin-bottom: 15px;
-        color: #333;
+        color: white;
         text-align: center;
         font-size: 18px;
       }
@@ -359,7 +358,8 @@
         padding: 20px;
         display: flex;
         gap: 10px;
-        justify-content: space-between;
+        /* justify-content: space-between; */
+        justify-content: space-around;
       }
 
       .modal-button {
@@ -372,26 +372,21 @@
         transition: all 0.3s;
         min-width: 80px;
       }
-
+      /*  background-color: #56bd3c;  */
       .modal-button.ok {
-        background-color: #56bd3c;
+        background-color: #6ac753;
         color: white;
       }
-
-      .modal-button.cancel {
-        background-color: #ffb223;
-        color: white;
-      }
-
+      /*   background-color: #3498db; */
       .modal-button.schedule {
-        background-color: #3498db;
+        background-color: #43a1e0;
         color: white;
       }
 
-      /*  justify-content: center; */
+      /*  justify-content: center; background-color: #ff7c6b */
       .modal-button.cancelAppointment {
         justify-content: center;
-        background-color: #ff7c6b;
+        background-color: #fc8677;
         color: white;
       }
 
@@ -541,7 +536,7 @@
 
       /* background: linear-gradient(135deg, #2689ca, #2c3e50); padding: 20px; */
       #scheduleModal .modal-header {
-        background: linear-gradient(135deg, #2689ca, #2c3e50);
+        background: linear-gradient(135deg, #1f6ea3, #043555);
         color: white;
         padding: 15px;
         border-radius: 15px 15px 0 0;
@@ -549,13 +544,20 @@
         position: relative;
       }
 
-      /*  */
-      .modal-card-header {
-        background: linear-gradient(135deg, #2689ca, #2c3e50);
+      .modal-add-vew-header {
+        background: linear-gradient(135deg, #1f6ea3, #043555);
         color: white;
-        padding: 5px;
+        padding-top: 10px;
+        padding-bottom: 1px;
+        border-radius: 15px 15px 0 0;
         text-align: center;
         position: relative;
+      }
+
+      .modal-inner-padding {
+        margin-left: 25px;
+        margin-right: 25px;
+        margin-top: 15px;
       }
 
       #scheduleModal .modal-header h2 {
@@ -581,18 +583,19 @@
         transition: background-color 0.3s;
       }
 
-      .close-button-modal {
+      .modal-close-button {
         position: absolute;
-        top: 15px;
-        right: 20px;
+        top: 1px;
+        right: 10px;
         background: none;
         border: none;
-        color: rgb(0, 74, 134);
-        font-size: 18px;
+        color: white;
+        font-size: 14px;
         font-weight: bold;
         cursor: pointer;
         width: 30px;
         height: 30px;
+        padding: 15px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -664,7 +667,7 @@
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          /* Убираем выделение при тапе */
+          /* убрал выделение при тапе */
           -webkit-tap-highlight-color: transparent;
           -webkit-user-select: none;
           -moz-user-select: none;
@@ -710,13 +713,13 @@
 
         .column-content {
           margin-left: 10px;
-          margin-bottom: 10px;
+          margin-bottom: 10px; /* margin-bottom: 8px; изменил отступ снизу*/
         }
 
         .column h2 {
           height: 50px;
           font-size: 14px;
-          margin-bottom: 10px; /* margin-bottom: 0px; изменил, чтобы поле нерабочего времени заняло всю ширину колонки*/
+          margin-bottom: 10px;
         }
 
         .cards-container {
@@ -866,45 +869,50 @@
     <div class="container" id="columnsContainer">
       <!-- Столбцы будут созданы через JavaScript -->
     </div>
+
     <!-- Модальное окно для добавления новой записи -->
-    <!--  <div class="modal-card-header"></div> -->
     <div class="modal" id="addModal">
       <div class="modal-content">
-        <button class="close-button-modal" onclick="closeAddModal()">✖</button>
-        <h2>Записать</h2>
-
-        <textarea
-          id="appointmentNote"
-          placeholder="Добавить комментарий"
-        ></textarea>
-        <input
-          type="text"
-          id="searchClient"
-          placeholder="Введите фамилию для поиска"
-        />
-        <div
-          id="searchResults"
-          style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
-        ></div>
-        <div style="margin: 5px">
-          <small>Дата и время начала приема</small>
-        </div>
-        <input type="datetime-local" id="appointmentDateTime" />
-
-        <div class="time-inputs-container">
-          <small>Время окончания приема</small>
-          <input type="time" id="appointmentEndTime" class="time-input" />
-        </div>
-        <div class="modal-buttons">
-          <button
-            class="modal-button schedule"
-            onclick="generateCompactSchedule()"
-          >
-            Расписание
+        <div class="modal-add-vew-header">
+          <button class="modal-close-button" onclick="closeAddModal()">
+            ✖
           </button>
-          <button class="modal-button ok" onclick="saveAppointment()">
-            Записать
-          </button>
+          <h2>Записать</h2>
+        </div>
+        <div class="modal-inner-padding">
+          <textarea
+            id="appointmentNote"
+            placeholder="Добавить комментарий"
+          ></textarea>
+          <input
+            type="text"
+            id="searchClient"
+            placeholder="Введите фамилию для поиска"
+          />
+          <div
+            id="searchResults"
+            style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
+          ></div>
+          <div style="margin: 5px">
+            <small>Дата и время начала приема</small>
+          </div>
+          <input type="datetime-local" id="appointmentDateTime" />
+
+          <div class="time-inputs-container">
+            <small>Время окончания приема</small>
+            <input type="time" id="appointmentEndTime" class="time-input" />
+          </div>
+          <div class="modal-buttons">
+            <button
+              class="modal-button schedule"
+              onclick="generateCompactSchedule()"
+            >
+              Расписание
+            </button>
+            <button class="modal-button ok" onclick="saveAppointment()">
+              Записать
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -912,16 +920,22 @@
     <!-- Модальное окно для просмотра записи -->
     <div class="modal" id="viewModal">
       <div class="modal-content">
-        <button class="close-button-modal" onclick="closeViewModal()">✖</button>
-        <h2>Информация о записи</h2>
-        <div id="clientInfo"></div>
-        <div class="modal-buttons">
-          <button
-            class="modal-button cancelAppointment"
-            onclick="cancelAppointment()"
-          >
-            Отменить запись
+        <div class="modal-add-vew-header">
+          <button class="modal-close-button" onclick="closeViewModal()">
+            ✖
           </button>
+          <h2><div id="clientName"></div></h2>
+        </div>
+        <div class="modal-inner-padding">
+          <div id="clientInfo"></div>
+          <div class="modal-buttons">
+            <button
+              class="modal-button cancelAppointment"
+              onclick="cancelAppointment()"
+            >
+              Отменить запись
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -931,7 +945,9 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>Расписание приема</h2>
-          <button class="close-button" onclick="closeScheduleModal()">×</button>
+          <button class="modal-close-button" onclick="closeScheduleModal()">
+            ✖
+          </button>
         </div>
         <div class="months-container" id="monthsContainer">
           <!-- Данные будут заполнены через JavaScript -->
@@ -940,10 +956,10 @@
     </div>
 
     <script>
+      // let tg = window.Telegram.WebApp;
       let tg = window.Telegram.WebApp;
       let tgUserId = tg.initDataUnsafe.user.id;
       const API_BASE = "https://alimovdev.ru/api";
-      let currentSpecialist = null;
       let currentUser = null; // Может быть Specialist или Administrator
       let currentClients = [];
       let currentSelectedClient = null;
@@ -1583,10 +1599,10 @@
           displayText = `${datePart} с ${startTime} до ${endTime}`;
         }
 
+        document.getElementById(
+          "clientName"
+        ).innerHTML = `<h4>${client.surname} ${client.name} ${client.patronymic}</h4>`;
         document.getElementById("clientInfo").innerHTML = `
-            <h4><strong>Клиент:</strong> ${client.surname} ${client.name} ${
-          client.patronymic
-        }</h4>
         <a href="tel:${client.phoneNumber}">${
           client.phoneNumber || "Телефонный номер не указан"
         }</a>
@@ -1646,6 +1662,8 @@
 
           const startDateTime = new Date(dateTimeInput);
           const startTimeStr = startDateTime.toTimeString().slice(0, 5);
+          const specialistWorkTime =
+            currentSpecialist.workTimeLength.split("#");
 
           if (startTimeStr >= endTimeInput) {
             alert("Время окончания должно быть позже времени начала");
@@ -1666,20 +1684,22 @@
           const startMinutes = parseInt(startTimeStr.split(":")[1]);
           const endHours = parseInt(endTimeInput.split(":")[0]);
           const endMinutes = parseInt(endTimeInput.split(":")[1]);
+          const specialistWorkTimeBegin = parseInt(specialistWorkTime[0]);
+          const specialistWorkTimeEnd = parseInt(specialistWorkTime[1]);
 
           if (
-            startHours < 8 ||
-            (startHours === 22 && startMinutes > 0) ||
-            startHours > 22
+            startHours < specialistWorkTimeBegin ||
+            endHours > specialistWorkTimeEnd ||
+            (endHours === specialistWorkTimeEnd && endMinutes > 0)
           ) {
-            alert("Время начала приема должно быть с 08:00 до 22:00");
+            alert(
+              `Время начала должно быть установлено не ранее ${specialistWorkTimeBegin}
+              :00, а время окончания не позднее ${specialistWorkTimeEnd}:00`
+            );
             return;
           }
 
-          if (endHours > 22 || (endHours === 22 && endMinutes > 0)) {
-            alert("Время окончания приема не может быть позже 22:00");
-            return;
-          }
+          specialistWorkTime;
 
           const now = new Date();
           if (startDateTime < now) {
@@ -2392,7 +2412,7 @@
           const overlay = document.createElement("div");
           overlay.className = "non-working-overlay";
           overlay.style.top = "0";
-          overlay.style.height = "102%"; // "100%" Костыль для выравнивания блока до начала рабочего времени;
+          overlay.style.height = "100%"; // "101.9%" Костыль для выравнивания блока до начала рабочего времени;
           container.appendChild(overlay);
           return;
         }
@@ -2433,7 +2453,7 @@
           const afterEndHeight =
             (((workEndHour - specialistEndHour) * 60) / totalWorkMinutes) *
               cardsContainerHeight +
-            14; // cardsContainerHeight Костыль: +14 константа для выравнивания блока до начала рабочего времени;
+            16; // cardsContainerHeight Костыль: +14 константа для выравнивания блока до начала рабочего времени;
 
           afterEndOverlay.style.height = `${afterEndHeight}px`;
           container.appendChild(afterEndOverlay);
