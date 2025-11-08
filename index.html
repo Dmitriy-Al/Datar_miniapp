@@ -15,7 +15,8 @@
       body {
         padding: 5px;
         font-family: Arial, sans-serif;
-        background-color: #f0f0f0;
+        /* background-color: #f0f0f0;  white  #627a8d*/
+        background-color: #708ca3;
         min-height: 100vh;
         overflow-x: hidden;
         padding-top: 65px;
@@ -95,8 +96,8 @@
         width: 100%;
         max-width: 100%;
       }
-
-      .column {
+      /*
+        .column {
         background-color: #fcf8e1;
         border-radius: 5px;
         padding: 25px;
@@ -108,12 +109,25 @@
         flex-direction: column;
         position: relative;
       }
+      */
+      .column {
+        /* background-color: #fcf8e1; */
+        background-color: #f8f2d0;
+        border-radius: 5px;
+        padding: 25px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
 
       .time-scale {
         position: absolute;
         left: 0;
-        top: 60px;
-        bottom: 0px;
+        top: 60px; /* Высота заголовка */
+        bottom: 0;
         width: 15px;
         background: linear-gradient(to bottom, #fff5e4, #fae4bd);
         border-right: 2px solid #3498db;
@@ -121,7 +135,7 @@
         flex-direction: column;
         align-items: center;
         padding: 10px 0;
-        z-index: 1;
+        z-index: 3;
       }
 
       .time-marker {
@@ -194,6 +208,7 @@
         justify-content: center;
       }
 
+      /*
       .cards-container {
         display: flex;
         flex-direction: column;
@@ -202,9 +217,33 @@
         position: relative;
         height: 840px;
       }
+        */
+
+      .non-working-overlay {
+        position: absolute;
+        left: 0;
+        right: 0;
+        /*   background-color: rgb(243, 241, 235);   #eeece2 */
+        background-color: #ebebeb;
+        border: none;
+        border-radius: 0;
+        pointer-events: none;
+        z-index: 1;
+        margin-top: -10px; /* убрал отступ сверху */
+      }
+
+      .cards-container {
+        /* height будет устанавливаться динамически через JS */
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex-grow: 1;
+        position: relative;
+      }
 
       .card {
-        background-color: #ffdc9c;
+        /* #ffdc9c;    #fdd997;  */
+        background-color: #ffd890;
         border-radius: 5px;
         padding: 1px;
         display: flex;
@@ -216,6 +255,7 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         text-align: center;
         word-break: break-word;
+        z-index: 2; /* z-index: 2; Карточки поверх блоков нерабочего времени */
         position: absolute;
         left: 0;
         right: 0;
@@ -224,7 +264,8 @@
       }
 
       .card:hover {
-        transform: scale(1.05);
+        /* transform: scale(1.05); */
+        transform: scaleY(1.1);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
 
@@ -259,7 +300,6 @@
         left: 50%;
         transform: translate(-50%, -50%);
         background-color: white;
-        padding: 25px;
         border-radius: 15px;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         width: 90%;
@@ -269,7 +309,7 @@
 
       .modal h2 {
         margin-bottom: 15px;
-        color: #333;
+        color: white;
         text-align: center;
         font-size: 18px;
       }
@@ -318,7 +358,8 @@
         padding: 20px;
         display: flex;
         gap: 10px;
-        justify-content: space-between;
+        /* justify-content: space-between; */
+        justify-content: space-around;
       }
 
       .modal-button {
@@ -331,26 +372,21 @@
         transition: all 0.3s;
         min-width: 80px;
       }
-
+      /*  background-color: #56bd3c;  */
       .modal-button.ok {
-        background-color: #56bd3c;
+        background-color: #6ac753;
         color: white;
       }
-
-      .modal-button.cancel {
-        background-color: #ffb223;
-        color: white;
-      }
-
+      /*   background-color: #3498db; */
       .modal-button.schedule {
-        background-color: #3498db;
+        background-color: #43a1e0;
         color: white;
       }
 
-      /*  justify-content: center; */
+      /*  justify-content: center; background-color: #ff7c6b */
       .modal-button.cancelAppointment {
         justify-content: center;
-        background-color: #ff7c6b;
+        background-color: #fc8677;
         color: white;
       }
 
@@ -500,7 +536,7 @@
 
       /* background: linear-gradient(135deg, #2689ca, #2c3e50); padding: 20px; */
       #scheduleModal .modal-header {
-        background: linear-gradient(135deg, #2689ca, #2c3e50);
+        background: linear-gradient(135deg, #1f6ea3, #043555);
         color: white;
         padding: 15px;
         border-radius: 15px 15px 0 0;
@@ -508,13 +544,20 @@
         position: relative;
       }
 
-      /*  */
-      .modal-card-header {
-        background: linear-gradient(135deg, #2689ca, #2c3e50);
+      .modal-add-vew-header {
+        background: linear-gradient(135deg, #1f6ea3, #043555);
         color: white;
-        padding: 5px;
+        padding-top: 10px;
+        padding-bottom: 1px;
+        border-radius: 15px 15px 0 0;
         text-align: center;
         position: relative;
+      }
+
+      .modal-inner-padding {
+        margin-left: 25px;
+        margin-right: 25px;
+        margin-top: 15px;
       }
 
       #scheduleModal .modal-header h2 {
@@ -540,17 +583,19 @@
         transition: background-color 0.3s;
       }
 
-      .close-button-modal {
+      .modal-close-button {
         position: absolute;
-        top: 15px;
-        right: 20px;
+        top: 1px;
+        right: 10px;
         background: none;
         border: none;
-        color: rgb(0, 74, 134);
-        font-size: 30px;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
         cursor: pointer;
         width: 30px;
         height: 30px;
+        padding: 15px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -622,7 +667,7 @@
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          /* Убираем выделение при тапе */
+          /* убрал выделение при тапе */
           -webkit-tap-highlight-color: transparent;
           -webkit-user-select: none;
           -moz-user-select: none;
@@ -652,13 +697,12 @@
         }
 
         .column {
-          padding: 5px;
-          min-height: 900px;
+          padding: 0px; /* padding: 5px; убрал, чтобы поле нерабочего времени заняло всю ширину колонки*/
         }
 
         .time-scale {
           width: 15px;
-          top: 40px;
+          top: 36px;
         }
 
         .time-label {
@@ -669,6 +713,7 @@
 
         .column-content {
           margin-left: 10px;
+          margin-bottom: 10px; /* margin-bottom: 8px; изменил отступ снизу*/
         }
 
         .column h2 {
@@ -824,45 +869,50 @@
     <div class="container" id="columnsContainer">
       <!-- Столбцы будут созданы через JavaScript -->
     </div>
+
     <!-- Модальное окно для добавления новой записи -->
-    <!--  <div class="modal-card-header"></div> -->
     <div class="modal" id="addModal">
       <div class="modal-content">
-        <button class="close-button-modal" onclick="closeAddModal()">×</button>
-        <h2>Записать</h2>
-
-        <textarea
-          id="appointmentNote"
-          placeholder="Добавить комментарий"
-        ></textarea>
-        <input
-          type="text"
-          id="searchClient"
-          placeholder="Введите фамилию для поиска"
-        />
-        <div
-          id="searchResults"
-          style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
-        ></div>
-        <div style="margin: 5px">
-          <small>Дата и время начала приема</small>
-        </div>
-        <input type="datetime-local" id="appointmentDateTime" />
-
-        <div class="time-inputs-container">
-          <small>Время окончания приема</small>
-          <input type="time" id="appointmentEndTime" class="time-input" />
-        </div>
-        <div class="modal-buttons">
-          <button
-            class="modal-button schedule"
-            onclick="generateCompactSchedule()"
-          >
-            Расписание
+        <div class="modal-add-vew-header">
+          <button class="modal-close-button" onclick="closeAddModal()">
+            ✖
           </button>
-          <button class="modal-button ok" onclick="saveAppointment()">
-            Записать
-          </button>
+          <h2>Записать</h2>
+        </div>
+        <div class="modal-inner-padding">
+          <textarea
+            id="appointmentNote"
+            placeholder="Добавить комментарий"
+          ></textarea>
+          <input
+            type="text"
+            id="searchClient"
+            placeholder="Введите фамилию для поиска"
+          />
+          <div
+            id="searchResults"
+            style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
+          ></div>
+          <div style="margin: 5px">
+            <small>Дата и время начала приема</small>
+          </div>
+          <input type="datetime-local" id="appointmentDateTime" />
+
+          <div class="time-inputs-container">
+            <small>Время окончания приема</small>
+            <input type="time" id="appointmentEndTime" class="time-input" />
+          </div>
+          <div class="modal-buttons">
+            <button
+              class="modal-button schedule"
+              onclick="generateCompactSchedule()"
+            >
+              Расписание
+            </button>
+            <button class="modal-button ok" onclick="saveAppointment()">
+              Записать
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -870,16 +920,22 @@
     <!-- Модальное окно для просмотра записи -->
     <div class="modal" id="viewModal">
       <div class="modal-content">
-        <button class="close-button-modal" onclick="closeViewModal()">×</button>
-        <h2>Информация о записи</h2>
-        <div id="clientInfo"></div>
-        <div class="modal-buttons">
-          <button
-            class="modal-button cancelAppointment"
-            onclick="cancelAppointment()"
-          >
-            Отменить запись
+        <div class="modal-add-vew-header">
+          <button class="modal-close-button" onclick="closeViewModal()">
+            ✖
           </button>
+          <h2><div id="clientName"></div></h2>
+        </div>
+        <div class="modal-inner-padding">
+          <div id="clientInfo"></div>
+          <div class="modal-buttons">
+            <button
+              class="modal-button cancelAppointment"
+              onclick="cancelAppointment()"
+            >
+              Отменить запись
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -889,7 +945,9 @@
       <div class="modal-content">
         <div class="modal-header">
           <h2>Расписание приема</h2>
-          <button class="close-button" onclick="closeScheduleModal()">×</button>
+          <button class="modal-close-button" onclick="closeScheduleModal()">
+            ✖
+          </button>
         </div>
         <div class="months-container" id="monthsContainer">
           <!-- Данные будут заполнены через JavaScript -->
@@ -917,12 +975,21 @@
 
       // Функция для создания шкалы времени
       function createTimeScale(columnElement) {
+        const workTime = getWorkTime();
+        const startHour = workTime.start;
+        const endHour = workTime.end;
+
         const timeScale = document.createElement("div");
         timeScale.className = "time-scale";
 
-        const startHour = 8;
-        const endHour = 22;
+        // Рассчитываем высоту шкалы времени на основе рабочего времени
+        const workDuration = endHour - startHour;
+        const scaleHeight = workDuration * 60 + 30; //60px в час + 30px на заголовок
 
+        // Устанавливаем высоту шкалы времени
+        timeScale.style.height = `${scaleHeight}px`;
+
+        // Создаем метки времени от startHour до endHour
         for (let hour = startHour; hour <= endHour; hour++) {
           for (let minute = 0; minute < 60; minute += 10) {
             if (hour === endHour && minute > 0) break;
@@ -945,7 +1012,6 @@
 
         columnElement.appendChild(timeScale);
       }
-
       // Функция для получения специалистов по массиву ID
       async function loadSpecialistsByIds(specialistIds) {
         try {
@@ -1211,6 +1277,19 @@
       // Загрузка и отображение записей специалиста
       async function loadAndDisplayAppointments(specialist) {
         try {
+          // Рассчитываем расписание специалиста при загрузке
+          specialistScheduleData = calculateSpecialistSchedule(specialist);
+
+          const appointments = await getAppointmentsBySpecialistId(
+            specialist.id
+          );
+          // ... остальной код
+        } catch (error) {
+          console.error("Error loading appointments:", error);
+          alert("Error loading appointments: " + error.message);
+        }
+
+        try {
           const appointments = await getAppointmentsBySpecialistId(
             specialist.id
           );
@@ -1319,25 +1398,46 @@
       // Создание столбца с записями
       function createColumn(date, appointments) {
         const container = document.getElementById("columnsContainer");
+        const workTime = getWorkTime();
+        const workDuration = workTime.end - workTime.start;
+
+        // Рассчитываем высоту столбца на основе рабочего времени
+        const columnHeight = workDuration * 60 + 60;
+        const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
         column.className = "column";
+        column.style.minHeight = `${columnHeight}px`;
+
         column.innerHTML = `
-            <div class="column-content">
-                <h2>${date}</h2>
-                <div class="cards-container" id="cards-${date}">
-                </div>
+        <div class="column-content">
+            <h2>${date}</h2>
+            <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;">
             </div>
-        `;
+        </div>
+    `;
 
         createTimeScale(column);
 
         const cardsContainer = column.querySelector(".cards-container");
 
+        // Добавляем блоки нерабочего времени специалиста (передаем cardsContainer)
+        createNonWorkingTimeOverlay(
+          date,
+          workTime,
+          specialistScheduleData,
+          cardsContainerHeight,
+          cardsContainer
+        );
+
         appointments.sort((a, b) => a.dateTime - b.dateTime);
 
         appointments.forEach((appointment) => {
-          const card = createAppointmentCard(appointment);
+          const card = createAppointmentCard(
+            appointment,
+            workTime.start,
+            cardsContainerHeight
+          );
           cardsContainer.appendChild(card);
         });
 
@@ -1355,20 +1455,28 @@
       }
 
       // Создание карточки записи
-      function createAppointmentCard(appointmentData) {
+      function createAppointmentCard(
+        appointmentData,
+        workStartHour,
+        containerHeight
+      ) {
         const card = document.createElement("div");
         card.className = "card";
 
-        const height = appointmentData.duration * 1.05;
+        const height = appointmentData.duration * 0.998; // ВАЖНО!!! const height = appointmentData.duration * 1.05
         card.style.height = `${height}px`;
 
         const startTime = appointmentData.dateTime;
         const hours = startTime.getHours();
         const minutes = startTime.getMinutes();
 
-        const totalMinutesFrom8 = (hours - 8) * 60 + minutes;
-        const topPosition = (totalMinutesFrom8 / 840) * 900;
+        // Пересчитываем позиционирование относительно начала рабочего дня
+        const totalMinutesFromStart = (hours - workStartHour) * 60 + minutes;
+        const workDurationMinutes = containerHeight; // containerHeight в пикселях равен количеству минут
 
+        // Точное позиционирование карточки
+        const topPosition =
+          (totalMinutesFromStart / workDurationMinutes) * containerHeight;
         card.style.top = `${topPosition}px`;
 
         const startTimeStr = startTime.toLocaleTimeString("ru-RU", {
@@ -1423,17 +1531,25 @@
       // Создание пустого столбца
       function createEmptyColumn() {
         const container = document.getElementById("columnsContainer");
+        const workTime = getWorkTime();
+        const workDuration = workTime.end - workTime.start;
+
+        // Рассчитываем высоту столбца на основе рабочего времени
+        const columnHeight = workDuration * 60 + 60; // 60px на заголовок
+        const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
         column.className = "column";
+        column.style.minHeight = `${columnHeight}px`;
+
         column.innerHTML = `
-            <div class="column-content">
-                <h2>Новая запись</h2>
-                <div class="cards-container">
-                    <div class="empty-column">Кликните для записи</div>
-                </div>
+        <div class="column-content">
+            <h2>Новая запись</h2>
+            <div class="cards-container" style="height: ${cardsContainerHeight}px;">
+                <div class="empty-column">Кликните для записи</div>
             </div>
-        `;
+        </div>
+    `;
 
         createTimeScale(column);
 
@@ -1483,10 +1599,10 @@
           displayText = `${datePart} с ${startTime} до ${endTime}`;
         }
 
+        document.getElementById(
+          "clientName"
+        ).innerHTML = `<h4>${client.surname} ${client.name} ${client.patronymic}</h4>`;
         document.getElementById("clientInfo").innerHTML = `
-            <h4><strong>Клиент:</strong> ${client.surname} ${client.name} ${
-          client.patronymic
-        }</h4>
         <a href="tel:${client.phoneNumber}">${
           client.phoneNumber || "Телефонный номер не указан"
         }</a>
@@ -1546,6 +1662,8 @@
 
           const startDateTime = new Date(dateTimeInput);
           const startTimeStr = startDateTime.toTimeString().slice(0, 5);
+          const specialistWorkTime = split("5#21");
+           // currentSpecialist.workTimeLength.split("#");
 
           if (startTimeStr >= endTimeInput) {
             alert("Время окончания должно быть позже времени начала");
@@ -1566,20 +1684,22 @@
           const startMinutes = parseInt(startTimeStr.split(":")[1]);
           const endHours = parseInt(endTimeInput.split(":")[0]);
           const endMinutes = parseInt(endTimeInput.split(":")[1]);
+          const specialistWorkTimeBegin = parseInt(specialistWorkTime[0]);
+          const specialistWorkTimeEnd = parseInt(specialistWorkTime[1]);
 
           if (
-            startHours < 8 ||
-            (startHours === 22 && startMinutes > 0) ||
-            startHours > 22
+            startHours < specialistWorkTimeBegin ||
+            endHours > specialistWorkTimeEnd ||
+            (endHours === specialistWorkTimeEnd && endMinutes > 0)
           ) {
-            alert("Время начала приема должно быть с 08:00 до 22:00");
+            alert(
+              `Время начала должно быть установлено не ранее ${specialistWorkTimeBegin}
+              :00, а время окончания не позднее ${specialistWorkTimeEnd}:00`
+            );
             return;
           }
 
-          if (endHours > 22 || (endHours === 22 && endMinutes > 0)) {
-            alert("Время окончания приема не может быть позже 22:00");
-            return;
-          }
+          specialistWorkTime;
 
           const now = new Date();
           if (startDateTime < now) {
@@ -1705,6 +1825,18 @@
           console.error("Error checking appointment overlap:", error);
           return true;
         }
+      }
+
+      // Функция для получения рабочего времени специалиста
+      function getWorkTime() {
+        if (!currentSpecialist || !currentSpecialist.workTimeLength) {
+          return { start: 8, end: 22 }; // Значения по умолчанию
+        }
+
+        const [start, end] = currentSpecialist.workTimeLength
+          .split("#")
+          .map(Number);
+        return { start, end };
       }
 
       // Календарь с графиком приема специалиста
@@ -2259,6 +2391,95 @@
             });
           }
         });
+
+      // Добавляем функцию для создания блоков нерабочего времени специалиста
+      function createNonWorkingTimeOverlay(
+        date,
+        workTime,
+        specialistSchedule,
+        cardsContainerHeight,
+        container
+      ) {
+        // Получаем рабочие часы специалиста для этой даты
+        const dateString = formatDateForSchedule(date);
+        const specialistWorkHours = getSpecialistWorkingHours(
+          dateString,
+          specialistSchedule
+        );
+
+        // Если специалист не работает в этот день - закрашиваем весь столбец
+        if (!specialistWorkHours || !specialistWorkHours.isWorking) {
+          const overlay = document.createElement("div");
+          overlay.className = "non-working-overlay";
+          overlay.style.top = "0";
+          overlay.style.height = "100%"; // "101.9%" Костыль для выравнивания блока до начала рабочего времени;
+          container.appendChild(overlay);
+          return;
+        }
+
+        // Если специалист работает, но не полный день
+        const workStartHour = workTime.start;
+        const workEndHour = workTime.end;
+        const specialistStartHour = parseHourString(
+          specialistWorkHours.workingHours.start
+        );
+        const specialistEndHour = parseHourString(
+          specialistWorkHours.workingHours.end
+        );
+
+        const totalWorkMinutes = (workEndHour - workStartHour) * 60;
+
+        // Создаем блоки для времени до начала работы специалиста
+        if (specialistStartHour > workStartHour) {
+          const beforeStartOverlay = document.createElement("div");
+          beforeStartOverlay.className = "non-working-overlay";
+          beforeStartOverlay.style.top = "0";
+          const beforeStartHeight =
+            (((specialistStartHour - workStartHour) * 60) / totalWorkMinutes) *
+            cardsContainerHeight;
+
+          beforeStartOverlay.style.height = `${beforeStartHeight}px`;
+          container.appendChild(beforeStartOverlay);
+        }
+
+        // Создаем блоки для времени после окончания работы специалиста
+        if (specialistEndHour < workEndHour) {
+          const afterEndOverlay = document.createElement("div");
+          afterEndOverlay.className = "non-working-overlay";
+          const afterEndTop =
+            (((specialistEndHour - workStartHour) * 60) / totalWorkMinutes) *
+            cardsContainerHeight;
+          afterEndOverlay.style.top = `${afterEndTop}px`;
+          const afterEndHeight =
+            (((workEndHour - specialistEndHour) * 60) / totalWorkMinutes) *
+              cardsContainerHeight +
+            16; // cardsContainerHeight Костыль: +14 константа для выравнивания блока до начала рабочего времени;
+
+          afterEndOverlay.style.height = `${afterEndHeight}px`;
+          container.appendChild(afterEndOverlay);
+        }
+      }
+
+      // Вспомогательная функция для парсинга времени из строки "HH:MM"
+      function parseHourString(timeString) {
+        const [hours, minutes] = timeString.split(":").map(Number);
+        return hours + minutes / 60;
+      }
+
+      // Функция для получения рабочих часов специалиста на конкретную дату
+      function getSpecialistWorkingHours(dateString, specialistSchedule) {
+        const targetDate = new Date(dateString);
+        return specialistSchedule.find(
+          (day) => day.date.toDateString() === targetDate.toDateString()
+        );
+      }
+
+      // Функция для форматирования даты в строку для расписания
+      function formatDateForSchedule(dateString) {
+        const [day, month, year] = dateString.split(".");
+        // Преобразуем в формат, который понимает Date: "yyyy-mm-dd"
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      }
 
       // Обработка нажатия Enter в поле поиска
       document
