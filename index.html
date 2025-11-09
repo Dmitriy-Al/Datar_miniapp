@@ -187,6 +187,7 @@
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+        margin-bottom: 10px;
       }
 
       .column:hover {
@@ -205,18 +206,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-bottom: 10px;
       }
-
-      /*
-      .cards-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        flex-grow: 1;
-        position: relative;
-        height: 840px;
-      }
-        */
 
       .non-working-overlay {
         position: absolute;
@@ -632,7 +623,6 @@
         border-color: #1890ff !important;
       }
 
-      /* Стили для уведомления о выборе даты */
       .date-selection-notification {
         position: fixed;
         top: 100px;
@@ -652,10 +642,25 @@
       }
       /* Calendar */
 
+      /* Стили для уведомления о выборе даты */
+      .date-selection-notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
       @media (max-width: 767px) {
-        /* Улучшаем область скролла для мобильных устройств max-height: 70vh; */
+        /* Улучшаем область скролла для мобильных устройств */
         .months-container {
-          max-height: 90vh;
+          max-height: 75vh;
           touch-action: pan-y; /*  только вертикальный скролл */
         }
 
@@ -709,15 +714,9 @@
           margin-top: 10px;
         }
 
-        .column-content {
-          margin-left: 10px;
-          margin-bottom: 10px; /* margin-bottom: 8px; изменил отступ снизу*/
-        }
-
         .column h2 {
           height: 50px;
           font-size: 14px;
-          margin-bottom: 10px;
         }
 
         .cards-container {
@@ -766,6 +765,29 @@
         .day-number {
           font-size: 1.2em;
         }
+
+        .selectable-day {
+          min-height: 80px; /* Увеличиваем область касания */
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .date-selection-notification {
+          top: 70px;
+          right: 10px;
+          left: 10px;
+          text-align: center;
+        }
+
+        .day-card.selectable-day:active {
+          background: #d4edff !important;
+        }
+
+        .day-card.weekend.selectable-day:active {
+          background: #ffebcc !important;
+        }
       }
 
       @media (min-width: 768px) and (max-width: 1023px) {
@@ -785,7 +807,6 @@
         .container {
           grid-template-columns: repeat(8, 1fr);
           max-width: 2000px;
-          margin: 0 auto;
           gap: 15px;
         }
 
@@ -813,49 +834,6 @@
         .work-time {
           font-size: 0.7em;
           padding: 3px 6px;
-        }
-      }
-
-      /* Улучшенные стили для мобильных устройств */
-      @media (max-width: 767px) {
-        .selectable-day {
-          min-height: 80px; /* Увеличиваем область касания */
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .day-card.selectable-day:active {
-          background: #d4edff !important;
-        }
-
-        .day-card.weekend.selectable-day:active {
-          background: #ffebcc !important;
-        }
-      }
-
-      /* Стили для уведомления о выборе даты */
-      .date-selection-notification {
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background: #4caf50;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        z-index: 10000;
-        font-size: 14px;
-        transition: all 0.3s ease;
-      }
-
-      @media (max-width: 767px) {
-        .date-selection-notification {
-          top: 80px;
-          right: 10px;
-          left: 10px;
-          text-align: center;
         }
       }
 
@@ -1098,22 +1076,6 @@
           throw error;
         }
       }
-      /*
-      // Функция для расчета времени окончания приема
-      function calculateEndTime() {
-        const dateTimeInput = document.getElementById(
-          "appointmentDateTime"
-        ).value;
-        const endTimeDisplay = document.getElementById("appointmentEndTime");
-
-        if (dateTimeInput) {
-          const startTime = new Date(dateTimeInput);
-          const endTime = new Date(startTime.getTime() + 30 * 60000);
-          const formattedEndTime = endTime.toTimeString().slice(0, 5);
-          endTimeDisplay.value = formattedEndTime;
-        }
-      }
-      */
 
       // Функция для расчета времени окончания приема
       function calculateEndTime() {
