@@ -114,7 +114,6 @@
         /* background-color: #fcf8e1; */
         background-color: #f8f2d0;
         border-radius: 5px;
-        padding: 25px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
@@ -654,10 +653,10 @@
       /* Calendar */
 
       @media (max-width: 767px) {
-        /* Улучшаем область скролла для мобильных устройств */
+        /* Улучшаем область скролла для мобильных устройств max-height: 70vh; */
         .months-container {
-          max-height: 70vh;
-          touch-action: pan-y; /* Разрешаем только вертикальный скролл */
+          max-height: 90vh;
+          touch-action: pan-y; /*  только вертикальный скролл */
         }
 
         /* Добавил в рамках решения проблемы мгновенного клика */
@@ -667,7 +666,6 @@
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          /* убрал выделение при тапе */
           -webkit-tap-highlight-color: transparent;
           -webkit-user-select: none;
           -moz-user-select: none;
@@ -785,14 +783,20 @@
 
       @media (min-width: 1024px) {
         .container {
-          grid-template-columns: repeat(7, 1fr);
+          grid-template-columns: repeat(8, 1fr);
           max-width: 2000px;
           margin: 0 auto;
-          gap: 20px;
+          gap: 15px;
         }
 
         .column {
           min-height: 900px;
+        }
+
+        .time-scale {
+          margin-left: 3px;
+          width: 15px;
+          top: 45px;
         }
       }
 
@@ -943,7 +947,7 @@
     <div class="modal" id="scheduleModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2><div id="specialistName"></h2>
+          <h2><div id="specialistName"></div></h2>
           <button class="modal-close-button" onclick="closeScheduleModal()">
             ✖
           </button>
@@ -969,7 +973,7 @@
       function formatFullName(surname, name, patronymic) {
         const nameInitial = name ? `${name.charAt(0)}.` : "";
         const patronymicInitial = patronymic ? `${patronymic.charAt(0)}.` : "";
-        return `${surname} ${nameInitial}${patronymicInitial}`;
+        return `${surname} ${nameInitial} ${patronymicInitial}`;
       }
 
       // Функция для создания шкалы времени
@@ -1857,8 +1861,8 @@
           currentSpecialist.name,
           currentSpecialist.patronymic
         );
-        header.innerHTML = `График ${formattedName}`;
-        
+        header.innerHTML = `График: ${formattedName}`;
+
         // Группируем дни по месяцам
         const monthsMap = new Map();
 
