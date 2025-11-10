@@ -1354,14 +1354,12 @@
         const workTime = getWorkTime();
         const workDuration = workTime.end - workTime.start;
 
-        // Рассчитываем высоту столбца на основе рабочего времени
         const columnHeight = workDuration * 60 + 60;
         const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
         column.className = "column";
         column.style.minHeight = `${columnHeight}px`;
-        // Добавляем data-атрибут с датой столбца
         column.setAttribute("data-column-date", date);
 
         column.innerHTML = `
@@ -1376,7 +1374,6 @@
 
         const cardsContainer = column.querySelector(".cards-container");
 
-        // Добавляем блоки нерабочего времени специалиста (передаем cardsContainer)
         createNonWorkingTimeOverlay(
           date,
           workTime,
@@ -1396,15 +1393,67 @@
           cardsContainer.appendChild(card);
         });
 
-        column.addEventListener("click", function (e) {
+        // Функция для обработки открытия модального окна
+        const handleColumnClick = function (e) {
           if (
             e.target === column ||
             e.target.classList.contains("empty-column") ||
             e.target.classList.contains("cards-container")
           ) {
-            // Передаем дату столбца в функцию открытия модального окна
             openAddModal(date);
           }
+        };
+
+        // Добавляем обработчики для десктопа и мобильных устройств
+        column.addEventListener("click", handleColumnClick);
+
+        // Добавляем обработчики для touch-устройств
+        column.addEventListener("touchstart", function (e) {
+          // Сохраняем координаты начала касания
+          this.touchStartX = e.touches[0].clientX;
+          this.touchStartY = e.touches[0].clientY;
+          this.isScrolling = false;
+        });
+
+        column.addEventListener("touchmove", function (e) {
+          if (!this.touchStartX || !this.touchStartY) return;
+
+          const touchX = e.touches[0].clientX;
+          const touchY = e.touches[0].clientY;
+
+          const diffX = Math.abs(touchX - this.touchStartX);
+          const diffY = Math.abs(touchY - this.touchStartY);
+
+          // Если движение по вертикали больше 10px - это скролл
+          if (diffY > 10 && diffY > diffX) {
+            this.isScrolling = true;
+          }
+        });
+
+        column.addEventListener("touchend", function (e) {
+          if (!this.isScrolling) {
+            // Если не было скролла - это выбор столбца
+            const touch = e.changedTouches[0];
+            const target = document.elementFromPoint(
+              touch.clientX,
+              touch.clientY
+            );
+
+            if (
+              target === column ||
+              target.classList.contains("empty-column") ||
+              target.classList.contains("cards-container") ||
+              (target.closest && target.closest(".column") === column)
+            ) {
+              e.preventDefault();
+              openAddModal(date);
+            }
+          }
+
+          // Сбрасываем значения
+          this.touchStartX = 0;
+          this.touchStartY = 0;
+          this.isScrolling = false;
         });
 
         container.appendChild(column);
@@ -1500,14 +1549,12 @@
         const workTime = getWorkTime();
         const workDuration = workTime.end - workTime.start;
 
-        // Рассчитываем высоту столбца на основе рабочего времени
         const columnHeight = workDuration * 60 + 60;
         const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
         column.className = "column";
         column.style.minHeight = `${columnHeight}px`;
-        // Не добавляем data-атрибут для пустого столбца
 
         column.innerHTML = `
       <div class="column-content">
@@ -1520,15 +1567,63 @@
 
         createTimeScale(column);
 
-        column.addEventListener("click", function (e) {
+        // Функция для обработки открытия модального окна (без даты)
+        const handleEmptyColumnClick = function (e) {
           if (
             e.target === column ||
             e.target.classList.contains("empty-column") ||
             e.target.classList.contains("cards-container")
           ) {
-            // Для пустого столбца вызываем без параметра
             openAddModal();
           }
+        };
+
+        // Добавляем обработчики для десктопа и мобильных устройств
+        column.addEventListener("click", handleEmptyColumnClick);
+
+        // Добавляем обработчики для touch-устройств
+        column.addEventListener("touchstart", function (e) {
+          this.touchStartX = e.touches[0].clientX;
+          this.touchStartY = e.touches[0].clientY;
+          this.isScrolling = false;
+        });
+
+        column.addEventListener("touchmove", function (e) {
+          if (!this.touchStartX || !this.touchStartY) return;
+
+          const touchX = e.touches[0].clientX;
+          const touchY = e.touches[0].clientY;
+
+          const diffX = Math.abs(touchX - this.touchStartX);
+          const diffY = Math.abs(touchY - this.touchStartY);
+
+          if (diffY > 10 && diffY > diffX) {
+            this.isScrolling = true;
+          }
+        });
+
+        column.addEventListener("touchend", function (e) {
+          if (!this.isScrolling) {
+            const touch = e.changedTouches[0];
+            const target = document.elementFromPoint(
+              touch.clientX,
+              touch.clientY
+            );
+
+            if (
+              target === column ||
+              target.classList.contains("empty-column") ||
+              target.classList.contains("cards-container") ||
+              (target.closest && target.closest(".column") === column)
+            ) {
+              e.preventDefault();
+              openAddModal();
+            }
+          }
+
+          this.touchStartX = 0;
+          this.touchStartY = 0;
+          this.isScrolling = false;
         });
 
         container.appendChild(column);
@@ -1540,7 +1635,11 @@
         document.getElementById("searchClient").value = "";
         document.getElementById("searchResults").innerHTML = "";
         document.getElementById("appointmentNote").value = "";
-        document.getElementById("searchClient").focus();
+
+        // Фокус на поле поиска с небольшой задержкой для мобильных устройств
+        setTimeout(() => {
+          document.getElementById("searchClient").focus();
+        }, 100);
 
         // Если передана дата столбца, устанавливаем ее в поле ввода
         if (columnDate) {
@@ -1557,19 +1656,30 @@
             .toString()
             .padStart(2, "0")}:00`;
 
-          document.getElementById(
-            "appointmentDateTime"
-          ).value = `${formattedDate}T${defaultTime}`;
+          const dateTimeValue = `${formattedDate}T${defaultTime}`;
+          document.getElementById("appointmentDateTime").value = dateTimeValue;
+
+          // Для мобильных устройств дополнительно активируем поле ввода
+          setTimeout(() => {
+            const dateTimeInput = document.getElementById(
+              "appointmentDateTime"
+            );
+            if (dateTimeInput.value !== dateTimeValue) {
+              // Если значение не установилось, пробуем еще раз
+              dateTimeInput.value = dateTimeValue;
+            }
+          }, 50);
 
           // Автоматически рассчитываем время окончания
-          calculateEndTime();
+          setTimeout(() => {
+            calculateEndTime();
+          }, 100);
         } else {
           // Для пустого столбца оставляем текущее поведение
           document.getElementById("appointmentDateTime").value = "";
           document.getElementById("appointmentEndTime").value = "";
         }
       }
-
       // Закрытие модального окна добавления записи
       function closeAddModal() {
         document.getElementById("addModal").style.display = "none";
