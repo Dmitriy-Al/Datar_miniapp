@@ -1361,13 +1361,15 @@
         const column = document.createElement("div");
         column.className = "column";
         column.style.minHeight = `${columnHeight}px`;
+        // Добавляем data-атрибут с датой столбца
+        column.setAttribute("data-column-date", date);
 
         column.innerHTML = `
-        <div class="column-content">
-            <h2>${date}</h2>
-            <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;">
-            </div>
-        </div>
+      <div class="column-content">
+          <h2>${date}</h2>
+          <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;">
+          </div>
+      </div>
     `;
 
         createTimeScale(column);
@@ -1400,7 +1402,8 @@
             e.target.classList.contains("empty-column") ||
             e.target.classList.contains("cards-container")
           ) {
-            openAddModal();
+            // Передаем дату столбца в функцию открытия модального окна
+            openAddModal(date);
           }
         });
 
@@ -1463,23 +1466,20 @@
 
         if (height > 50) {
           card.innerHTML = `
-            <h3>${formattedName}</h3>
-            <p>${appointmentData.client.phoneNumber}</p> 
-            <p>${startTimeStr} - ${endTimeStr}</p>
-        `;
+              <h3>${formattedName}</h3>
+              <p>${appointmentData.client.phoneNumber}</p>
+              <p>${startTimeStr} - ${endTimeStr}</p>
+          `;
         } else if (height > 30) {
           card.style.fontSize = "8px";
           card.innerHTML = `
-          <p><small>${formattedName}</small></p>
-          <p>${startTimeStr} - ${endTimeStr}</p>
-        `;
+            <p><small>${formattedName}</small></p>
+            <p>${startTimeStr} - ${endTimeStr}</p>
+          `;
         } else {
-          //card.style.backgroundColor = "#ffc457";
           card.style.fontSize = "7px";
           card.style.padding = "5px";
-          card.innerHTML = `
-          <p>${startTimeStr} - ${endTimeStr}</p>
-        `;
+          card.innerHTML = `<p>${startTimeStr} - ${endTimeStr}</p>`;
         }
 
         card.addEventListener("click", function (e) {
@@ -1501,20 +1501,21 @@
         const workDuration = workTime.end - workTime.start;
 
         // Рассчитываем высоту столбца на основе рабочего времени
-        const columnHeight = workDuration * 60 + 60; // 60px на заголовок
+        const columnHeight = workDuration * 60 + 60;
         const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
         column.className = "column";
         column.style.minHeight = `${columnHeight}px`;
+        // Не добавляем data-атрибут для пустого столбца
 
         column.innerHTML = `
-        <div class="column-content">
-            <h2>Новая запись</h2>
-            <div class="cards-container" style="height: ${cardsContainerHeight}px;">
-                <div class="empty-column">Нажмите для записи</div>
-            </div>
-        </div>
+      <div class="column-content">
+          <h2>Новая запись</h2>
+          <div class="cards-container" style="height: ${cardsContainerHeight}px;">
+              <div class="empty-column">Нажмите для записи</div>
+          </div>
+      </div>
     `;
 
         createTimeScale(column);
@@ -1525,6 +1526,7 @@
             e.target.classList.contains("empty-column") ||
             e.target.classList.contains("cards-container")
           ) {
+            // Для пустого столбца вызываем без параметра
             openAddModal();
           }
         });
@@ -1533,14 +1535,39 @@
       }
 
       // Открытие модального окна добавления записи
-      function openAddModal() {
+      function openAddModal(columnDate) {
         document.getElementById("addModal").style.display = "block";
         document.getElementById("searchClient").value = "";
         document.getElementById("searchResults").innerHTML = "";
-        document.getElementById("appointmentDateTime").value = "";
-        document.getElementById("appointmentEndTime").value = "";
         document.getElementById("appointmentNote").value = "";
         document.getElementById("searchClient").focus();
+
+        // Если передана дата столбца, устанавливаем ее в поле ввода
+        if (columnDate) {
+          // Преобразуем дату из формата "dd.MM.yyyy" в "yyyy-MM-dd"
+          const [day, month, year] = columnDate.split(".");
+          const formattedDate = `${year}-${month.padStart(
+            2,
+            "0"
+          )}-${day.padStart(2, "0")}`;
+
+          // Устанавливаем дату и время по умолчанию (начало рабочего дня)
+          const workTime = getWorkTime();
+          const defaultTime = `${workTime.start
+            .toString()
+            .padStart(2, "0")}:00`;
+
+          document.getElementById(
+            "appointmentDateTime"
+          ).value = `${formattedDate}T${defaultTime}`;
+
+          // Автоматически рассчитываем время окончания
+          calculateEndTime();
+        } else {
+          // Для пустого столбца оставляем текущее поведение
+          document.getElementById("appointmentDateTime").value = "";
+          document.getElementById("appointmentEndTime").value = "";
+        }
       }
 
       // Закрытие модального окна добавления записи
@@ -1569,17 +1596,17 @@
           "clientName"
         ).innerHTML = `<h4>${client.surname} ${client.name} ${client.patronymic}</h4>`;
         document.getElementById("clientInfo").innerHTML = `
-        <a href="tel:${client.phoneNumber}">${
+          <a href="tel:${client.phoneNumber}">${
           client.phoneNumber || "Телефонный номер не указан"
         }</a>
-            <p><strong>Дата рождения:</strong> ${
-              client.birthdate || "Не указана"
-            }</p>
-            <p><strong>Дата и время приема:</strong> <p>${displayText}</p>
-            <p><strong>Комментарий:</strong> ${
-              appointment.appointmentNote || ""
-            }</p>
-        `;
+              <p><strong>Дата рождения:</strong> ${
+                client.birthdate || "Не указана"
+              }</p>
+              <p><strong>Дата и время приема:</strong> <p>${displayText}</p>
+              <p><strong>Комментарий:</strong> ${
+                appointment.appointmentNote || ""
+              }</p>
+          `;
 
         document.getElementById("viewModal").style.display = "block";
       }
@@ -1889,25 +1916,25 @@
               ? ` с ${dayData.workingHours.start} до ${dayData.workingHours.end}`
               : " - выходной";
 
-            daysHtml += `<div class="${dayClass} ${todayClass} selectable-day" 
-                            data-date="${dateString}"
-                            data-is-working="${dayData.isWorking}"
-                            data-working-hours="${
-                              dayData.isWorking
-                                ? `${dayData.workingHours.start}-${dayData.workingHours.end}`
-                                : ""
-                            }"
-                            title="Выбрать ${dateString}${timeString}">
-                        <div class="day-number">${day}</div>
-                        <div class="day-name">${daysOfWeek[dayOfWeek]}</div>
-                        <div class="work-time">${dayData.displayText}</div>
-                    </div>`;
+            daysHtml += `<div class="${dayClass} ${todayClass} selectable-day"
+                              data-date="${dateString}"
+                              data-is-working="${dayData.isWorking}"
+                              data-working-hours="${
+                                dayData.isWorking
+                                  ? `${dayData.workingHours.start}-${dayData.workingHours.end}`
+                                  : ""
+                              }"
+                              title="Выбрать ${dateString}${timeString}">
+                          <div class="day-number">${day}</div>
+                          <div class="day-name">${daysOfWeek[dayOfWeek]}</div>
+                          <div class="work-time">${dayData.displayText}</div>
+                      </div>`;
           });
 
           html += `<div class="month-section">
-                    <div class="month-title">${monthName} ${year}</div>
-                    <div class="days-grid">${daysHtml}</div>
-                </div>`;
+                      <div class="month-title">${monthName} ${year}</div>
+                      <div class="days-grid">${daysHtml}</div>
+                  </div>`;
         });
 
         container.innerHTML = html;
@@ -2100,18 +2127,18 @@
         // Создаем временное уведомление
         const notification = document.createElement("div");
         notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background: ${isWorking ? "#4CAF50" : "#FF9800"};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        z-index: 10000;
-        font-size: 14px;
-        transition: all 0.3s ease;
-    `;
+          position: fixed;
+          top: 100px;
+          right: 20px;
+          background: ${isWorking ? "#4CAF50" : "#FF9800"};
+          color: white;
+          padding: 12px 20px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          z-index: 10000;
+          font-size: 14px;
+          transition: all 0.3s ease;
+      `;
 
         const formattedDate = new Date(dateString).toLocaleDateString("ru-RU");
         notification.textContent = `Выбрана дата: ${formattedDate}${
