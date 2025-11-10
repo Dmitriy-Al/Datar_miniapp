@@ -96,20 +96,7 @@
         width: 100%;
         max-width: 100%;
       }
-      /*
-        .column {
-        background-color: #fcf8e1;
-        border-radius: 5px;
-        padding: 25px;
-        min-height: 900px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-      }
-      */
+
       .column {
         /* background-color: #fcf8e1; */
         background-color: #f8f2d0;
@@ -232,7 +219,7 @@
       }
 
       .card {
-        /* #ffdc9c;    #fdd997;  */
+        /* background-color: #ffd890;  */
         background: linear-gradient(to bottom, #ffcc6e, #ffd890);
         border-radius: 5px;
         padding: 1px;
@@ -1327,6 +1314,8 @@
               endTime: endTime,
               appointmentString: appointment.appointmentDateTime,
               appointmentId: appointment.id,
+              confirmAppointment: appointment.confirmAppointment,
+              waitNearAppointment: appointment.waitNearAppointment,
             });
           }
         });
@@ -1433,6 +1422,8 @@
         const startTime = appointmentData.dateTime;
         const hours = startTime.getHours();
         const minutes = startTime.getMinutes();
+        const confirmAppointmentStatus = appointmentData.confirmAppointment;
+        const isWaitNearAppointment = appointmentData.waitNearAppointment;
 
         // Пересчитываем позиционирование относительно начала рабочего дня
         const totalMinutesFromStart = (hours - workStartHour) * 60 + minutes;
@@ -1459,6 +1450,14 @@
           appointmentData.client.patronymic
         );
 
+        if (confirmAppointmentStatus === "UNCERTAIN" && isWaitNearAppointment) {
+          card.style.background = "#ffa2a2";
+        } else if (confirmAppointmentStatus === "EXPECTANT") {
+          card.style.background = "#ade8ff";
+        } else if (confirmAppointmentStatus === "CONFIRMED") {
+          card.style.background = "#b6f5b5";
+        }
+
         if (height > 50) {
           card.innerHTML = `
             <h3>${formattedName}</h3>
@@ -1472,7 +1471,7 @@
           <p>${startTimeStr} - ${endTimeStr}</p>
         `;
         } else {
-          card.style.backgroundColor = "#ffc457";
+          //card.style.backgroundColor = "#ffc457";
           card.style.fontSize = "7px";
           card.style.padding = "5px";
           card.innerHTML = `
