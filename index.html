@@ -1451,11 +1451,14 @@
         );
 
         if (confirmAppointmentStatus === "UNCERTAIN" && isWaitNearAppointment) {
-          card.style.background = "#ffa2a2";
+          card.style.background =
+            "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
         } else if (confirmAppointmentStatus === "EXPECTANT") {
-          card.style.background = "#ade8ff";
+          card.style.background =
+            "linear-gradient(to bottom, #92ddfa, #ade8ff)";
         } else if (confirmAppointmentStatus === "CONFIRMED") {
-          card.style.background = "#b6f5b5";
+          card.style.background =
+            "linear-gradient(to bottom, #9af798, #b6f5b5)";
         }
 
         if (height > 50) {
