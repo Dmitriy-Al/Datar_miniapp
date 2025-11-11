@@ -629,63 +629,19 @@
       }
       /* Calendar */
 
-      /* Стиль 3: Toggle-переключатель */
-      .toggle-container {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding-bottom: 10px;
-      }
-
-      .toggle-switch {
-        position: relative;
-        display: inline-block;
-        width: 50px;
-        height: 24px;
-      }
-
-      .toggle-switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
-
-      .toggle-slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        transition: 0.4s;
-        border-radius: 24px;
-      }
-
-      .toggle-slider:before {
-        position: absolute;
-        content: "";
-        height: 16px;
-        width: 16px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        transition: 0.4s;
-        border-radius: 50%;
-      }
-
-      input:checked + .toggle-slider {
-        background-color: #3498db;
-      }
-
-      input:checked + .toggle-slider:before {
-        transform: translateX(26px);
-      }
-
-      .toggle-label {
+      /* Стили для уведомления о выборе даты */
+      .date-selection-notification {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
         font-size: 14px;
-        color: #2c3e50;
-        font-weight: 500;
+        transition: all 0.3s ease;
       }
 
       @media (max-width: 767px) {
@@ -868,6 +824,65 @@
         }
       }
 
+      /* Toggle-переключатель */
+      .toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 10px;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+      }
+
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+
+      .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+
+      input:checked + .toggle-slider {
+        background-color: #3498db;
+      }
+
+      input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+      }
+
+      .toggle-label {
+        font-size: 14px;
+        color: #2c3e50;
+        font-weight: 500;
+      }
+
       /* Calendar */
     </style>
   </head>
@@ -882,11 +897,10 @@
     <div class="container" id="columnsContainer">
       <!-- Столбцы будут созданы через JavaScript -->
     </div>
-
     <!-- Модальное окно для добавления новой записи -->
     <div class="modal" id="addModal">
       <div class="modal-content">
-        <div class="modal-add-view-header">
+        <div class="modal-add-vew-header">
           <button class="modal-close-button" onclick="closeAddModal()">
             ✖
           </button>
@@ -928,7 +942,6 @@
             <small>Время окончания приема</small>
             <input type="time" id="appointmentEndTime" class="time-input" />
           </div>
-
           <div class="modal-buttons">
             <button
               class="modal-button schedule"
@@ -1674,7 +1687,7 @@
             <p>${startTimeStr} - ${endTimeStr}</p>
           `;
         } else {
-          card.style.background = "#ffb222";
+          card.style.background = "#ffc14e";
           card.style.fontSize = "7px";
           card.style.padding = "5px";
           card.innerHTML = `<p>${startTimeStr} - ${endTimeStr}</p>`;
@@ -1688,7 +1701,7 @@
             "linear-gradient(to bottom, #92ddfa, #c3eeff)";
         } else if (confirmAppointmentStatus === "CONFIRMED") {
           card.style.background =
-            "linear-gradient(to bottom, #9af798, #baffb9)";
+            "linear-gradient(to bottom, #9af798, #ceffcd)";
         }
 
         // Обработчик для десктопа
