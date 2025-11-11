@@ -897,6 +897,7 @@
     <div class="container" id="columnsContainer">
       <!-- Столбцы будут созданы через JavaScript -->
     </div>
+
     <!-- Модальное окно для добавления новой записи -->
     <div class="modal" id="addModal">
       <div class="modal-content">
@@ -1080,6 +1081,29 @@
           const response = await fetch(
             `${API_BASE}/appointments/by-specialist-id/${encodeURIComponent(
               specialistId
+            )}`
+          );
+
+          if (!response.ok) {
+            if (response.status === 404) {
+              return [];
+            }
+            throw new Error("Failed to load appointments: " + response.status);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading appointments by specialistId:", error);
+          throw error;
+        }
+      }
+
+      // Функция для получения записей по clientId
+      async function getAppointmentsByClientId(clientId) {
+        try {
+          const response = await fetch(
+            `${API_BASE}/appointments/by-client-id/${encodeURIComponent(
+              clientId
             )}`
           );
 
@@ -1435,12 +1459,12 @@
         column.setAttribute("data-column-date", date);
 
         column.innerHTML = `
-      <div class="column-content">
-          <h2>${date}</h2>
-          <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;">
-          </div>
-      </div>
-    `;
+        <div class="column-content">
+            <h2>${date}</h2>
+            <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;">
+            </div>
+        </div>
+      `;
 
         createTimeScale(column);
 
@@ -1561,13 +1585,13 @@
         column.style.minHeight = `${columnHeight}px`;
 
         column.innerHTML = `
-      <div class="column-content">
-          <h2>Новая запись</h2>
-          <div class="cards-container" style="height: ${cardsContainerHeight}px;">
-              <div class="empty-column">Нажмите для записи</div>
-          </div>
-      </div>
-    `;
+        <div class="column-content">
+            <h2>Новая запись</h2>
+            <div class="cards-container" style="height: ${cardsContainerHeight}px;">
+                <div class="empty-column">Нажмите для записи</div>
+            </div>
+        </div>
+      `;
 
         createTimeScale(column);
 
@@ -1676,16 +1700,16 @@
 
         if (height > 50) {
           card.innerHTML = `
-              <h3>${formattedName}</h3>
-              <p>${appointmentData.client.phoneNumber}</p>
-              <p>${startTimeStr} - ${endTimeStr}</p>
-          `;
+                <h3>${formattedName}</h3>
+                <p>${appointmentData.client.phoneNumber}</p>
+                <p>${startTimeStr} - ${endTimeStr}</p>
+            `;
         } else if (height > 30) {
           card.style.fontSize = "8px";
           card.innerHTML = `
-            <p><small>${formattedName}</small></p>
-            <p>${startTimeStr} - ${endTimeStr}</p>
-          `;
+              <p><small>${formattedName}</small></p>
+              <p>${startTimeStr} - ${endTimeStr}</p>
+            `;
         } else {
           card.style.background = "#ffc14e";
           card.style.fontSize = "7px";
@@ -1767,6 +1791,9 @@
         document.getElementById("searchResults").innerHTML = "";
         document.getElementById("appointmentNote").value = "";
 
+        // Сбрасываем переключатель в выключенное состояние
+        document.getElementById("waitAppointmentToggle").checked = false;
+
         // Фокус на поле поиска с небольшой задержкой для мобильных устройств
         setTimeout(() => {
           document.getElementById("searchClient").focus();
@@ -1811,6 +1838,7 @@
           document.getElementById("appointmentEndTime").value = "";
         }
       }
+
       // Закрытие модального окна добавления записи
       function closeAddModal() {
         document.getElementById("addModal").style.display = "none";
@@ -1837,17 +1865,17 @@
           "clientName"
         ).innerHTML = `<h4>${client.surname} ${client.name} ${client.patronymic}</h4>`;
         document.getElementById("clientInfo").innerHTML = `
-          <a href="tel:${client.phoneNumber}">${
+            <a href="tel:${client.phoneNumber}">${
           client.phoneNumber || "Телефонный номер не указан"
         }</a>
-              <p><strong>Дата рождения:</strong> ${
-                client.birthdate || "Не указана"
-              }</p>
-              <p><strong>Дата и время приема:</strong> <p>${displayText}</p>
-              <p><strong>Комментарий:</strong> ${
-                appointment.appointmentNote || ""
-              }</p>
-          `;
+                <p><strong>Дата рождения:</strong> ${
+                  client.birthdate || "Не указана"
+                }</p>
+                <p><strong>Дата и время приема:</strong> <p>${displayText}</p>
+                <p><strong>Комментарий:</strong> ${
+                  appointment.appointmentNote || ""
+                }</p>
+            `;
 
         document.getElementById("viewModal").style.display = "block";
       }
@@ -1878,6 +1906,11 @@
           const endTimeInput =
             document.getElementById("appointmentEndTime").value;
           const noteInput = document.getElementById("appointmentNote").value;
+
+          // Получаем состояние переключателя "Добавить в лист ожидания"
+          const waitNearAppointment = document.getElementById(
+            "waitAppointmentToggle"
+          ).checked;
 
           if (!currentSelectedClient) {
             alert("Пожалуйста, выберите клиента");
@@ -1932,8 +1965,6 @@
             return;
           }
 
-          specialistWorkTime;
-
           const now = new Date();
           if (startDateTime < now) {
             alert("Нельзя записать на прошедшую дату");
@@ -1941,8 +1972,12 @@
           }
 
           const hasOverlap = await checkAppointmentOverlap(
-            newAppointmentDateTime
+            newAppointmentDateTime,
+            currentSelectedClient.id
           );
+          //  const hasOverlap = await checkAppointmentOverlap(
+          //   newAppointmentDateTime
+          //   );
           if (hasOverlap) {
             alert(
               "Выбранное время накладывается на существующую запись. Пожалуйста, выберите другое время."
@@ -1957,6 +1992,8 @@
             clientId: currentSelectedClient.id,
             appointmentDateTime: newAppointmentDateTime,
             appointmentNote: noteInput.trim(),
+            waitNearAppointment: waitNearAppointment, // Добавляем поле из переключателя
+            confirmAppointment: "UNCERTAIN", // Устанавливаем значение по умолчанию
           };
 
           const response = await fetch(`${API_BASE}/appointments`, {
@@ -2010,11 +2047,15 @@
       }
 
       // Вспомогательная функция для проверки наложения записей
-      async function checkAppointmentOverlap(newAppointmentDateTime) {
+      async function checkAppointmentOverlap(newAppointmentDateTime, clientId) {
         try {
-          const appointments = await getAppointmentsBySpecialistId(
+          const clientAppointments = await getAppointmentsByClientId(clientId);
+
+          const specialistAppointments = await getAppointmentsBySpecialistId(
             currentSpecialist.id
           );
+
+          specialistAppointments.concat(clientAppointments);
 
           // Парсим новую запись
           const [newDatePart, newTimePart] =
@@ -2027,7 +2068,7 @@
           );
           const newEnd = new Date(`${year}-${month}-${day}T${newEndTimeStr}`);
 
-          for (const appointment of appointments) {
+          for (const appointment of clientAppointments) {
             // Парсим существующие записи
             const ap = appointment.appointmentDateTime;
 
@@ -2158,24 +2199,24 @@
               : " - выходной";
 
             daysHtml += `<div class="${dayClass} ${todayClass} selectable-day"
-                              data-date="${dateString}"
-                              data-is-working="${dayData.isWorking}"
-                              data-working-hours="${
-                                dayData.isWorking
-                                  ? `${dayData.workingHours.start}-${dayData.workingHours.end}`
-                                  : ""
-                              }"
-                              title="Выбрать ${dateString}${timeString}">
-                          <div class="day-number">${day}</div>
-                          <div class="day-name">${daysOfWeek[dayOfWeek]}</div>
-                          <div class="work-time">${dayData.displayText}</div>
-                      </div>`;
+                                data-date="${dateString}"
+                                data-is-working="${dayData.isWorking}"
+                                data-working-hours="${
+                                  dayData.isWorking
+                                    ? `${dayData.workingHours.start}-${dayData.workingHours.end}`
+                                    : ""
+                                }"
+                                title="Выбрать ${dateString}${timeString}">
+                            <div class="day-number">${day}</div>
+                            <div class="day-name">${daysOfWeek[dayOfWeek]}</div>
+                            <div class="work-time">${dayData.displayText}</div>
+                        </div>`;
           });
 
           html += `<div class="month-section">
-                      <div class="month-title">${monthName} ${year}</div>
-                      <div class="days-grid">${daysHtml}</div>
-                  </div>`;
+                        <div class="month-title">${monthName} ${year}</div>
+                        <div class="days-grid">${daysHtml}</div>
+                    </div>`;
         });
 
         container.innerHTML = html;
@@ -2368,18 +2409,18 @@
         // Создаем временное уведомление
         const notification = document.createElement("div");
         notification.style.cssText = `
-          position: fixed;
-          top: 100px;
-          right: 20px;
-          background: ${isWorking ? "#4CAF50" : "#FF9800"};
-          color: white;
-          padding: 12px 20px;
-          border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-          z-index: 10000;
-          font-size: 14px;
-          transition: all 0.3s ease;
-      `;
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: ${isWorking ? "#4CAF50" : "#FF9800"};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        `;
 
         const formattedDate = new Date(dateString).toLocaleDateString("ru-RU");
         notification.textContent = `Выбрана дата: ${formattedDate}${
