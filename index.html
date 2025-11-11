@@ -1659,130 +1659,151 @@
 
       // Создание карточки записи
       function createAppointmentCard(
-        appointmentData,
-        workStartHour,
-        containerHeight
-      ) {
-        const card = document.createElement("div");
-        card.className = "card";
+    appointmentData,
+    workStartHour,
+    containerHeight
+) {
+    const card = document.createElement("div");
+    card.className = "card";
 
-        const height = appointmentData.duration * 0.998;
-        card.style.height = `${height}px`;
+    const height = appointmentData.duration * 0.998;
+    card.style.height = `${height}px`;
 
-        const startTime = appointmentData.dateTime;
-        const hours = startTime.getHours();
-        const minutes = startTime.getMinutes();
-        const confirmAppointmentStatus = appointmentData.confirmAppointment;
-        const isWaitNearAppointment = appointmentData.waitNearAppointment;
+    const startTime = appointmentData.dateTime;
+    const hours = startTime.getHours();
+    const minutes = startTime.getMinutes();
+    const confirmAppointmentStatus = appointmentData.confirmAppointment;
+    const isWaitNearAppointment = appointmentData.waitNearAppointment;
 
-        const totalMinutesFromStart = (hours - workStartHour) * 60 + minutes;
-        const workDurationMinutes = containerHeight;
+    const totalMinutesFromStart = (hours - workStartHour) * 60 + minutes;
+    const workDurationMinutes = containerHeight;
 
-        const topPosition =
-          (totalMinutesFromStart / workDurationMinutes) * containerHeight;
-        card.style.top = `${topPosition}px`;
+    const topPosition = (totalMinutesFromStart / workDurationMinutes) * containerHeight;
+    card.style.top = `${topPosition}px`;
 
-        const startTimeStr = startTime.toLocaleTimeString("ru-RU", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
+    const startTimeStr = startTime.toLocaleTimeString("ru-RU", {
+        hour: "2-digit",
+        minute: "2-digit",
+    });
 
-        const endTimeStr = appointmentData.endTime.toLocaleTimeString("ru-RU", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
+    const endTimeStr = appointmentData.endTime.toLocaleTimeString("ru-RU", {
+        hour: "2-digit",
+        minute: "2-digit",
+    });
 
-        const formattedName = formatFullName(
-          appointmentData.client.surname,
-          appointmentData.client.name,
-          appointmentData.client.patronymic
-        );
+    const formattedName = formatFullName(
+        appointmentData.client.surname,
+        appointmentData.client.name,
+        appointmentData.client.patronymic
+    );
 
-        if (height > 50) {
-          card.innerHTML = `
-                <h3>${formattedName}</h3>
-                <p>${appointmentData.client.phoneNumber}</p>
-                <p>${startTimeStr} - ${endTimeStr}</p>
-            `;
-        } else if (height > 30) {
-          card.style.fontSize = "8px";
-          card.innerHTML = `
-              <p><small>${formattedName}</small></p>
+    // Обновляем логику отображения цветов карточек с учетом waitNearAppointment
+    if (confirmAppointmentStatus === "UNCERTAIN" && isWaitNearAppointment) {
+        card.style.background = "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
+    } else if (confirmAppointmentStatus === "EXPECTANT") {
+        card.style.background = "linear-gradient(to bottom, #92ddfa, #ade8ff)";
+    } else if (confirmAppointmentStatus === "CONFIRMED") {
+        card.style.background = "linear-gradient(to bottom, #9af798, #b6f5b5)";
+    } else if (isWaitNearAppointment) {
+        // Если запись в листе ожидания, но статус не UNCERTAIN
+        card.style.background = "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
+    }
+
+    if (height > 50) {
+        card.innerHTML = `
+              <h3>${formattedName}</h3>
+              <p>${appointmentData.client.phoneNumber}</p>
               <p>${startTimeStr} - ${endTimeStr}</p>
-            `;
-        } else {
-          card.style.background = "#ffc14e";
-          card.style.fontSize = "7px";
-          card.style.padding = "5px";
-          card.innerHTML = `<p>${startTimeStr} - ${endTimeStr}</p>`;
-        }
+              ${isWaitNearAppointment ? '<p style="color: #d63031; font-weight: bold;">В листе ожидания</p>' : ''}
+          `;
+    } else if (height > 30) {
+        card.style.fontSize = "8px";
+        card.innerHTML = `
+            <p><small>${formattedName}</small></p>
+            <p>${startTimeStr} - ${endTimeStr}</p>
+            ${isWaitNearAppointment ? '<p style="color: #d63031; font-weight: bold;">Ожидание</p>' : ''}
+          `;
+    } else {
+        card.style.fontSize = "7px";
+        card.style.padding = "5px";
+        card.innerHTML = `
+            <p>${startTimeStr} - ${endTimeStr}</p>
+            ${isWaitNearAppointment ? '<p style="color: #d63031; font-size: 6px;">Ожид.</p>' : ''}
+        `;
+    }
 
-        if (confirmAppointmentStatus === "UNCERTAIN" && isWaitNearAppointment) {
-          card.style.background =
-            "linear-gradient(to bottom, #fcacac, #fdc9c9)";
-        } else if (confirmAppointmentStatus === "EXPECTANT") {
-          card.style.background =
-            "linear-gradient(to bottom, #92ddfa, #c3eeff)";
-        } else if (confirmAppointmentStatus === "CONFIRMED") {
-          card.style.background =
-            "linear-gradient(to bottom, #9af798, #ceffcd)";
-        }
+    // Увеличиваем область клика для маленьких карточек
+    if (height < 40) {
+        card.style.minHeight = "40px";
+        card.style.display = "flex";
+        card.style.alignItems = "center";
+        card.style.justifyContent = "center";
+    }
 
-        // Обработчик для десктопа
-        card.addEventListener("click", function (e) {
-          e.stopPropagation(); // Останавливаем всплытие события
-          openViewModal(
+    // Улучшенный обработчик для десктопа
+    card.addEventListener("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        openViewModal(
             appointmentData.client,
             appointmentData.appointment,
             appointmentData.appointmentString
-          );
-        });
+        );
+    });
 
-        // Обработчики для touch-устройств
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let isScrolling = false;
+    // Улучшенные обработчики для touch-устройств
+    let touchStartTime = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
 
-        card.addEventListener("touchstart", function (e) {
-          e.stopPropagation(); // Останавливаем всплытие
-          touchStartX = e.touches[0].clientX;
-          touchStartY = e.touches[0].clientY;
-          isScrolling = false;
-        });
+    card.addEventListener("touchstart", function (e) {
+        e.stopPropagation();
+        touchStartTime = Date.now();
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        
+        // Добавляем визуальную обратную связь
+        this.style.opacity = "0.8";
+    });
 
-        card.addEventListener("touchmove", function (e) {
-          e.stopPropagation(); // Останавливаем всплытие
+    card.addEventListener("touchmove", function (e) {
+        e.stopPropagation();
+    });
 
-          if (!touchStartX || !touchStartY) return;
-
-          const touchX = e.touches[0].clientX;
-          const touchY = e.touches[0].clientY;
-
-          const diffX = Math.abs(touchX - touchStartX);
-          const diffY = Math.abs(touchY - touchStartY);
-
-          if (diffY > 10 && diffY > diffX) {
-            isScrolling = true;
-          }
-        });
-
-        card.addEventListener("touchend", function (e) {
-          e.stopPropagation(); // Останавливаем всплытие
-
-          if (!isScrolling) {
+    card.addEventListener("touchend", function (e) {
+        e.stopPropagation();
+        
+        const touchDuration = Date.now() - touchStartTime;
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        
+        const deltaX = Math.abs(touchEndX - touchStartX);
+        const deltaY = Math.abs(touchEndY - touchStartY);
+        
+        // Считаем касание тапом, если:
+        // - Длительность менее 500ms
+        // - Смещение менее 10px
+        if (touchDuration < 500 && deltaX < 10 && deltaY < 10) {
+            e.preventDefault();
             openViewModal(
-              appointmentData.client,
-              appointmentData.appointment,
-              appointmentData.appointmentString
+                appointmentData.client,
+                appointmentData.appointment,
+                appointmentData.appointmentString
             );
-          }
+        }
+        
+        // Восстанавливаем прозрачность
+        this.style.opacity = "1";
+    });
 
-          touchStartX = 0;
-          touchStartY = 0;
-          isScrolling = false;
-        });
-        return card;
-      }
+    // Добавляем обработчик для отмены визуальной обратной связи при отмене касания
+    card.addEventListener("touchcancel", function (e) {
+        e.stopPropagation();
+        this.style.opacity = "1";
+    });
+
+    return card;
+}
 
       // Открытие модального окна добавления записи
       function openAddModal(columnDate) {
@@ -1971,16 +1992,14 @@
             return;
           }
 
-          const hasOverlap = await checkAppointmentOverlap(
+          var hasOverlap = await checkAppointmentOverlap(
             newAppointmentDateTime,
             currentSelectedClient.id
           );
-          //  const hasOverlap = await checkAppointmentOverlap(
-          //   newAppointmentDateTime
-          //   );
+
           if (hasOverlap) {
             alert(
-              "Выбранное время накладывается на существующую запись. Пожалуйста, выберите другое время."
+              "Выбранное время накладывается на существующую запись к выбранному специалисту, либо к другим специалистам. Пожалуйста, выберите другое время."
             );
             return;
           }
@@ -2055,7 +2074,10 @@
             currentSpecialist.id
           );
 
-          specialistAppointments.concat(clientAppointments);
+          const allAppointments = [
+            ...specialistAppointments,
+            ...clientAppointments,
+          ];
 
           // Парсим новую запись
           const [newDatePart, newTimePart] =
@@ -2068,7 +2090,7 @@
           );
           const newEnd = new Date(`${year}-${month}-${day}T${newEndTimeStr}`);
 
-          for (const appointment of clientAppointments) {
+          for (const appointment of allAppointments) {
             // Парсим существующие записи
             const ap = appointment.appointmentDateTime;
 
