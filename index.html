@@ -1354,26 +1354,27 @@
         const workTime = getWorkTime();
         const workDuration = workTime.end - workTime.start;
 
+        // Рассчитываем высоту столбца на основе рабочего времени
         const columnHeight = workDuration * 60 + 60;
         const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
         column.className = "column";
         column.style.minHeight = `${columnHeight}px`;
-        column.setAttribute("data-column-date", date);
 
         column.innerHTML = `
-      <div class="column-content">
-          <h2>${date}</h2>
-          <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;">
+          <div class="column-content">
+              <h2>${date}</h2>
+              <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;">
+              </div>
           </div>
-      </div>
-    `;
+      `;
 
         createTimeScale(column);
 
         const cardsContainer = column.querySelector(".cards-container");
 
+        // Добавляем блоки нерабочего времени специалиста (передаем cardsContainer)
         createNonWorkingTimeOverlay(
           date,
           workTime,
@@ -1393,67 +1394,14 @@
           cardsContainer.appendChild(card);
         });
 
-        // Функция для обработки открытия модального окна
-        const handleColumnClick = function (e) {
+        column.addEventListener("click", function (e) {
           if (
             e.target === column ||
             e.target.classList.contains("empty-column") ||
             e.target.classList.contains("cards-container")
           ) {
-            openAddModal(date);
+            openAddModal();
           }
-        };
-
-        // Добавляем обработчики для десктопа и мобильных устройств
-        column.addEventListener("click", handleColumnClick);
-
-        // Добавляем обработчики для touch-устройств
-        column.addEventListener("touchstart", function (e) {
-          // Сохраняем координаты начала касания
-          this.touchStartX = e.touches[0].clientX;
-          this.touchStartY = e.touches[0].clientY;
-          this.isScrolling = false;
-        });
-
-        column.addEventListener("touchmove", function (e) {
-          if (!this.touchStartX || !this.touchStartY) return;
-
-          const touchX = e.touches[0].clientX;
-          const touchY = e.touches[0].clientY;
-
-          const diffX = Math.abs(touchX - this.touchStartX);
-          const diffY = Math.abs(touchY - this.touchStartY);
-
-          // Если движение по вертикали больше 10px - это скролл
-          if (diffY > 10 && diffY > diffX) {
-            this.isScrolling = true;
-          }
-        });
-
-        column.addEventListener("touchend", function (e) {
-          if (!this.isScrolling) {
-            // Если не было скролла - это выбор столбца
-            const touch = e.changedTouches[0];
-            const target = document.elementFromPoint(
-              touch.clientX,
-              touch.clientY
-            );
-
-            if (
-              target === column ||
-              target.classList.contains("empty-column") ||
-              target.classList.contains("cards-container") ||
-              (target.closest && target.closest(".column") === column)
-            ) {
-              e.preventDefault();
-              openAddModal(date);
-            }
-          }
-
-          // Сбрасываем значения
-          this.touchStartX = 0;
-          this.touchStartY = 0;
-          this.isScrolling = false;
         });
 
         container.appendChild(column);
@@ -1549,7 +1497,8 @@
         const workTime = getWorkTime();
         const workDuration = workTime.end - workTime.start;
 
-        const columnHeight = workDuration * 60 + 60;
+        // Рассчитываем высоту столбца на основе рабочего времени
+        const columnHeight = workDuration * 60 + 60; // 60px на заголовок
         const cardsContainerHeight = workDuration * 60;
 
         const column = document.createElement("div");
@@ -1557,18 +1506,17 @@
         column.style.minHeight = `${columnHeight}px`;
 
         column.innerHTML = `
-      <div class="column-content">
-          <h2>Новая запись</h2>
-          <div class="cards-container" style="height: ${cardsContainerHeight}px;">
-              <div class="empty-column">Нажмите для записи</div>
+          <div class="column-content">
+              <h2>Новая запись</h2>
+              <div class="cards-container" style="height: ${cardsContainerHeight}px;">
+                  <div class="empty-column">Нажмите для записи</div>
+              </div>
           </div>
-      </div>
-    `;
+      `;
 
         createTimeScale(column);
 
-        // Функция для обработки открытия модального окна (без даты)
-        const handleEmptyColumnClick = function (e) {
+        column.addEventListener("click", function (e) {
           if (
             e.target === column ||
             e.target.classList.contains("empty-column") ||
@@ -1576,110 +1524,22 @@
           ) {
             openAddModal();
           }
-        };
-
-        // Добавляем обработчики для десктопа и мобильных устройств
-        column.addEventListener("click", handleEmptyColumnClick);
-
-        // Добавляем обработчики для touch-устройств
-        column.addEventListener("touchstart", function (e) {
-          this.touchStartX = e.touches[0].clientX;
-          this.touchStartY = e.touches[0].clientY;
-          this.isScrolling = false;
-        });
-
-        column.addEventListener("touchmove", function (e) {
-          if (!this.touchStartX || !this.touchStartY) return;
-
-          const touchX = e.touches[0].clientX;
-          const touchY = e.touches[0].clientY;
-
-          const diffX = Math.abs(touchX - this.touchStartX);
-          const diffY = Math.abs(touchY - this.touchStartY);
-
-          if (diffY > 10 && diffY > diffX) {
-            this.isScrolling = true;
-          }
-        });
-
-        column.addEventListener("touchend", function (e) {
-          if (!this.isScrolling) {
-            const touch = e.changedTouches[0];
-            const target = document.elementFromPoint(
-              touch.clientX,
-              touch.clientY
-            );
-
-            if (
-              target === column ||
-              target.classList.contains("empty-column") ||
-              target.classList.contains("cards-container") ||
-              (target.closest && target.closest(".column") === column)
-            ) {
-              e.preventDefault();
-              openAddModal();
-            }
-          }
-
-          this.touchStartX = 0;
-          this.touchStartY = 0;
-          this.isScrolling = false;
         });
 
         container.appendChild(column);
       }
 
       // Открытие модального окна добавления записи
-      function openAddModal(columnDate) {
+      function openAddModal() {
         document.getElementById("addModal").style.display = "block";
         document.getElementById("searchClient").value = "";
         document.getElementById("searchResults").innerHTML = "";
+        document.getElementById("appointmentDateTime").value = "";
+        document.getElementById("appointmentEndTime").value = "";
         document.getElementById("appointmentNote").value = "";
-
-        // Фокус на поле поиска с небольшой задержкой для мобильных устройств
-        setTimeout(() => {
-          document.getElementById("searchClient").focus();
-        }, 100);
-
-        // Если передана дата столбца, устанавливаем ее в поле ввода
-        if (columnDate) {
-          // Преобразуем дату из формата "dd.MM.yyyy" в "yyyy-MM-dd"
-          const [day, month, year] = columnDate.split(".");
-          const formattedDate = `${year}-${month.padStart(
-            2,
-            "0"
-          )}-${day.padStart(2, "0")}`;
-
-          // Устанавливаем дату и время по умолчанию (начало рабочего дня)
-          const workTime = getWorkTime();
-          const defaultTime = `${workTime.start
-            .toString()
-            .padStart(2, "0")}:00`;
-
-          const dateTimeValue = `${formattedDate}T${defaultTime}`;
-          document.getElementById("appointmentDateTime").value = dateTimeValue;
-
-          // Для мобильных устройств дополнительно активируем поле ввода
-          setTimeout(() => {
-            const dateTimeInput = document.getElementById(
-              "appointmentDateTime"
-            );
-            if (dateTimeInput.value !== dateTimeValue) {
-              // Если значение не установилось, пробуем еще раз
-              dateTimeInput.value = dateTimeValue;
-            }
-          }, 50);
-
-          // Автоматически рассчитываем время окончания
-          setTimeout(() => {
-            calculateEndTime();
-          }, 100);
-        } else {
-          // Для пустого столбца оставляем текущее поведение
-          document.getElementById("appointmentDateTime").value = "";
-          document.getElementById("appointmentEndTime").value = "";
-        }
+        document.getElementById("searchClient").focus();
       }
+
       // Закрытие модального окна добавления записи
       function closeAddModal() {
         document.getElementById("addModal").style.display = "none";
