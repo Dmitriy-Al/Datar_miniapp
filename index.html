@@ -1602,17 +1602,6 @@
           appointmentData.client.patronymic
         );
 
-        if (confirmAppointmentStatus === "UNCERTAIN" && isWaitNearAppointment) {
-          card.style.background =
-            "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
-        } else if (confirmAppointmentStatus === "EXPECTANT") {
-          card.style.background =
-            "linear-gradient(to bottom, #92ddfa, #ade8ff)";
-        } else if (confirmAppointmentStatus === "CONFIRMED") {
-          card.style.background =
-            "linear-gradient(to bottom, #9af798, #b6f5b5)";
-        }
-
         if (height > 50) {
           card.innerHTML = `
               <h3>${formattedName}</h3>
@@ -1626,9 +1615,21 @@
             <p>${startTimeStr} - ${endTimeStr}</p>
           `;
         } else {
+          card.style.background = "#ffc14e";
           card.style.fontSize = "7px";
           card.style.padding = "5px";
           card.innerHTML = `<p>${startTimeStr} - ${endTimeStr}</p>`;
+        }
+
+        if (confirmAppointmentStatus === "UNCERTAIN" && isWaitNearAppointment) {
+          card.style.background =
+            "linear-gradient(to bottom, #fcacac, #fdc9c9)";
+        } else if (confirmAppointmentStatus === "EXPECTANT") {
+          card.style.background =
+            "linear-gradient(to bottom, #92ddfa, #c3eeff)";
+        } else if (confirmAppointmentStatus === "CONFIRMED") {
+          card.style.background =
+            "linear-gradient(to bottom, #9af798, #ceffcd)";
         }
 
         // Обработчик для десктопа
