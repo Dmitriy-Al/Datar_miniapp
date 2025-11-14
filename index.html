@@ -15,6 +15,7 @@
       body {
         padding: 5px;
         font-family: Arial, sans-serif;
+        /* background-color: #f0f0f0;  white  #627a8d*/
         background-color: #708ca3;
         min-height: 100vh;
         overflow-x: hidden;
@@ -97,6 +98,7 @@
       }
 
       .column {
+        /* background-color: #fcf8e1; */
         background-color: #f8f2d0;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -110,7 +112,7 @@
       .time-scale {
         position: absolute;
         left: 0;
-        top: 60px;
+        top: 60px; /* Высота заголовка */
         bottom: 0;
         width: 15px;
         background: linear-gradient(to bottom, #fff5e4, #fae4bd);
@@ -198,15 +200,17 @@
         position: absolute;
         left: 0;
         right: 0;
+        /*   background-color: rgb(243, 241, 235);   #eeece2 */
         background-color: #ebebeb;
         border: none;
         border-radius: 0;
         pointer-events: none;
         z-index: 1;
-        margin-top: -10px;
+        margin-top: -10px; /* убрал отступ сверху */
       }
 
       .cards-container {
+        /* height будет устанавливаться динамически через JS */
         display: flex;
         flex-direction: column;
         gap: 10px;
@@ -215,6 +219,7 @@
       }
 
       .card {
+        /* background-color: #ffd890;  */
         background: linear-gradient(to bottom, #ffcc6e, #ffd890);
         border-radius: 5px;
         padding: 1px;
@@ -227,7 +232,7 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         text-align: center;
         word-break: break-word;
-        z-index: 2;
+        z-index: 2; /* z-index: 2; Карточки поверх блоков нерабочего времени */
         position: absolute;
         left: 0;
         right: 0;
@@ -236,6 +241,7 @@
       }
 
       .card:hover {
+        /* transform: scale(1.05); */
         transform: scaleY(1.1);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
@@ -329,6 +335,7 @@
         padding: 20px;
         display: flex;
         gap: 10px;
+        /* justify-content: space-between; */
         justify-content: space-around;
       }
 
@@ -342,17 +349,18 @@
         transition: all 0.3s;
         min-width: 80px;
       }
-
+      /*  background-color: #56bd3c;  */
       .modal-button.ok {
         background-color: #6ac753;
         color: white;
       }
-
+      /*   background-color: #3498db; */
       .modal-button.schedule {
         background-color: #43a1e0;
         color: white;
       }
 
+      /*  justify-content: center; background-color: #ff7c6b */
       .modal-button.cancelAppointment {
         justify-content: center;
         background-color: #fc8677;
@@ -403,11 +411,12 @@
         background: #2980b9;
       }
 
+      /* Calendar*/
       .months-container {
         max-height: 600px;
         overflow-y: auto;
         padding: 0;
-        -webkit-overflow-scrolling: touch;
+        -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
       }
 
       .month-section {
@@ -415,6 +424,7 @@
         border-bottom: 1px solid #ecf0f1;
       }
 
+      /* text-align: match-parent; font-size: 1.2em;    max-height: 50px;*/
       .month-title {
         background: #2c3e50;
         color: white;
@@ -472,6 +482,7 @@
         margin-bottom: 8px;
       }
 
+      /* #ffa500 */
       .weekend .day-name {
         color: #ffc14e;
       }
@@ -486,18 +497,21 @@
         display: inline-block;
       }
 
+      /* #ffa500 */
       .weekend .work-time {
         background: #ffc14e;
       }
 
+      /* Schedule Modal Specific Styles */
       #scheduleModal .modal-content {
         max-width: 800px;
         max-height: 90vh;
         overflow-y: auto;
         padding: 0;
-        -webkit-overflow-scrolling: touch;
+        -webkit-overflow-scrolling: touch; /* добавил */
       }
 
+      /* background: linear-gradient(135deg, #2689ca, #2c3e50); padding: 20px; */
       #scheduleModal .modal-header {
         background: linear-gradient(135deg, #1f6ea3, #043555);
         color: white;
@@ -566,6 +580,9 @@
         transition: background-color 0.3s;
       }
 
+      /* -webkit-tap-highlight-color: transparent; Убирает подсветку при тапе на iOS */
+      /*     touch-action: manipulation; Улучшает отзывчивость на касания */
+      /* */
       .selectable-day {
         cursor: pointer;
         transition: all 0.3s ease;
@@ -610,7 +627,9 @@
       #scheduleModal .close-button:hover {
         background-color: rgba(255, 255, 255, 0.2);
       }
+      /* Calendar */
 
+      /* Стили для уведомления о выборе даты */
       .date-selection-notification {
         position: fixed;
         top: 100px;
@@ -626,11 +645,13 @@
       }
 
       @media (max-width: 767px) {
+        /* Улучшаем область скролла для мобильных устройств */
         .months-container {
           max-height: 75vh;
-          touch-action: pan-y;
+          touch-action: pan-y; /*  только вертикальный скролл */
         }
 
+        /* Добавил в рамках решения проблемы мгновенного клика */
         .selectable-day {
           min-height: 80px;
           display: flex;
@@ -666,7 +687,7 @@
         }
 
         .column {
-          padding: 0px;
+          padding: 0px; /* padding: 5px; убрал, чтобы поле нерабочего времени заняло всю ширину колонки*/
         }
 
         .time-scale {
@@ -711,10 +732,11 @@
           flex-direction: column;
         }
 
+        /* Calendar mobile */
         #scheduleModal .modal-content {
           width: 95%;
           max-height: 85vh;
-          margin: 5vh auto;
+          margin: 5vh auto; /* добавил */
         }
 
         .days-grid {
@@ -732,7 +754,7 @@
         }
 
         .selectable-day {
-          min-height: 80px;
+          min-height: 80px; /* Увеличиваем область касания */
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -786,6 +808,7 @@
         }
       }
 
+      /* Calendar */
       @media (max-width: 480px) {
         .days-grid {
           grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -801,6 +824,7 @@
         }
       }
 
+      /* Toggle-переключатель */
       .toggle-container {
         display: flex;
         align-items: center;
@@ -858,35 +882,61 @@
         color: #2c3e50;
         font-weight: 500;
       }
+
+      /* Calendar */
     </style>
   </head>
   <body>
+    <!-- Шапка с кнопками-клавишами -->
     <div class="header" id="header" style="display: none">
-      <div class="keys-container" id="keysContainer"></div>
+      <div class="keys-container" id="keysContainer">
+        <!-- Кнопки-клавиши будут созданы через JavaScript -->
+      </div>
     </div>
 
-    <div class="container" id="columnsContainer"></div>
+    <div class="container" id="columnsContainer">
+      <!-- Столбцы будут созданы через JavaScript -->
+    </div>
 
+    <!-- Модальное окно для добавления новой записи -->
     <div class="modal" id="addModal">
       <div class="modal-content">
         <div class="modal-add-vew-header">
-          <button class="modal-close-button" onclick="App.closeAddModal()">✖</button>
+          <button class="modal-close-button" onclick="closeAddModal()">
+            ✖
+          </button>
           <h2>Записать</h2>
         </div>
         <div class="modal-inner-padding">
-          <textarea id="appointmentNote" placeholder="Добавить комментарий"></textarea>
+          <textarea
+            id="appointmentNote"
+            placeholder="Добавить комментарий"
+          ></textarea>
 
           <div class="toggle-container">
             <label class="toggle-switch">
-              <input type="checkbox" id="waitAppointmentToggle" class="toggle-input" />
+              <input
+                type="checkbox"
+                id="waitAppointmentToggle"
+                class="toggle-input"
+              />
               <span class="toggle-slider"></span>
             </label>
             <span class="toggle-label">Добавить в лист ожидания</span>
           </div>
 
-          <input type="text" id="searchClient" placeholder="Введите фамилию для поиска" />
-          <div id="searchResults" style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"></div>
-          <div style="margin: 5px"><small>Дата и время начала приема</small></div>
+          <input
+            type="text"
+            id="searchClient"
+            placeholder="Введите фамилию для поиска"
+          />
+          <div
+            id="searchResults"
+            style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
+          ></div>
+          <div style="margin: 5px">
+            <small>Дата и время начала приема</small>
+          </div>
           <input type="datetime-local" id="appointmentDateTime" />
 
           <div class="time-inputs-container">
@@ -894,1035 +944,1486 @@
             <input type="time" id="appointmentEndTime" class="time-input" />
           </div>
           <div class="modal-buttons">
-            <button class="modal-button schedule" onclick="App.generateCompactSchedule()">Расписание</button>
-            <button class="modal-button ok" onclick="App.saveAppointment()">Записать</button>
+            <button
+              class="modal-button schedule"
+              onclick="generateCompactSchedule()"
+            >
+              Расписание
+            </button>
+            <button class="modal-button ok" onclick="saveAppointment()">
+              Записать
+            </button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Модальное окно для просмотра записи -->
     <div class="modal" id="viewModal">
       <div class="modal-content">
         <div class="modal-add-vew-header">
-          <button class="modal-close-button" onclick="App.closeViewModal()">✖</button>
+          <button class="modal-close-button" onclick="closeViewModal()">
+            ✖
+          </button>
           <h2><div id="clientName"></div></h2>
         </div>
         <div class="modal-inner-padding">
           <div id="clientInfo"></div>
           <div class="modal-buttons">
-            <button class="modal-button cancelAppointment" onclick="App.cancelAppointment()">Отменить запись</button>
+            <button
+              class="modal-button cancelAppointment"
+              onclick="cancelAppointment()"
+            >
+              Отменить запись
+            </button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Модальное окно с графиком приема специалиста -->
     <div class="modal" id="scheduleModal">
       <div class="modal-content">
         <div class="modal-header">
           <h2><div id="specialistName"></div></h2>
-          <button class="modal-close-button" onclick="App.closeScheduleModal()">✖</button>
+          <button class="modal-close-button" onclick="closeScheduleModal()">
+            ✖
+          </button>
         </div>
-        <div class="months-container" id="monthsContainer"></div>
+        <div class="months-container" id="monthsContainer">
+          <!-- Данные будут заполнены через JavaScript -->
+        </div>
       </div>
     </div>
 
     <script>
-      const App = (function() {
-        const tg = window.Telegram.WebApp;
-        const tgUserId = tg.initDataUnsafe.user.id;
-        const API_BASE = "https://alimovdev.ru/api";
-        
-        let currentSpecialist = null;
-        let currentUser = null;
-        let currentClients = [];
-        let currentSelectedClient = null;
-        let currentAppointmentId = null;
-        let specialistScheduleData = [];
-        let searchTimeout = null;
+      let tg = window.Telegram.WebApp;
+      let tgUserId = tg.initDataUnsafe.user.id;
+      const API_BASE = "https://alimovdev.ru/api";
+      let currentSpecialist = null;
+      let currentUser = null; // Может быть Specialist или Administrator
+      let currentClients = [];
+      let currentSelectedClient = null;
+      let currentAppointmentId = null;
+      let specialistScheduleData = []; // переменная для хранения данных расписания
 
-        // Кэширование DOM элементов
-        const elements = {
-          header: document.getElementById("header"),
-          keysContainer: document.getElementById("keysContainer"),
-          columnsContainer: document.getElementById("columnsContainer"),
-          addModal: document.getElementById("addModal"),
-          viewModal: document.getElementById("viewModal"),
-          scheduleModal: document.getElementById("scheduleModal"),
-          searchClient: document.getElementById("searchClient"),
-          searchResults: document.getElementById("searchResults"),
-          appointmentNote: document.getElementById("appointmentNote"),
-          waitAppointmentToggle: document.getElementById("waitAppointmentToggle"),
-          appointmentDateTime: document.getElementById("appointmentDateTime"),
-          appointmentEndTime: document.getElementById("appointmentEndTime"),
-          clientName: document.getElementById("clientName"),
-          clientInfo: document.getElementById("clientInfo"),
-          specialistName: document.getElementById("specialistName"),
-          monthsContainer: document.getElementById("monthsContainer")
-        };
+      // Функция для форматирования ФИО в формат "Фамилия И. О."
+      function formatFullName(surname, name, patronymic) {
+        const nameInitial = name ? `${name.charAt(0)}.` : "";
+        const patronymicInitial = patronymic ? `${patronymic.charAt(0)}.` : "";
+        return `${surname} ${nameInitial} ${patronymicInitial}`;
+      }
 
-        // Утилиты для работы с датами
-        const DateUtils = {
-          parseAppointmentDateTime(str) {
-            if (!str.includes(" - ") || !str.includes("/")) return null;
-            
-            const [datePart, timeRange] = str.split(" - ");
-            const [startTimeStr, endTimeStr] = timeRange.split("/");
-            const [day, month, year] = datePart.split(".");
-            
-            return {
-              start: new Date(`${year}-${month}-${day}T${startTimeStr}`),
-              end: new Date(`${year}-${month}-${day}T${endTimeStr}`),
-              dateString: datePart
-            };
-          },
-          
-          formatForInput(date) {
-            return date.toISOString().slice(0, 16);
-          },
-          
-          formatForDisplay(date) {
-            return date.toLocaleDateString("ru-RU");
-          },
-          
-          formatForSchedule(dateString) {
-            const [day, month, year] = dateString.split(".");
-            return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-          }
-        };
+      // Функция для создания шкалы времени
+      function createTimeScale(columnElement) {
+        const workTime = getWorkTime();
+        const startHour = workTime.start;
+        const endHour = workTime.end;
 
-        // Утилиты для работы с DOM
-        const DomUtils = {
-          createElement(tag, className, innerHTML = "") {
-            const element = document.createElement(tag);
-            if (className) element.className = className;
-            if (innerHTML) element.innerHTML = innerHTML;
-            return element;
-          }
-        };
+        const timeScale = document.createElement("div");
+        timeScale.className = "time-scale";
 
-        // API функции
-        const Api = {
-          async call(url, options = {}) {
-            try {
-              const response = await fetch(`${API_BASE}${url}`, {
-                headers: {
-                  "Content-Type": "application/json",
-                  ...options.headers
-                },
-                ...options
-              });
+        // Рассчитываем высоту шкалы времени на основе рабочего времени
+        const workDuration = endHour - startHour;
+        const scaleHeight = workDuration * 60 + 30; //60px в час + 30px на заголовок
 
-              if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-              }
+        // Устанавливаем высоту шкалы времени
+        timeScale.style.height = `${scaleHeight}px`;
 
-              return await response.json();
-            } catch (error) {
-              console.error(`API call failed: ${url}`, error);
-              throw error;
+        // Создаем метки времени от startHour до endHour
+        for (let hour = startHour; hour <= endHour; hour++) {
+          for (let minute = 0; minute < 60; minute += 10) {
+            if (hour === endHour && minute > 0) break;
+
+            const timeMarker = document.createElement("div");
+            timeMarker.className = "time-marker";
+
+            if (minute === 0) {
+              timeMarker.classList.add("hour");
+
+              const timeLabel = document.createElement("div");
+              timeLabel.className = "time-label";
+              timeLabel.textContent = `${hour.toString().padStart(2, "0")}:00`;
+              timeMarker.appendChild(timeLabel);
             }
-          },
 
-          async loadSpecialistsByIds(specialistIds) {
-            return this.call("/specialists/by-ids", {
-              method: "POST",
-              body: JSON.stringify(specialistIds)
-            });
-          },
-
-          async getAppointmentsBySpecialistId(specialistId) {
-            return this.call(`/appointments/by-specialist-id/${encodeURIComponent(specialistId)}`);
-          },
-
-          async getAppointmentsByClientId(clientId) {
-            return this.call(`/appointments/by-client-id/${encodeURIComponent(clientId)}`);
-          },
-
-          async getClientById(clientId) {
-            return this.call(`/clients/${encodeURIComponent(clientId)}`);
-          },
-
-          async getClientsByOwnerId(ownerId) {
-            return this.call(`/clients/by-owner-id/${encodeURIComponent(ownerId)}`);
-          },
-
-          async getClientsByIds(clientIds) {
-            return this.call("/clients/by-ids", {
-              method: "POST",
-              body: JSON.stringify(clientIds)
-            });
-          },
-
-          async saveAppointment(appointmentData) {
-            return this.call("/appointments", {
-              method: "POST",
-              body: JSON.stringify(appointmentData)
-            });
-          },
-
-          async deleteAppointment(appointmentId) {
-            return this.call(`/appointments/${appointmentId}`, {
-              method: "DELETE"
-            });
+            timeScale.appendChild(timeMarker);
           }
-        };
-
-        // Основные функции
-        function formatFullName(surname, name, patronymic) {
-          const nameInitial = name ? `${name.charAt(0)}.` : "";
-          const patronymicInitial = patronymic ? `${patronymic.charAt(0)}.` : "";
-          return `${surname} ${nameInitial} ${patronymicInitial}`;
         }
 
-        function createTimeScale(columnElement) {
-          const workTime = getWorkTime();
-          const startHour = workTime.start;
-          const endHour = workTime.end;
+        columnElement.appendChild(timeScale);
+      }
+      // Функция для получения специалистов по массиву ID
+      async function loadSpecialistsByIds(specialistIds) {
+        try {
+          const response = await fetch(`${API_BASE}/specialists/by-ids`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(specialistIds),
+          });
 
-          const timeScale = DomUtils.createElement("div", "time-scale");
-          const workDuration = endHour - startHour;
-          const scaleHeight = workDuration * 60 + 30;
-          timeScale.style.height = `${scaleHeight}px`;
-
-          for (let hour = startHour; hour <= endHour; hour++) {
-            for (let minute = 0; minute < 60; minute += 10) {
-              if (hour === endHour && minute > 0) break;
-
-              const timeMarker = DomUtils.createElement("div", "time-marker");
-
-              if (minute === 0) {
-                timeMarker.classList.add("hour");
-                const timeLabel = DomUtils.createElement("div", "time-label", 
-                  `${hour.toString().padStart(2, "0")}:00`);
-                timeMarker.appendChild(timeLabel);
-              }
-
-              timeScale.appendChild(timeMarker);
-            }
+          if (!response.ok) {
+            throw new Error("Failed to load specialists: " + response.status);
           }
 
-          columnElement.appendChild(timeScale);
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading specialists by IDs:", error);
+          throw error;
         }
+      }
 
-        function setupColumnEventHandlers(column, date) {
-          const handleColumnClick = function(e) {
-            if (e.target.closest(".card")) return;
+      // Функция для получения записей по specialistId
+      async function getAppointmentsBySpecialistId(specialistId) {
+        try {
+          const response = await fetch(
+            `${API_BASE}/appointments/by-specialist-id/${encodeURIComponent(
+              specialistId
+            )}`
+          );
 
-            if (e.target === column || 
-                e.target.classList.contains("empty-column") || 
-                e.target.classList.contains("cards-container")) {
-              openAddModal(date);
+          if (!response.ok) {
+            if (response.status === 404) {
+              return [];
             }
-          };
+            throw new Error("Failed to load appointments: " + response.status);
+          }
 
-          column.addEventListener("click", handleColumnClick);
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading appointments by specialistId:", error);
+          throw error;
+        }
+      }
 
-          // Touch handlers (оставляем как было)
-          column.addEventListener("touchstart", function(e) {
-            if (e.target.closest(".card")) return;
-            this.touchStartX = e.touches[0].clientX;
-            this.touchStartY = e.touches[0].clientY;
-            this.isScrolling = false;
-          });
+      // Функция для получения записей по clientId
+      async function getAppointmentsByClientId(clientId) {
+        try {
+          const response = await fetch(
+            `${API_BASE}/appointments/by-client-id/${encodeURIComponent(
+              clientId
+            )}`
+          );
 
-          column.addEventListener("touchmove", function(e) {
-            if (!this.touchStartX || !this.touchStartY) return;
-
-            const touchX = e.touches[0].clientX;
-            const touchY = e.touches[0].clientY;
-            const diffX = Math.abs(touchX - this.touchStartX);
-            const diffY = Math.abs(touchY - this.touchStartY);
-
-            if (diffY > 10 && diffY > diffX) {
-              this.isScrolling = true;
+          if (!response.ok) {
+            if (response.status === 404) {
+              return [];
             }
-          });
+            throw new Error("Failed to load appointments: " + response.status);
+          }
 
-          column.addEventListener("touchend", function(e) {
-            if (e.target.closest(".card")) return;
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading appointments by specialistId:", error);
+          throw error;
+        }
+      }
 
-            if (!this.isScrolling) {
-              const touch = e.changedTouches[0];
-              const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      // Функция для получения клиента по ID
+      async function getClientById(clientId) {
+        try {
+          const response = await fetch(
+            `${API_BASE}/clients/${encodeURIComponent(clientId)}`
+          );
 
-              if (target.closest(".card")) return;
+          if (!response.ok) {
+            throw new Error("Failed to load client: " + response.status);
+          }
 
-              if (target === column ||
-                  target.classList.contains("empty-column") ||
-                  target.classList.contains("cards-container") ||
-                  (target.closest && target.closest(".column") === column)) {
-                e.preventDefault();
-                openAddModal(date);
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading client by ID:", error);
+          throw error;
+        }
+      }
+
+      // Функция для получения клиентов по ownerId
+      async function getClientsByOwnerId(ownerId) {
+        try {
+          const response = await fetch(
+            `${API_BASE}/clients/by-owner-id/${encodeURIComponent(ownerId)}`
+          );
+
+          if (!response.ok) {
+            if (response.status === 404) {
+              return [];
+            }
+            throw new Error("Failed to load clients: " + response.status);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading clients by ownerId:", error);
+          throw error;
+        }
+      }
+
+      // Функция для расчета времени окончания приема
+      function calculateEndTime() {
+        const dateTimeInput = document.getElementById(
+          "appointmentDateTime"
+        ).value;
+        const endTimeDisplay = document.getElementById("appointmentEndTime");
+
+        if (dateTimeInput) {
+          const startTime = new Date(dateTimeInput);
+
+          // Для мобильных устройств добавляем проверку валидности даты
+          if (isNaN(startTime.getTime())) {
+            console.error("Invalid date selected");
+            return;
+          }
+
+          const dateString = formatDateForInput(startTime);
+
+          // Пытаемся найти рабочие часы для выбранной даты
+          const workingHours = getWorkingHours(startTime);
+
+          if (workingHours && workingHours.end) {
+            // Если нашли рабочие часы, предлагаем время окончания на основе рабочего дня,
+            // но не перезаписываем время начала
+            const [endHour, endMinute] = workingHours.end
+              .split(":")
+              .map(Number);
+
+            // Устанавливаем время окончания на конец рабочего дня
+            const endTime = new Date(startTime);
+            endTime.setHours(endHour, endMinute);
+            endTimeDisplay.value = endTime.toTimeString().slice(0, 5);
+          } else {
+            // Стандартная логика: добавляем 30 минут к текущему времени начала
+            const endTime = new Date(startTime.getTime() + 30 * 60000);
+
+            // Для мобильных устройств проверяем валидность
+            if (isNaN(endTime.getTime())) {
+              console.error("Invalid end time calculated");
+              return;
+            }
+
+            const formattedEndTime = endTime.toTimeString().slice(0, 5);
+            endTimeDisplay.value = formattedEndTime;
+          }
+        }
+      }
+
+      // Функция для поиска пользователя Telegram по ID
+      async function searchTgUserById(tgUserId) {
+        try {
+          const responseSpecialist = await fetch(
+            `${API_BASE}/specialists/${tgUserId}`
+          );
+          if (responseSpecialist.ok) {
+            const tgSpecialist = await responseSpecialist.json();
+
+            // Логика для специалиста
+            currentUser = tgSpecialist;
+            currentSpecialist = tgSpecialist;
+            showSpecialistHeader();
+
+            // Загружаем клиентов по ownerId специалиста
+            currentClients = await getClientsByOwnerId(tgSpecialist.ownerId);
+            await loadAndDisplayAppointments(tgSpecialist);
+          } else {
+            const responseAdmin = await fetch(
+              `${API_BASE}/administrators/${tgUserId}`
+            );
+            if (responseAdmin.ok) {
+              const tgAdministrator = await responseAdmin.json();
+              currentUser = tgAdministrator;
+
+              const specialistsIdList = tgAdministrator.specialistIdList
+                .split("/")
+                .filter((id) => id.length > 1)
+                .map((id) => parseInt(id.trim()));
+
+              try {
+                const specialists = await loadSpecialistsByIds(
+                  specialistsIdList
+                );
+
+                // Логика для администратора
+                showAdminHeader();
+                createSpecialistButtons(specialists);
+                if (specialists.length > 0) {
+                  currentSpecialist = specialists[0];
+
+                  // Загружаем клиентов по ownerId администратора
+                  currentClients = await getClientsByOwnerId(
+                    tgAdministrator.ownerId
+                  );
+                  await loadAndDisplayAppointments(specialists[0]);
+                }
+              } catch (error) {
+                alert("Error loading SPECIALISTS: " + error.message);
               }
-            }
-
-            this.touchStartX = 0;
-            this.touchStartY = 0;
-            this.isScrolling = false;
-          });
-        }
-
-        async function searchTgUserById(tgUserId) {
-          try {
-            const responseSpecialist = await fetch(`${API_BASE}/specialists/${tgUserId}`);
-            if (responseSpecialist.ok) {
-              const tgSpecialist = await responseSpecialist.json();
-              currentUser = tgSpecialist;
-              currentSpecialist = tgSpecialist;
-              showSpecialistHeader();
-              currentClients = await Api.getClientsByOwnerId(tgSpecialist.ownerId);
-              await loadAndDisplayAppointments(tgSpecialist);
             } else {
-              const responseAdmin = await fetch(`${API_BASE}/administrators/${tgUserId}`);
-              if (responseAdmin.ok) {
-                const tgAdministrator = await responseAdmin.json();
-                currentUser = tgAdministrator;
-
-                const specialistsIdList = tgAdministrator.specialistIdList
-                  .split("/")
-                  .filter((id) => id.length > 1)
-                  .map((id) => parseInt(id.trim()));
-
-                try {
-                  const specialists = await Api.loadSpecialistsByIds(specialistsIdList);
-                  showAdminHeader();
-                  createSpecialistButtons(specialists);
-                  if (specialists.length > 0) {
-                    currentSpecialist = specialists[0];
-                    currentClients = await Api.getClientsByOwnerId(tgAdministrator.ownerId);
-                    await loadAndDisplayAppointments(specialists[0]);
-                  }
-                } catch (error) {
-                  alert("Error loading SPECIALISTS: " + error.message);
-                }
+              if (responseAdmin.status === 404) {
+                // Логика для гостя
+                document.getElementById("columnsContainer").innerHTML =
+                  '<div class="guest-message">Здравствуйте, гость!</div>';
               } else {
-                if (responseAdmin.status === 404) {
-                  elements.columnsContainer.innerHTML = '<div class="guest-message">Здравствуйте, гость!</div>';
-                } else {
-                  throw new Error("Failed to load tgUser: " + responseAdmin.status);
-                }
+                throw new Error(
+                  "Failed to load tgUser: " + responseAdmin.status
+                );
               }
             }
-          } catch (error) {
-            console.error("Error loading user by ID:", error);
-            alert("Error loading user: " + error.message);
           }
+        } catch (error) {
+          console.error("Error loading user by ID:", error);
+          alert("Error loading user: " + error.message);
         }
+      }
 
-        function showSpecialistHeader() {
-          elements.header.style.display = "block";
-          elements.header.className = "header specialist";
-          elements.header.innerHTML = '<div class="specialist-title">Datar</div>';
-        }
+      // Показать шапку для специалиста
+      function showSpecialistHeader() {
+        const header = document.getElementById("header");
+        header.style.display = "block";
+        header.className = "header specialist";
+        header.innerHTML = '<div class="specialist-title">Datar</div>';
+      }
 
-        function showAdminHeader() {
-          elements.header.style.display = "block";
-          elements.header.className = "header";
-          elements.header.innerHTML = '<div class="keys-container" id="keysContainer"></div>';
-        }
+      // Показать шапку для администратора
+      function showAdminHeader() {
+        const header = document.getElementById("header");
+        header.style.display = "block";
+        header.className = "header";
+        header.innerHTML =
+          '<div class="keys-container" id="keysContainer"></div>';
+      }
 
-        function createSpecialistButtons(specialists) {
-          elements.keysContainer.innerHTML = "";
+      // Создание кнопок специалистов в шапке
+      function createSpecialistButtons(specialists) {
+        const keysContainer = document.getElementById("keysContainer");
+        keysContainer.innerHTML = "";
 
-          specialists.forEach((specialist) => {
-            const keyButton = DomUtils.createElement("button", "key-button", 
-              `${specialist.surname} ${specialist.name} ${specialist.patronymic}`);
-            keyButton.setAttribute("data-specialist-id", specialist.id);
+        specialists.forEach((specialist) => {
+          const keyButton = document.createElement("button");
+          keyButton.className = "key-button";
+          keyButton.textContent = `${specialist.surname} ${specialist.name} ${specialist.patronymic}`;
+          keyButton.setAttribute("data-specialist-id", specialist.id);
 
-            if (currentSpecialist && currentSpecialist.id === specialist.id) {
-              keyButton.classList.add("active");
-            }
+          if (currentSpecialist && currentSpecialist.id === specialist.id) {
+            keyButton.classList.add("active");
+          }
 
-            keyButton.addEventListener("click", async function() {
-              document.querySelectorAll(".key-button").forEach((btn) => {
-                btn.classList.remove("active");
-              });
-              keyButton.classList.add("active");
-
-              currentSpecialist = specialist;
-              await loadAndDisplayAppointments(specialist);
+          keyButton.addEventListener("click", async function () {
+            document.querySelectorAll(".key-button").forEach((btn) => {
+              btn.classList.remove("active");
             });
+            keyButton.classList.add("active");
 
-            elements.keysContainer.appendChild(keyButton);
+            currentSpecialist = specialist;
+            await loadAndDisplayAppointments(specialist);
           });
+
+          keysContainer.appendChild(keyButton);
+        });
+      }
+
+      // Загрузка и отображение записей специалиста
+      async function loadAndDisplayAppointments(specialist) {
+        try {
+          // Рассчитываем расписание специалиста при загрузке
+          specialistScheduleData = calculateSpecialistSchedule(specialist);
+
+          const appointments = await getAppointmentsBySpecialistId(
+            specialist.id
+          );
+        } catch (error) {
+          console.error("Error loading appointments:", error);
+          alert("Error loading appointments: " + error.message);
         }
 
-        async function loadAndDisplayAppointments(specialist) {
-          try {
-            specialistScheduleData = calculateSpecialistSchedule(specialist);
-            const appointments = await Api.getAppointmentsBySpecialistId(specialist.id);
-            
-            // Оптимизация: получаем всех клиентов одним запросом
-            const clientIds = [...new Set(appointments.map(a => a.clientId))];
-            const clients = await Api.getClientsByIds(clientIds);
-            const clientMap = new Map(clients.map(c => [c.id, c]));
-            
-            const appointmentsWithClients = appointments.map(appointment => ({
-              appointment: appointment,
-              client: clientMap.get(appointment.clientId)
-            })).filter(item => item.client !== null);
+        try {
+          const appointments = await getAppointmentsBySpecialistId(
+            specialist.id
+          );
 
-            createColumnsWithAppointments(appointmentsWithClients);
-          } catch (error) {
-            console.error("Error loading appointments:", error);
-            alert("Error loading appointments: " + error.message);
-          }
-        }
-
-        function createColumnsWithAppointments(appointmentsWithClients) {
-          elements.columnsContainer.innerHTML = "";
-          const allAppointments = [];
-
-          appointmentsWithClients.forEach((item) => {
-            const appointment = item.appointment;
-            const client = item.client;
-
-            if (appointment.appointmentDateTime.includes(" - ") &&
-                appointment.appointmentDateTime.includes("/")) {
-              const parsed = DateUtils.parseAppointmentDateTime(appointment.appointmentDateTime);
-              if (parsed) {
-                const duration = (parsed.end - parsed.start) / 60000;
-                allAppointments.push({
+          // Загружаем данные клиентов для каждой записи
+          const appointmentsWithClients = await Promise.all(
+            appointments.map(async (appointment) => {
+              try {
+                const client = await getClientById(appointment.clientId);
+                return {
                   appointment: appointment,
                   client: client,
-                  dateTime: parsed.start,
-                  duration: duration,
-                  endTime: parsed.end,
-                  appointmentString: appointment.appointmentDateTime,
-                  appointmentId: appointment.id,
-                  confirmAppointment: appointment.confirmAppointment,
-                  waitNearAppointment: appointment.waitNearAppointment,
-                });
+                };
+              } catch (error) {
+                console.error(
+                  `Error loading client ${appointment.clientId}:`,
+                  error
+                );
+                return null;
               }
-            }
-          });
-
-          allAppointments.sort((a, b) => a.dateTime - b.dateTime);
-          const appointmentsByDate = {};
-
-          allAppointments.forEach((appointment) => {
-            const dateKey = appointment.dateTime.toLocaleDateString("ru-RU");
-            if (!appointmentsByDate[dateKey]) {
-              appointmentsByDate[dateKey] = [];
-            }
-            appointmentsByDate[dateKey].push(appointment);
-          });
-
-          const dates = Object.keys(appointmentsByDate).sort(
-            (a, b) =>
-              new Date(a.split(".").reverse().join("-")) -
-              new Date(b.split(".").reverse().join("-"))
+            })
           );
 
-          dates.forEach((date) => {
-            createColumn(date, appointmentsByDate[date]);
-          });
+          // Фильтруем записи, для которых удалось загрузить клиентов
+          const validAppointments = appointmentsWithClients.filter(
+            (appointment) => appointment !== null
+          );
 
-          createEmptyColumn();
+          createColumnsWithAppointments(validAppointments);
+        } catch (error) {
+          console.error("Error loading appointments:", error);
+          alert("Error loading appointments: " + error.message);
         }
+      }
 
-        function createColumn(date, appointments) {
-          const workTime = getWorkTime();
-          const workDuration = workTime.end - workTime.start;
-          const columnHeight = workDuration * 60 + 60;
-          const cardsContainerHeight = workDuration * 60;
+      // Создание столбцов с записями
+      function createColumnsWithAppointments(appointmentsWithClients) {
+        const container = document.getElementById("columnsContainer");
+        container.innerHTML = "";
 
-          const column = DomUtils.createElement("div", "column");
-          column.style.minHeight = `${columnHeight}px`;
-          column.setAttribute("data-column-date", date);
+        // Обрабатываем записи с клиентами
+        const allAppointments = [];
 
-          column.innerHTML = `
-            <div class="column-content">
-              <h2>${date}</h2>
-              <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;"></div>
-            </div>
-          `;
+        appointmentsWithClients.forEach((item) => {
+          const appointment = item.appointment;
+          const client = item.client;
 
-          createTimeScale(column);
-          const cardsContainer = column.querySelector(".cards-container");
+          // Парсим формат: "dd.MM.yyyy - HH:mm/HH:mm"
+          if (
+            appointment.appointmentDateTime.includes(" - ") &&
+            appointment.appointmentDateTime.includes("/")
+          ) {
+            const [dateTimePart, timeRange] =
+              appointment.appointmentDateTime.split(" - ");
+            const [startTimeStr, endTimeStr] = timeRange.split("/");
 
-          createNonWorkingTimeOverlay(
-            date,
-            workTime,
-            specialistScheduleData,
-            cardsContainerHeight,
-            cardsContainer
-          );
-
-          appointments.sort((a, b) => a.dateTime - b.dateTime);
-          appointments.forEach((appointment) => {
-            const card = createAppointmentCard(
-              appointment,
-              workTime.start,
-              cardsContainerHeight
+            const startTime = new Date(
+              `${dateTimePart.split(".").reverse().join("-")}T${startTimeStr}`
             );
-            cardsContainer.appendChild(card);
-          });
+            const endTime = new Date(
+              `${dateTimePart.split(".").reverse().join("-")}T${endTimeStr}`
+            );
 
-          setupColumnEventHandlers(column, date);
-          elements.columnsContainer.appendChild(column);
-        }
+            const duration = (endTime - startTime) / 60000;
 
-        function createEmptyColumn() {
-          const workTime = getWorkTime();
-          const workDuration = workTime.end - workTime.start;
-          const columnHeight = workDuration * 60 + 60;
-          const cardsContainerHeight = workDuration * 60;
+            allAppointments.push({
+              appointment: appointment,
+              client: client,
+              dateTime: startTime,
+              duration: duration,
+              endTime: endTime,
+              appointmentString: appointment.appointmentDateTime,
+              appointmentId: appointment.id,
+              confirmAppointment: appointment.confirmAppointment,
+              waitNearAppointment: appointment.waitNearAppointment,
+            });
+          }
+        });
 
-          const column = DomUtils.createElement("div", "column");
-          column.style.minHeight = `${columnHeight}px`;
+        // Сортируем по дате
+        allAppointments.sort((a, b) => a.dateTime - b.dateTime);
 
-          column.innerHTML = `
-            <div class="column-content">
-              <h2>Новая запись</h2>
-              <div class="cards-container" style="height: ${cardsContainerHeight}px;">
-                <div class="empty-column">Нажмите для записи</div>
-              </div>
+        // Группируем по датам
+        const appointmentsByDate = {};
+        allAppointments.forEach((appointment) => {
+          const dateKey = appointment.dateTime.toLocaleDateString("ru-RU");
+          if (!appointmentsByDate[dateKey]) {
+            appointmentsByDate[dateKey] = [];
+          }
+          appointmentsByDate[dateKey].push(appointment);
+        });
+
+        // Создаем столбцы для каждой даты
+        const dates = Object.keys(appointmentsByDate).sort(
+          (a, b) =>
+            new Date(a.split(".").reverse().join("-")) -
+            new Date(b.split(".").reverse().join("-"))
+        );
+
+        dates.forEach((date) => {
+          createColumn(date, appointmentsByDate[date]);
+        });
+
+        // Добавляем пустой столбец для новой записи
+        createEmptyColumn();
+      }
+
+      // Создание столбца с записями
+      function createColumn(date, appointments) {
+        const container = document.getElementById("columnsContainer");
+        const workTime = getWorkTime();
+        const workDuration = workTime.end - workTime.start;
+
+        const columnHeight = workDuration * 60 + 60;
+        const cardsContainerHeight = workDuration * 60;
+
+        const column = document.createElement("div");
+        column.className = "column";
+        column.style.minHeight = `${columnHeight}px`;
+        column.setAttribute("data-column-date", date);
+
+        column.innerHTML = `
+        <div class="column-content">
+            <h2>${date}</h2>
+            <div class="cards-container" id="cards-${date}" style="height: ${cardsContainerHeight}px;">
             </div>
-          `;
+        </div>
+      `;
 
-          createTimeScale(column);
-          setupColumnEventHandlers(column);
-          elements.columnsContainer.appendChild(column);
-        }
+        createTimeScale(column);
 
-        function createAppointmentCard(appointmentData, workStartHour, containerHeight) {
-          const card = DomUtils.createElement("div", "card");
-          const height = appointmentData.duration * 0.998;
-          card.style.height = `${height}px`;
+        const cardsContainer = column.querySelector(".cards-container");
 
-          const startTime = appointmentData.dateTime;
-          const hours = startTime.getHours();
-          const minutes = startTime.getMinutes();
-          const confirmAppointmentStatus = appointmentData.confirmAppointment;
-          const isWaitNearAppointment = appointmentData.waitNearAppointment;
+        createNonWorkingTimeOverlay(
+          date,
+          workTime,
+          specialistScheduleData,
+          cardsContainerHeight,
+          cardsContainer
+        );
 
-          const totalMinutesFromStart = (hours - workStartHour) * 60 + minutes;
-          const workDurationMinutes = containerHeight;
-          const topPosition = (totalMinutesFromStart / workDurationMinutes) * containerHeight;
-          card.style.top = `${topPosition}px`;
+        appointments.sort((a, b) => a.dateTime - b.dateTime);
 
-          const startTimeStr = startTime.toLocaleTimeString("ru-RU", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-
-          const endTimeStr = appointmentData.endTime.toLocaleTimeString("ru-RU", {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-
-          const formattedName = formatFullName(
-            appointmentData.client.surname,
-            appointmentData.client.name,
-            appointmentData.client.patronymic
+        appointments.forEach((appointment) => {
+          const card = createAppointmentCard(
+            appointment,
+            workTime.start,
+            cardsContainerHeight
           );
+          cardsContainer.appendChild(card);
+        });
 
-          if (confirmAppointmentStatus === "UNCERTAIN" && isWaitNearAppointment) {
-            card.style.background = "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
-          } else if (confirmAppointmentStatus === "EXPECTANT") {
-            card.style.background = "linear-gradient(to bottom, #92ddfa, #ade8ff)";
-          } else if (confirmAppointmentStatus === "CONFIRMED") {
-            card.style.background = "linear-gradient(to bottom, #9af798, #b6f5b5)";
-          } else if (isWaitNearAppointment) {
-            card.style.background = "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
+        // Функция для обработки открытия модального окна
+        const handleColumnClick = function (e) {
+          // Игнорируем клики по карточкам
+          if (e.target.closest(".card")) {
+            return;
           }
 
-          if (height > 50) {
-            card.innerHTML = `
-              <h3>${formattedName}</h3>
-              <p>${appointmentData.client.phoneNumber}</p>
-              <p>${startTimeStr} - ${endTimeStr}</p>
+          if (
+            e.target === column ||
+            e.target.classList.contains("empty-column") ||
+            e.target.classList.contains("cards-container")
+          ) {
+            openAddModal(date);
+          }
+        };
+
+        // Добавляем обработчики для десктопа и мобильных устройств
+        column.addEventListener("click", handleColumnClick);
+
+        // Добавляем обработчики для touch-устройств
+        column.addEventListener("touchstart", function (e) {
+          // Игнорируем касания по карточкам
+          if (e.target.closest(".card")) {
+            return;
+          }
+
+          this.touchStartX = e.touches[0].clientX;
+          this.touchStartY = e.touches[0].clientY;
+          this.isScrolling = false;
+        });
+
+        column.addEventListener("touchmove", function (e) {
+          if (!this.touchStartX || !this.touchStartY) return;
+
+          const touchX = e.touches[0].clientX;
+          const touchY = e.touches[0].clientY;
+
+          const diffX = Math.abs(touchX - this.touchStartX);
+          const diffY = Math.abs(touchY - this.touchStartY);
+
+          if (diffY > 10 && diffY > diffX) {
+            this.isScrolling = true;
+          }
+        });
+
+        column.addEventListener("touchend", function (e) {
+          // Игнорируем касания по карточкам
+          if (e.target.closest(".card")) {
+            return;
+          }
+
+          if (!this.isScrolling) {
+            const touch = e.changedTouches[0];
+            const target = document.elementFromPoint(
+              touch.clientX,
+              touch.clientY
+            );
+
+            // Дополнительная проверка, что не попали в карточку
+            if (target.closest(".card")) {
+              return;
+            }
+
+            if (
+              target === column ||
+              target.classList.contains("empty-column") ||
+              target.classList.contains("cards-container") ||
+              (target.closest && target.closest(".column") === column)
+            ) {
+              e.preventDefault();
+              openAddModal(date);
+            }
+          }
+
+          this.touchStartX = 0;
+          this.touchStartY = 0;
+          this.isScrolling = false;
+        });
+
+        container.appendChild(column);
+      }
+
+      // Создание пустого столбца
+      function createEmptyColumn() {
+        const container = document.getElementById("columnsContainer");
+        const workTime = getWorkTime();
+        const workDuration = workTime.end - workTime.start;
+
+        const columnHeight = workDuration * 60 + 60;
+        const cardsContainerHeight = workDuration * 60;
+
+        const column = document.createElement("div");
+        column.className = "column";
+        column.style.minHeight = `${columnHeight}px`;
+
+        column.innerHTML = `
+        <div class="column-content">
+            <h2>Новая запись</h2>
+            <div class="cards-container" style="height: ${cardsContainerHeight}px;">
+                <div class="empty-column">Нажмите для записи</div>
+            </div>
+        </div>
+      `;
+
+        createTimeScale(column);
+
+        // Функция для обработки открытия модального окна (без даты)
+        const handleEmptyColumnClick = function (e) {
+          if (
+            e.target === column ||
+            e.target.classList.contains("empty-column") ||
+            e.target.classList.contains("cards-container")
+          ) {
+            openAddModal();
+          }
+        };
+
+        // Добавляем обработчики для десктопа и мобильных устройств
+        column.addEventListener("click", handleEmptyColumnClick);
+
+        // Добавляем обработчики для touch-устройств
+        column.addEventListener("touchstart", function (e) {
+          this.touchStartX = e.touches[0].clientX;
+          this.touchStartY = e.touches[0].clientY;
+          this.isScrolling = false;
+        });
+
+        column.addEventListener("touchmove", function (e) {
+          if (!this.touchStartX || !this.touchStartY) return;
+
+          const touchX = e.touches[0].clientX;
+          const touchY = e.touches[0].clientY;
+
+          const diffX = Math.abs(touchX - this.touchStartX);
+          const diffY = Math.abs(touchY - this.touchStartY);
+
+          if (diffY > 10 && diffY > diffX) {
+            this.isScrolling = true;
+          }
+        });
+
+        column.addEventListener("touchend", function (e) {
+          if (!this.isScrolling) {
+            const touch = e.changedTouches[0];
+            const target = document.elementFromPoint(
+              touch.clientX,
+              touch.clientY
+            );
+
+            if (
+              target === column ||
+              target.classList.contains("empty-column") ||
+              target.classList.contains("cards-container") ||
+              (target.closest && target.closest(".column") === column)
+            ) {
+              e.preventDefault();
+              openAddModal();
+            }
+          }
+
+          this.touchStartX = 0;
+          this.touchStartY = 0;
+          this.isScrolling = false;
+        });
+
+        container.appendChild(column);
+      }
+
+      // Создание карточки записи
+      function createAppointmentCard(
+        appointmentData,
+        workStartHour,
+        containerHeight
+      ) {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const height = appointmentData.duration * 0.998;
+        card.style.height = `${height}px`;
+
+        const startTime = appointmentData.dateTime;
+        const hours = startTime.getHours();
+        const minutes = startTime.getMinutes();
+        const confirmAppointmentStatus = appointmentData.confirmAppointment;
+        const isWaitNearAppointment = appointmentData.waitNearAppointment;
+
+        const totalMinutesFromStart = (hours - workStartHour) * 60 + minutes;
+        const workDurationMinutes = containerHeight;
+
+        const topPosition =
+          (totalMinutesFromStart / workDurationMinutes) * containerHeight;
+        card.style.top = `${topPosition}px`;
+
+        const startTimeStr = startTime.toLocaleTimeString("ru-RU", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        const endTimeStr = appointmentData.endTime.toLocaleTimeString("ru-RU", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        const formattedName = formatFullName(
+          appointmentData.client.surname,
+          appointmentData.client.name,
+          appointmentData.client.patronymic
+        );
+
+        // Обновляем логику отображения цветов карточек с учетом waitNearAppointment
+        if (confirmAppointmentStatus === "UNCERTAIN" && isWaitNearAppointment) {
+          card.style.background =
+            "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
+        } else if (confirmAppointmentStatus === "EXPECTANT") {
+          card.style.background =
+            "linear-gradient(to bottom, #92ddfa, #ade8ff)";
+        } else if (confirmAppointmentStatus === "CONFIRMED") {
+          card.style.background =
+            "linear-gradient(to bottom, #9af798, #b6f5b5)";
+        } else if (isWaitNearAppointment) {
+          // Если запись в листе ожидания, но статус не UNCERTAIN
+          card.style.background =
+            "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
+        }
+
+        if (height > 50) {
+          card.innerHTML = `
+                <h3>${formattedName}</h3>
+                <p>${appointmentData.client.phoneNumber}</p>
+                <p>${startTimeStr} - ${endTimeStr}</p>
             `;
-          } else if (height > 30) {
-            card.style.fontSize = "8px";
-            card.innerHTML = `
+        } else if (height > 30) {
+          card.style.fontSize = "8px";
+          card.innerHTML = `
               <p><small>${formattedName}</small></p>
               <p>${startTimeStr} - ${endTimeStr}</p>
             `;
-          } else {
-            card.style.background = "#ffd900";
-            card.style.fontSize = "7px";
-            card.style.padding = "5px";
-            card.innerHTML = `<p>${startTimeStr} - ${endTimeStr}</p>`;
-          }
+        } else {
+          card.style.background = "#ffd900";
+          card.style.fontSize = "7px";
+          card.style.padding = "5px";
+          card.innerHTML = `<p>${startTimeStr} - ${endTimeStr}</p>`;
+        }
 
-          // Обработчики событий (оставляем как было)
-          card.addEventListener("click", function(e) {
-            e.stopPropagation();
+        // Улучшенный обработчик для десктопа
+        card.addEventListener("click", function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+          openViewModal(
+            appointmentData.client,
+            appointmentData.appointment,
+            appointmentData.appointmentString
+          );
+        });
+
+        // Улучшенные обработчики для touch-устройств
+        let touchStartTime = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        card.addEventListener("touchstart", function (e) {
+          e.stopPropagation();
+          touchStartTime = Date.now();
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+
+          // Добавляем визуальную обратную связь
+          this.style.opacity = "0.8";
+        });
+
+        card.addEventListener("touchmove", function (e) {
+          e.stopPropagation();
+        });
+
+        card.addEventListener("touchend", function (e) {
+          e.stopPropagation();
+
+          const touchDuration = Date.now() - touchStartTime;
+          const touchEndX = e.changedTouches[0].clientX;
+          const touchEndY = e.changedTouches[0].clientY;
+
+          const deltaX = Math.abs(touchEndX - touchStartX);
+          const deltaY = Math.abs(touchEndY - touchStartY);
+
+          // Считаем касание тапом, если:
+          // - Длительность менее 500ms
+          // - Смещение менее 10px
+          if (touchDuration < 500 && deltaX < 10 && deltaY < 10) {
             e.preventDefault();
             openViewModal(
               appointmentData.client,
               appointmentData.appointment,
               appointmentData.appointmentString
             );
-          });
+          }
 
-          let touchStartTime = 0;
-          let touchStartX = 0;
-          let touchStartY = 0;
+          // Восстанавливаем прозрачность
+          this.style.opacity = "1";
+        });
 
-          card.addEventListener("touchstart", function(e) {
-            e.stopPropagation();
-            touchStartTime = Date.now();
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            this.style.opacity = "0.8";
-          });
+        // Добавляем обработчик для отмены визуальной обратной связи при отмене касания
+        card.addEventListener("touchcancel", function (e) {
+          e.stopPropagation();
+          this.style.opacity = "1";
+        });
 
-          card.addEventListener("touchmove", function(e) {
-            e.stopPropagation();
-          });
+        return card;
+      }
 
-          card.addEventListener("touchend", function(e) {
-            e.stopPropagation();
-            const touchDuration = Date.now() - touchStartTime;
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            const deltaX = Math.abs(touchEndX - touchStartX);
-            const deltaY = Math.abs(touchEndY - touchStartY);
+      // Открытие модального окна добавления записи
+      function openAddModal(columnDate) {
+        document.getElementById("addModal").style.display = "block";
+        document.getElementById("searchClient").value = "";
+        document.getElementById("searchResults").innerHTML = "";
+        document.getElementById("appointmentNote").value = "";
 
-            if (touchDuration < 500 && deltaX < 10 && deltaY < 10) {
-              e.preventDefault();
-              openViewModal(
-                appointmentData.client,
-                appointmentData.appointment,
-                appointmentData.appointmentString
-              );
-            }
+        // Сбрасываем переключатель в выключенное состояние
+        document.getElementById("waitAppointmentToggle").checked = false;
 
-            this.style.opacity = "1";
-          });
+        // Фокус на поле поиска с небольшой задержкой для мобильных устройств
+        setTimeout(() => {
+          document.getElementById("searchClient").focus();
+        }, 100);
 
-          card.addEventListener("touchcancel", function(e) {
-            e.stopPropagation();
-            this.style.opacity = "1";
-          });
+        // Если передана дата столбца, устанавливаем ее в поле ввода
+        if (columnDate) {
+          // Преобразуем дату из формата "dd.MM.yyyy" в "yyyy-MM-dd"
+          const [day, month, year] = columnDate.split(".");
+          const formattedDate = `${year}-${month.padStart(
+            2,
+            "0"
+          )}-${day.padStart(2, "0")}`;
 
-          return card;
-        }
+          // Устанавливаем дату и время по умолчанию (начало рабочего дня)
+          const workTime = getWorkTime();
+          const defaultTime = `${workTime.start
+            .toString()
+            .padStart(2, "0")}:00`;
 
-        function openAddModal(columnDate) {
-          elements.addModal.style.display = "block";
-          elements.searchClient.value = "";
-          elements.searchResults.innerHTML = "";
-          elements.appointmentNote.value = "";
-          elements.waitAppointmentToggle.checked = false;
+          const dateTimeValue = `${formattedDate}T${defaultTime}`;
+          document.getElementById("appointmentDateTime").value = dateTimeValue;
 
+          // Для мобильных устройств дополнительно активируем поле ввода
           setTimeout(() => {
-            elements.searchClient.focus();
+            const dateTimeInput = document.getElementById(
+              "appointmentDateTime"
+            );
+            if (dateTimeInput.value !== dateTimeValue) {
+              // Если значение не установилось, пробуем еще раз
+              dateTimeInput.value = dateTimeValue;
+            }
+          }, 50);
+
+          // Автоматически рассчитываем время окончания
+          setTimeout(() => {
+            calculateEndTime();
           }, 100);
+        } else {
+          // Для пустого столбца оставляем текущее поведение
+          document.getElementById("appointmentDateTime").value = "";
+          document.getElementById("appointmentEndTime").value = "";
+        }
+      }
 
-          if (columnDate) {
-            const [day, month, year] = columnDate.split(".");
-            const formattedDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-            const workTime = getWorkTime();
-            const defaultTime = `${workTime.start.toString().padStart(2, "0")}:00`;
-            const dateTimeValue = `${formattedDate}T${defaultTime}`;
-            
-            elements.appointmentDateTime.value = dateTimeValue;
+      // Закрытие модального окна добавления записи
+      function closeAddModal() {
+        document.getElementById("addModal").style.display = "none";
+        currentSelectedClient = null;
+      }
 
-            setTimeout(() => {
-              if (elements.appointmentDateTime.value !== dateTimeValue) {
-                elements.appointmentDateTime.value = dateTimeValue;
-              }
-            }, 50);
+      // Открытие модального окна просмотра записи
+      function openViewModal(client, appointment, appointmentString) {
+        currentSelectedClient = client;
+        currentAppointmentId = appointment.id;
 
-            setTimeout(() => {
-              calculateEndTime();
-            }, 100);
-          } else {
-            elements.appointmentDateTime.value = "";
-            elements.appointmentEndTime.value = "";
-          }
+        // Парсим формат: "dd.MM.yyyy - HH:mm/HH:mm"
+        let displayText = appointmentString;
+        if (
+          appointmentString.includes(" - ") &&
+          appointmentString.includes("/")
+        ) {
+          const [datePart, timePart] = appointmentString.split(" - ");
+          const [startTime, endTime] = timePart.split("/");
+          displayText = `${datePart} с ${startTime} до ${endTime}`;
         }
 
-        function closeAddModal() {
-          elements.addModal.style.display = "none";
-          currentSelectedClient = null;
-        }
+        document.getElementById(
+          "clientName"
+        ).innerHTML = `<h4>${client.surname} ${client.name} ${client.patronymic}</h4>`;
+        document.getElementById("clientInfo").innerHTML = `
+            <a href="tel:${client.phoneNumber}">${
+          client.phoneNumber || "Телефонный номер не указан"
+        }</a>
+                <p><strong>Дата рождения:</strong> ${
+                  client.birthdate || "Не указана"
+                }</p>
+                <p><strong>Дата и время приема:</strong> <p>${displayText}</p>
+                <p><strong>Комментарий:</strong> ${
+                  appointment.appointmentNote || ""
+                }</p>
+            `;
 
-        function openViewModal(client, appointment, appointmentString) {
-          currentSelectedClient = client;
-          currentAppointmentId = appointment.id;
+        document.getElementById("viewModal").style.display = "block";
+      }
 
-          let displayText = appointmentString;
-          if (appointmentString.includes(" - ") && appointmentString.includes("/")) {
-            const [datePart, timePart] = appointmentString.split(" - ");
-            const [startTime, endTime] = timePart.split("/");
-            displayText = `${datePart} с ${startTime} до ${endTime}`;
-          }
+      // Закрытие модального окна просмотра
+      function closeViewModal() {
+        document.getElementById("viewModal").style.display = "none";
+        currentSelectedClient = null;
+        currentAppointmentId = null;
+      }
 
-          elements.clientName.innerHTML = `<h4>${client.surname} ${client.name} ${client.patronymic}</h4>`;
-          elements.clientInfo.innerHTML = `
-            <a href="tel:${client.phoneNumber}">${client.phoneNumber || "Телефонный номер не указан"}</a>
-            <p><strong>Дата рождения:</strong> ${client.birthdate || "Не указана"}</p>
-            <p><strong>Дата и время приема:</strong> <p>${displayText}</p>
-            <p><strong>Комментарий:</strong> ${appointment.appointmentNote || ""}</p>
-          `;
+      // Открытие модального окна с расписанием
+      function openScheduleModal() {
+        document.getElementById("scheduleModal").style.display = "block";
+      }
 
-          elements.viewModal.style.display = "block";
-        }
+      // Закрытие модального окна с расписанием
+      function closeScheduleModal() {
+        document.getElementById("scheduleModal").style.display = "none";
+      }
 
-        function closeViewModal() {
-          elements.viewModal.style.display = "none";
-          currentSelectedClient = null;
-          currentAppointmentId = null;
-        }
+      // Сохранение записи
+      async function saveAppointment() {
+        try {
+          const dateTimeInput = document.getElementById(
+            "appointmentDateTime"
+          ).value;
+          const endTimeInput =
+            document.getElementById("appointmentEndTime").value;
+          const noteInput = document.getElementById("appointmentNote").value;
 
-        function openScheduleModal() {
-          elements.scheduleModal.style.display = "block";
-        }
+          // Получаем состояние переключателя "Добавить в лист ожидания"
+          const waitNearAppointment = document.getElementById(
+            "waitAppointmentToggle"
+          ).checked;
 
-        function closeScheduleModal() {
-          elements.scheduleModal.style.display = "none";
-        }
-
-        async function saveAppointment() {
-          try {
-            const dateTimeInput = elements.appointmentDateTime.value;
-            const endTimeInput = elements.appointmentEndTime.value;
-            const noteInput = elements.appointmentNote.value;
-            const waitNearAppointment = elements.waitAppointmentToggle.checked;
-
-            if (!currentSelectedClient) {
-              alert("Пожалуйста, выберите клиента");
-              return;
-            }
-
-            if (!dateTimeInput) {
-              alert("Пожалуйста, укажите дату и время начала приема");
-              return;
-            }
-
-            if (!endTimeInput) {
-              alert("Пожалуйста, укажите время окончания приема");
-              return;
-            }
-
-            const startDateTime = new Date(dateTimeInput);
-            const startTimeStr = startDateTime.toTimeString().slice(0, 5);
-            const specialistWorkTime = currentSpecialist.workTimeLength.split("#");
-
-            if (startTimeStr >= endTimeInput) {
-              alert("Время окончания должно быть позже времени начала");
-              return;
-            }
-
-            const formattedDate = `${startDateTime.getDate().toString().padStart(2, "0")}.${(startDateTime.getMonth() + 1).toString().padStart(2, "0")}.${startDateTime.getFullYear()}`;
-            const newAppointmentDateTime = `${formattedDate} - ${startTimeStr}/${endTimeInput}`;
-
-            const startHours = parseInt(startTimeStr.split(":")[0]);
-            const startMinutes = parseInt(startTimeStr.split(":")[1]);
-            const endHours = parseInt(endTimeInput.split(":")[0]);
-            const endMinutes = parseInt(endTimeInput.split(":")[1]);
-            const specialistWorkTimeBegin = parseInt(specialistWorkTime[0]);
-            const specialistWorkTimeEnd = parseInt(specialistWorkTime[1]);
-
-            if (startHours < specialistWorkTimeBegin ||
-                endHours > specialistWorkTimeEnd ||
-                (endHours === specialistWorkTimeEnd && endMinutes > 0)) {
-              alert(`Время начала должно быть установлено не ранее ${specialistWorkTimeBegin}:00, а время окончания не позднее ${specialistWorkTimeEnd}:00`);
-              return;
-            }
-
-            const now = new Date();
-            if (startDateTime < now) {
-              alert("Нельзя записать на прошедшую дату");
-              return;
-            }
-
-            const hasOverlap = await checkAppointmentOverlap(newAppointmentDateTime, currentSelectedClient.id);
-            if (hasOverlap) {
-              alert("Выбранное время накладывается на существующую запись к выбранному специалисту, либо к другим специалистам. Пожалуйста, выберите другое время.");
-              return;
-            }
-
-            const appointmentData = {
-              specialistId: currentSpecialist.id.toString(),
-              ownerId: currentSpecialist.ownerId,
-              clientId: currentSelectedClient.id,
-              appointmentDateTime: newAppointmentDateTime,
-              appointmentNote: noteInput.trim(),
-              waitNearAppointment: waitNearAppointment,
-              confirmAppointment: "UNCERTAIN",
-            };
-
-            await Api.saveAppointment(appointmentData);
-            closeAddModal();
-            await loadAndDisplayAppointments(currentSpecialist);
-          } catch (error) {
-            console.error("Error saving appointment:", error);
-            alert("Ошибка при сохранении записи: " + error.message);
-          }
-        }
-
-        async function cancelAppointment() {
-          if (currentAppointmentId) {
-            try {
-              const isConfirmed = confirm("Подтвердите отмену записи");
-              if (!isConfirmed) {
-                closeViewModal();
-                return;
-              }
-
-              await Api.deleteAppointment(currentAppointmentId);
-              closeViewModal();
-              await loadAndDisplayAppointments(currentSpecialist);
-            } catch (error) {
-              console.error("Error canceling appointment:", error);
-              alert("Ошибка при отмене записи: " + error.message);
-            }
-          }
-        }
-
-        async function checkAppointmentOverlap(newAppointmentDateTime, clientId) {
-          try {
-            const clientAppointments = await Api.getAppointmentsByClientId(clientId);
-            const specialistAppointments = await Api.getAppointmentsBySpecialistId(currentSpecialist.id);
-            const allAppointments = [...specialistAppointments, ...clientAppointments];
-
-            const parsedNew = DateUtils.parseAppointmentDateTime(newAppointmentDateTime);
-            if (!parsedNew) return false;
-
-            for (const appointment of allAppointments) {
-              const parsedExisting = DateUtils.parseAppointmentDateTime(appointment.appointmentDateTime);
-              if (!parsedExisting) continue;
-
-              if ((parsedNew.start >= parsedExisting.start && parsedNew.start < parsedExisting.end) ||
-                  (parsedNew.end > parsedExisting.start && parsedNew.end <= parsedExisting.end) ||
-                  (parsedNew.start <= parsedExisting.start && parsedNew.end >= parsedExisting.end)) {
-                return true;
-              }
-            }
-
-            return false;
-          } catch (error) {
-            console.error("Error checking appointment overlap:", error);
-            return true;
-          }
-        }
-
-        function getWorkTime() {
-          if (!currentSpecialist || !currentSpecialist.workTimeLength) {
-            return { start: 8, end: 22 };
-          }
-
-          const [start, end] = currentSpecialist.workTimeLength.split("#").map(Number);
-          return { start, end };
-        }
-
-        function generateCompactSchedule() {
-          if (!currentSpecialist) {
-            alert("Специалист не выбран");
+          if (!currentSelectedClient) {
+            alert("Пожалуйста, выберите клиента");
             return;
           }
 
-          specialistScheduleData = calculateSpecialistSchedule(currentSpecialist);
-          openScheduleModal();
-          
-          const formattedName = formatFullName(
-            currentSpecialist.surname,
-            currentSpecialist.name,
-            currentSpecialist.patronymic
+          if (!dateTimeInput) {
+            alert("Пожалуйста, укажите дату и время начала приема");
+            return;
+          }
+
+          if (!endTimeInput) {
+            alert("Пожалуйста, укажите время окончания приема");
+            return;
+          }
+
+          const startDateTime = new Date(dateTimeInput);
+          const startTimeStr = startDateTime.toTimeString().slice(0, 5);
+          const specialistWorkTime =
+            currentSpecialist.workTimeLength.split("#");
+
+          if (startTimeStr >= endTimeInput) {
+            alert("Время окончания должно быть позже времени начала");
+            return;
+          }
+
+          const formattedDate = `${startDateTime
+            .getDate()
+            .toString()
+            .padStart(2, "0")}.${(startDateTime.getMonth() + 1)
+            .toString()
+            .padStart(2, "0")}.${startDateTime.getFullYear()}`;
+
+          // Формируем строку в формате "dd.MM.yyyy - HH:mm/HH:mm"
+          const newAppointmentDateTime = `${formattedDate} - ${startTimeStr}/${endTimeInput}`;
+
+          const startHours = parseInt(startTimeStr.split(":")[0]);
+          const startMinutes = parseInt(startTimeStr.split(":")[1]);
+          const endHours = parseInt(endTimeInput.split(":")[0]);
+          const endMinutes = parseInt(endTimeInput.split(":")[1]);
+          const specialistWorkTimeBegin = parseInt(specialistWorkTime[0]);
+          const specialistWorkTimeEnd = parseInt(specialistWorkTime[1]);
+
+          if (
+            startHours < specialistWorkTimeBegin ||
+            endHours > specialistWorkTimeEnd ||
+            (endHours === specialistWorkTimeEnd && endMinutes > 0)
+          ) {
+            alert(
+              `Время начала должно быть установлено не ранее ${specialistWorkTimeBegin}:00, а время окончания не позднее ${specialistWorkTimeEnd}:00`
+            );
+            return;
+          }
+
+          const now = new Date();
+          if (startDateTime < now) {
+            alert("Нельзя записать на прошедшую дату");
+            return;
+          }
+
+          var hasOverlap = await checkAppointmentOverlap(
+            newAppointmentDateTime,
+            currentSelectedClient.id
           );
-          elements.specialistName.innerHTML = `График: ${formattedName}`;
 
-          const monthsMap = new Map();
-          specialistScheduleData.forEach((dayData) => {
-            const date = dayData.date;
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            const key = `${year}-${month}`;
+          if (hasOverlap) {
+            alert(
+              "Выбранное время накладывается на существующую запись к выбранному специалисту, либо к другим специалистам. Пожалуйста, выберите другое время."
+            );
+            return;
+          }
 
-            if (!monthsMap.has(key)) {
-              monthsMap.set(key, []);
-            }
-            monthsMap.get(key).push(dayData);
+          // Создаем новую запись в таблице Appointment
+          const appointmentData = {
+            specialistId: currentSpecialist.id.toString(),
+            ownerId: currentSpecialist.ownerId,
+            clientId: currentSelectedClient.id,
+            appointmentDateTime: newAppointmentDateTime,
+            appointmentNote: noteInput.trim(),
+            waitNearAppointment: waitNearAppointment, // Добавляем поле из переключателя
+            confirmAppointment: "UNCERTAIN", // Устанавливаем значение по умолчанию
+          };
+
+          const response = await fetch(`${API_BASE}/appointments`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(appointmentData),
           });
 
-          const daysOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
-          const monthsNames = [
-            "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
-            "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+          if (!response.ok) {
+            throw new Error("Ошибка при сохранении записи: " + response.status);
+          }
+
+          closeAddModal();
+          await loadAndDisplayAppointments(currentSpecialist);
+        } catch (error) {
+          console.error("Error saving appointment:", error);
+          alert("Ошибка при сохранении записи: " + error.message);
+        }
+      }
+
+      // Отмена записи
+      async function cancelAppointment() {
+        if (currentAppointmentId) {
+          try {
+            const isConfirmed = confirm("Подтвердите отмену записи");
+            if (!isConfirmed) {
+              closeViewModal();
+              return;
+            }
+
+            const response = await fetch(
+              `${API_BASE}/appointments/${currentAppointmentId}`,
+              {
+                method: "DELETE",
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Ошибка при отмене записи: " + response.status);
+            }
+
+            closeViewModal();
+            await loadAndDisplayAppointments(currentSpecialist);
+          } catch (error) {
+            console.error("Error canceling appointment:", error);
+            alert("Ошибка при отмене записи: " + error.message);
+          }
+        }
+      }
+
+      // Вспомогательная функция для проверки наложения записей
+      async function checkAppointmentOverlap(newAppointmentDateTime, clientId) {
+        try {
+          const clientAppointments = await getAppointmentsByClientId(clientId);
+
+          const specialistAppointments = await getAppointmentsBySpecialistId(
+            currentSpecialist.id
+          );
+
+          const allAppointments = [
+            ...specialistAppointments,
+            ...clientAppointments,
           ];
 
-          let html = "";
-          const sortedMonths = Array.from(monthsMap.entries()).sort(([keyA], [keyB]) => keyA.localeCompare(keyB));
+          // Парсим новую запись
+          const [newDatePart, newTimePart] =
+            newAppointmentDateTime.split(" - ");
+          const [newStartTimeStr, newEndTimeStr] = newTimePart.split("/");
+          const [day, month, year] = newDatePart.split(".");
 
-          sortedMonths.forEach(([key, days]) => {
-            const [year, month] = key.split("-").map(Number);
-            const monthName = monthsNames[month];
-            let daysHtml = "";
+          const newStart = new Date(
+            `${year}-${month}-${day}T${newStartTimeStr}`
+          );
+          const newEnd = new Date(`${year}-${month}-${day}T${newEndTimeStr}`);
 
-            days.forEach((dayData) => {
-              const date = dayData.date;
-              const day = date.getDate();
-              const dayOfWeek = date.getDay();
-              const isToday = date.toDateString() === new Date().toDateString();
-              const isWeekend = !dayData.isWorking;
+          for (const appointment of allAppointments) {
+            // Парсим существующие записи
+            const ap = appointment.appointmentDateTime;
 
-              const dayClass = isWeekend ? "day-card weekend" : "day-card";
-              const todayClass = isToday ? "today" : "";
-              const dateString = DateUtils.formatForInput(date);
-              const timeString = dayData.isWorking
-                ? ` с ${dayData.workingHours.start} до ${dayData.workingHours.end}`
-                : " - выходной";
+            if (ap.includes(" - ") && ap.includes("/")) {
+              const [datePart, timePart] = ap.split(" - ");
+              const [startTimeStr, endTimeStr] = timePart.split("/");
+              const [day, month, year] = datePart.split(".");
 
-              daysHtml += `<div class="${dayClass} ${todayClass} selectable-day"
+              const existingStart = new Date(
+                `${year}-${month}-${day}T${startTimeStr}`
+              );
+              const existingEnd = new Date(
+                `${year}-${month}-${day}T${endTimeStr}`
+              );
+
+              if (
+                (newStart >= existingStart && newStart < existingEnd) ||
+                (newEnd > existingStart && newEnd <= existingEnd) ||
+                (newStart <= existingStart && newEnd >= existingEnd)
+              ) {
+                return true;
+              }
+            }
+          }
+
+          return false;
+        } catch (error) {
+          console.error("Error checking appointment overlap:", error);
+          return true;
+        }
+      }
+
+      // Функция для получения рабочего времени специалиста
+      function getWorkTime() {
+        if (!currentSpecialist || !currentSpecialist.workTimeLength) {
+          return { start: 8, end: 22 }; // Значения по умолчанию
+        }
+
+        const [start, end] = currentSpecialist.workTimeLength
+          .split("#")
+          .map(Number);
+        return { start, end };
+      }
+
+      // Календарь с графиком приема специалиста
+      function generateCompactSchedule() {
+        if (!currentSpecialist) {
+          alert("Специалист не выбран");
+          return;
+        }
+
+        // Рассчитываем расписание
+        specialistScheduleData = calculateSpecialistSchedule(currentSpecialist);
+
+        openScheduleModal();
+        const container = document.getElementById("monthsContainer");
+        const today = new Date();
+        const header = document.getElementById("specialistName");
+
+        // Фио специалиста в заголовке
+        const formattedName = formatFullName(
+          currentSpecialist.surname,
+          currentSpecialist.name,
+          currentSpecialist.patronymic
+        );
+        header.innerHTML = `График: ${formattedName}`;
+
+        // Группируем дни по месяцам
+        const monthsMap = new Map();
+
+        specialistScheduleData.forEach((dayData) => {
+          const date = dayData.date;
+          const year = date.getFullYear();
+          const month = date.getMonth();
+          const key = `${year}-${month}`;
+
+          if (!monthsMap.has(key)) {
+            monthsMap.set(key, []);
+          }
+          monthsMap.get(key).push(dayData);
+        });
+
+        const daysOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+        const monthsNames = [
+          "Январь",
+          "Февраль",
+          "Март",
+          "Апрель",
+          "Май",
+          "Июнь",
+          "Июль",
+          "Август",
+          "Сентябрь",
+          "Октябрь",
+          "Ноябрь",
+          "Декабрь",
+        ];
+
+        let html = "";
+
+        // Сортируем месяцы по дате
+        const sortedMonths = Array.from(monthsMap.entries()).sort(
+          ([keyA], [keyB]) => {
+            return keyA.localeCompare(keyB);
+          }
+        );
+
+        sortedMonths.forEach(([key, days]) => {
+          const [year, month] = key.split("-").map(Number);
+          const monthName = monthsNames[month];
+
+          let daysHtml = "";
+
+          days.forEach((dayData) => {
+            const date = dayData.date;
+            const day = date.getDate();
+            const dayOfWeek = date.getDay();
+            const isToday = date.toDateString() === today.toDateString();
+            const isWeekend = !dayData.isWorking;
+
+            const dayClass = isWeekend ? "day-card weekend" : "day-card";
+            const todayClass = isToday ? "today" : "";
+
+            // Добавляем data-атрибуты для выбора даты
+            const dateString = formatDateForInput(date);
+            const timeString = dayData.isWorking
+              ? ` с ${dayData.workingHours.start} до ${dayData.workingHours.end}`
+              : " - выходной";
+
+            daysHtml += `<div class="${dayClass} ${todayClass} selectable-day"
                                 data-date="${dateString}"
                                 data-is-working="${dayData.isWorking}"
-                                data-working-hours="${dayData.isWorking ? `${dayData.workingHours.start}-${dayData.workingHours.end}` : ""}"
+                                data-working-hours="${
+                                  dayData.isWorking
+                                    ? `${dayData.workingHours.start}-${dayData.workingHours.end}`
+                                    : ""
+                                }"
                                 title="Выбрать ${dateString}${timeString}">
                             <div class="day-number">${day}</div>
                             <div class="day-name">${daysOfWeek[dayOfWeek]}</div>
                             <div class="work-time">${dayData.displayText}</div>
                         </div>`;
-            });
+          });
 
-            html += `<div class="month-section">
-                      <div class="month-title">${monthName} ${year}</div>
-                      <div class="days-grid">${daysHtml}</div>
+          html += `<div class="month-section">
+                        <div class="month-title">${monthName} ${year}</div>
+                        <div class="days-grid">${daysHtml}</div>
                     </div>`;
+        });
+
+        container.innerHTML = html;
+
+        // Добавляем обработчики событий для выбора даты
+        addDateSelectionHandlers();
+      }
+
+      // Функция для форматирования даты в формат для input[type="datetime-local"]
+      function formatDateForInput(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function addDateSelectionHandlers() {
+        const selectableDays = document.querySelectorAll(".selectable-day");
+
+        selectableDays.forEach((dayElement) => {
+          let touchStartX = 0;
+          let touchStartY = 0;
+          let isScrolling = false;
+          const scrollThreshold = 10; // Порог в пикселях для определения скролла
+
+          // Обработчик начала касания
+          function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            isScrolling = false;
+          }
+
+          // Обработчик движения касания
+          function handleTouchMove(e) {
+            if (!touchStartX || !touchStartY) return;
+
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+
+            const diffX = Math.abs(touchX - touchStartX);
+            const diffY = Math.abs(touchY - touchStartY);
+
+            // Если движение по вертикали больше порога - это скролл
+            if (diffY > scrollThreshold && diffY > diffX) {
+              isScrolling = true;
+            }
+          }
+
+          // Обработчик окончания касания
+          function handleTouchEnd(e) {
+            if (!isScrolling) {
+              // Если не было скролла - это выбор даты
+              selectDateFromCalendar(dayElement);
+            }
+
+            // Сбрасываем значения
+            touchStartX = 0;
+            touchStartY = 0;
+            isScrolling = false;
+          }
+
+          // Удаляем предыдущие обработчики
+          dayElement.removeEventListener("touchstart", handleTouchStart);
+          dayElement.removeEventListener("touchmove", handleTouchMove);
+          dayElement.removeEventListener("touchend", handleTouchEnd);
+          dayElement.removeEventListener("click", handleDayClick);
+
+          // Добавляем новые обработчики
+          dayElement.addEventListener("touchstart", handleTouchStart, {
+            passive: true,
+          });
+          dayElement.addEventListener("touchmove", handleTouchMove, {
+            passive: true,
+          });
+          dayElement.addEventListener("touchend", handleTouchEnd);
+          dayElement.addEventListener("click", handleDayClick);
+
+          // Эффекты при наведении (только для десктопа)
+          dayElement.addEventListener("mouseenter", function () {
+            if (!isTouchDevice()) {
+              this.style.transform = "scale(1.05)";
+              this.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.2)";
+            }
           });
 
-          elements.monthsContainer.innerHTML = html;
-          addDateSelectionHandlers();
-        }
-
-        function addDateSelectionHandlers() {
-          const selectableDays = document.querySelectorAll(".selectable-day");
-
-          selectableDays.forEach((dayElement) => {
-            let touchStartX = 0;
-            let touchStartY = 0;
-            let isScrolling = false;
-            const scrollThreshold = 10;
-
-            function handleTouchStart(e) {
-              touchStartX = e.touches[0].clientX;
-              touchStartY = e.touches[0].clientY;
-              isScrolling = false;
+          dayElement.addEventListener("mouseleave", function () {
+            if (!isTouchDevice()) {
+              this.style.transform = "scale(1)";
+              this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
             }
-
-            function handleTouchMove(e) {
-              if (!touchStartX || !touchStartY) return;
-
-              const touchX = e.touches[0].clientX;
-              const touchY = e.touches[0].clientY;
-              const diffX = Math.abs(touchX - touchStartX);
-              const diffY = Math.abs(touchY - touchStartY);
-
-              if (diffY > scrollThreshold && diffY > diffX) {
-                isScrolling = true;
-              }
-            }
-
-            function handleTouchEnd(e) {
-              if (!isScrolling) {
-                selectDateFromCalendar(dayElement);
-              }
-
-              touchStartX = 0;
-              touchStartY = 0;
-              isScrolling = false;
-            }
-
-            dayElement.removeEventListener("touchstart", handleTouchStart);
-            dayElement.removeEventListener("touchmove", handleTouchMove);
-            dayElement.removeEventListener("touchend", handleTouchEnd);
-            dayElement.removeEventListener("click", handleDayClick);
-
-            dayElement.addEventListener("touchstart", handleTouchStart, { passive: true });
-            dayElement.addEventListener("touchmove", handleTouchMove, { passive: true });
-            dayElement.addEventListener("touchend", handleTouchEnd);
-            dayElement.addEventListener("click", handleDayClick);
-
-            dayElement.addEventListener("mouseenter", function() {
-              if (!isTouchDevice()) {
-                this.style.transform = "scale(1.05)";
-                this.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.2)";
-              }
-            });
-
-            dayElement.addEventListener("mouseleave", function() {
-              if (!isTouchDevice()) {
-                this.style.transform = "scale(1)";
-                this.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
-              }
-            });
           });
-        }
+        });
+      }
 
-        function handleDayClick(event) {
-          event.preventDefault();
-          event.stopPropagation();
-          selectDateFromCalendar(this);
-        }
+      // Отдельная функция для обработки клика (десктоп)
+      function handleDayClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        selectDateFromCalendar(this);
+      }
 
-        function isTouchDevice() {
-          return "ontouchstart" in window || navigator.maxTouchPoints > 0;
-        }
+      // Отдельная функция для обработки касания (мобильные устройства)
+      function handleDayTouch(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        selectDateFromCalendar(this);
+      }
 
-        function selectDateFromCalendar(dayElement) {
-          const dateString = dayElement.getAttribute("data-date");
-          const isWorking = dayElement.getAttribute("data-is-working") === "true";
-          const workingHours = dayElement.getAttribute("data-working-hours");
+      // Функция для определения touch-устройства
+      function isTouchDevice() {
+        return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+      }
 
-          dayElement.style.backgroundColor = "#e6f7ff";
-          dayElement.style.borderColor = "#1890ff";
-          setTimeout(() => {
-            dayElement.style.backgroundColor = "";
-            dayElement.style.borderColor = "";
-          }, 300);
+      // Общая функция для выбора даты из календаря
+      function selectDateFromCalendar(dayElement) {
+        const dateString = dayElement.getAttribute("data-date");
+        const isWorking = dayElement.getAttribute("data-is-working") === "true";
+        const workingHours = dayElement.getAttribute("data-working-hours");
 
-          const currentDateTimeValue = elements.appointmentDateTime.value;
-          let newDateTimeValue;
+        // Добавляем визуальную обратную связь
+        dayElement.style.backgroundColor = "#e6f7ff";
+        dayElement.style.borderColor = "#1890ff";
+        setTimeout(() => {
+          dayElement.style.backgroundColor = "";
+          dayElement.style.borderColor = "";
+        }, 300);
 
-          if (currentDateTimeValue) {
-            const currentDate = new Date(currentDateTimeValue);
-            const newDate = new Date(dateString);
-            const hours = currentDate.getHours();
-            const minutes = currentDate.getMinutes();
+        // Получаем текущее значение поля appointmentDateTime
+        const currentDateTimeValue = document.getElementById(
+          "appointmentDateTime"
+        ).value;
 
-            newDate.setHours(hours, minutes);
-            newDateTimeValue = newDate.toISOString().slice(0, 16);
+        let newDateTimeValue;
+
+        if (currentDateTimeValue) {
+          // Если уже есть значение, сохраняем время и меняем только дату
+          const currentDate = new Date(currentDateTimeValue);
+          const newDate = new Date(dateString);
+
+          // Сохраняем часы и минуты из текущего значения
+          const hours = currentDate.getHours();
+          const minutes = currentDate.getMinutes();
+
+          newDate.setHours(hours, minutes);
+          newDateTimeValue = newDate.toISOString().slice(0, 16);
+        } else {
+          // Если значения нет, устанавливаем время по умолчанию
+          if (isWorking && workingHours) {
+            const [startTime] = workingHours.split("-");
+            const formattedTime = formatTimeForInput(startTime);
+            newDateTimeValue = `${dateString}T${formattedTime}`;
           } else {
-            if (isWorking && workingHours) {
-              const [startTime] = workingHours.split("-");
-              const formattedTime = formatTimeForInput(startTime);
-              newDateTimeValue = `${dateString}T${formattedTime}`;
-            } else {
-              newDateTimeValue = `${dateString}T09:00`;
-            }
+            // Для выходных дней устанавливаем разумное время по умолчанию
+            newDateTimeValue = `${dateString}T09:00`;
           }
+        }
 
-          elements.appointmentDateTime.value = newDateTimeValue;
+        document.getElementById("appointmentDateTime").value = newDateTimeValue;
 
-          if (!currentDateTimeValue) {
-            setTimeout(() => {
-              calculateEndTime();
-            }, 100);
-          }
-
+        // Автоматически рассчитываем время окончания только если время было установлено по умолчанию
+        if (!currentDateTimeValue) {
           setTimeout(() => {
-            closeScheduleModal();
-          }, 300);
-
-          showDateSelectionNotification(dateString, isWorking);
+            calculateEndTime();
+          }, 100);
         }
 
-        function formatTimeForInput(timeStr) {
-          if (!timeStr) return "08:00";
-          const [hours, minutes] = timeStr.split(":");
-          const formattedHours = hours.padStart(2, "0");
-          const formattedMinutes = (minutes || "00").padStart(2, "0");
-          return `${formattedHours}:${formattedMinutes}`;
-        }
+        // Закрываем модальное окно расписания с небольшой задержкой
+        setTimeout(() => {
+          closeScheduleModal();
+        }, 300);
 
-        function showDateSelectionNotification(dateString, isWorking) {
-          const notification = DomUtils.createElement("div");
-          notification.style.cssText = `
+        // Показываем уведомление о выборе даты
+        showDateSelectionNotification(dateString, isWorking);
+      }
+
+      // Функция для форматирования времени в корректный формат для input[type="datetime-local"]
+      function formatTimeForInput(timeStr) {
+        if (!timeStr) return "08:00";
+
+        // Убеждаемся, что время в формате HH:MM
+        const [hours, minutes] = timeStr.split(":");
+        const formattedHours = hours.padStart(2, "0");
+        const formattedMinutes = (minutes || "00").padStart(2, "0");
+
+        return `${formattedHours}:${formattedMinutes}`;
+      }
+
+      // Функция для показа уведомления о выборе даты
+      function showDateSelectionNotification(dateString, isWorking) {
+        // Создаем временное уведомление
+        const notification = document.createElement("div");
+        notification.style.cssText = `
             position: fixed;
             top: 100px;
             right: 20px;
@@ -1934,276 +2435,232 @@
             z-index: 10000;
             font-size: 14px;
             transition: all 0.3s ease;
-          `;
+        `;
 
-          const formattedDate = new Date(dateString).toLocaleDateString("ru-RU");
-          notification.textContent = `Выбрана дата: ${formattedDate}${isWorking ? "" : " (выходной)"}`;
+        const formattedDate = new Date(dateString).toLocaleDateString("ru-RU");
+        notification.textContent = `Выбрана дата: ${formattedDate}${
+          isWorking ? "" : " (выходной)"
+        }`;
 
-          document.body.appendChild(notification);
+        document.body.appendChild(notification);
 
+        // Автоматически скрываем уведомление через 3 секунды
+        setTimeout(() => {
+          notification.style.opacity = "0";
+          notification.style.transform = "translateX(100px)";
           setTimeout(() => {
-            notification.style.opacity = "0";
-            notification.style.transform = "translateX(100px)";
-            setTimeout(() => {
-              if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-              }
-            }, 300);
-          }, 3000);
-        }
-
-        function calculateEndTime() {
-          const dateTimeInput = elements.appointmentDateTime.value;
-          const endTimeDisplay = elements.appointmentEndTime;
-
-          if (dateTimeInput) {
-            const startTime = new Date(dateTimeInput);
-
-            if (isNaN(startTime.getTime())) {
-              console.error("Invalid date selected");
-              return;
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
             }
+          }, 300);
+        }, 3000);
+      }
 
-            const dateString = DateUtils.formatForInput(startTime);
-            const workingHours = getWorkingHours(startTime);
+      // Вспомогательная функция для проверки, можно ли редактировать время
+      function isTimeEditable() {
+        const dateTimeInput = document.getElementById("appointmentDateTime");
+        return dateTimeInput && !dateTimeInput.readOnly;
+      }
 
-            if (workingHours && workingHours.end) {
-              const [endHour, endMinute] = workingHours.end.split(":").map(Number);
-              const endTime = new Date(startTime);
-              endTime.setHours(endHour, endMinute);
-              endTimeDisplay.value = endTime.toTimeString().slice(0, 5);
-            } else {
-              const endTime = new Date(startTime.getTime() + 30 * 60000);
+      // Функция для парсинга и расчета расписания на 120 дней
+      function calculateSpecialistSchedule(specialist) {
+        const scheduleData = [];
+        const today = new Date();
+        const daysCount = 120;
 
-              if (isNaN(endTime.getTime())) {
-                console.error("Invalid end time calculated");
-                return;
-              }
+        if (!specialist || !specialist.receptionSchedule) {
+          // Пустая строка - стандартный график (5 рабочих, 2 выходных)
+          for (let i = 0; i < daysCount; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            const dayOfWeek = date.getDay(); // 0 - воскресенье, 6 - суббота
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
-              const formattedEndTime = endTime.toTimeString().slice(0, 5);
-              endTimeDisplay.value = formattedEndTime;
-            }
+            scheduleData.push({
+              date: new Date(date),
+              isWorking: !isWeekend,
+              workingHours: !isWeekend ? { start: "8:00", end: "16:00" } : null,
+              displayText: !isWeekend ? "8:00-16:00" : "Выходной",
+            });
           }
-        }
+        } else if (specialist.receptionSchedule.includes("FIX_DAYS")) {
+          // FIX_DAYS - фиксированные дни недели
+          const scheduleString = specialist.receptionSchedule.replace(
+            "FIX_DAYS",
+            ""
+          );
+          const days = scheduleString.split("/").filter((day) => day.trim());
 
-        function calculateSpecialistSchedule(specialist) {
-          const scheduleData = [];
-          const today = new Date();
-          const daysCount = 120;
-
-          if (!specialist || !specialist.receptionSchedule) {
+          if (days.length === 7) {
             for (let i = 0; i < daysCount; i++) {
               const date = new Date(today);
               date.setDate(today.getDate() + i);
               const dayOfWeek = date.getDay();
-              const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+              // Преобразование: 0=воскресенье, 1=понедельник...6=суббота
+              const scheduleIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+              const daySchedule = days[scheduleIndex];
 
-              scheduleData.push({
-                date: new Date(date),
-                isWorking: !isWeekend,
-                workingHours: !isWeekend ? { start: "8:00", end: "16:00" } : null,
-                displayText: !isWeekend ? "8:00-16:00" : "Выходной",
-              });
-            }
-          } else if (specialist.receptionSchedule.includes("FIX_DAYS")) {
-            const scheduleString = specialist.receptionSchedule.replace("FIX_DAYS", "");
-            const days = scheduleString.split("/").filter((day) => day.trim());
-
-            if (days.length === 7) {
-              for (let i = 0; i < daysCount; i++) {
-                const date = new Date(today);
-                date.setDate(today.getDate() + i);
-                const dayOfWeek = date.getDay();
-                const scheduleIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-                const daySchedule = days[scheduleIndex];
-
-                if (daySchedule === "*") {
-                  scheduleData.push({
-                    date: new Date(date),
-                    isWorking: false,
-                    workingHours: null,
-                    displayText: "Выходной",
-                  });
-                } else if (daySchedule.includes("#")) {
-                  const [start, end] = daySchedule.split("#");
-                  scheduleData.push({
-                    date: new Date(date),
-                    isWorking: true,
-                    workingHours: { start: `${start}:00`, end: `${end}:00` },
-                    displayText: `${start}:00-${end}:00`,
-                  });
-                }
+              if (daySchedule === "*") {
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: false,
+                  workingHours: null,
+                  displayText: "Выходной",
+                });
+              } else if (daySchedule.includes("#")) {
+                const [start, end] = daySchedule.split("#");
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: true,
+                  workingHours: { start: `${start}:00`, end: `${end}:00` },
+                  displayText: `${start}:00-${end}:00`,
+                });
               }
             }
-          } else if (specialist.receptionSchedule.includes("EVEN_ODD_DAYS")) {
-            const scheduleString = specialist.receptionSchedule.replace("EVEN_ODD_DAYS", "");
-            const parts = scheduleString.split("/").filter((part) => part.trim());
+          }
+        } else if (specialist.receptionSchedule.includes("EVEN_ODD_DAYS")) {
+          // EVEN_ODD_DAYS - четные/нечетные дни
+          const scheduleString = specialist.receptionSchedule.replace(
+            "EVEN_ODD_DAYS",
+            ""
+          );
+          const parts = scheduleString.split("/").filter((part) => part.trim());
 
-            if (parts.length >= 2) {
-              const oddHours = parts[0].split("#");
-              const evenHours = parts[1].split("#");
-              const weekendDays = parts.slice(2).map((day) => parseInt(day));
+          if (parts.length >= 2) {
+            const oddHours = parts[0].split("#"); // нечетные дни
+            const evenHours = parts[1].split("#"); // четные дни
+            const weekendDays = parts.slice(2).map((day) => parseInt(day)); // выходные дни недели
 
-              for (let i = 0; i < daysCount; i++) {
-                const date = new Date(today);
-                date.setDate(today.getDate() + i);
-                const dayOfMonth = date.getDate();
-                const dayOfWeek = date.getDay();
-                const isWeekendDay = weekendDays.includes(dayOfWeek);
-
-                if (isWeekendDay) {
-                  scheduleData.push({
-                    date: new Date(date),
-                    isWorking: false,
-                    workingHours: null,
-                    displayText: "Выходной",
-                  });
-                } else if (dayOfMonth % 2 === 1) {
-                  scheduleData.push({
-                    date: new Date(date),
-                    isWorking: true,
-                    workingHours: {
-                      start: `${oddHours[0]}:00`,
-                      end: `${oddHours[1]}:00`,
-                    },
-                    displayText: `${oddHours[0]}:00-${oddHours[1]}:00`,
-                  });
-                } else {
-                  scheduleData.push({
-                    date: new Date(date),
-                    isWorking: true,
-                    workingHours: {
-                      start: `${evenHours[0]}:00`,
-                      end: `${evenHours[1]}:00`,
-                    },
-                    displayText: `${evenHours[0]}:00-${evenHours[1]}:00`,
-                  });
-                }
-              }
-            }
-          } else if (specialist.receptionSchedule.includes("ROLLING_CHART")) {
-            const scheduleString = specialist.receptionSchedule.replace("ROLLING_CHART", "");
-            const parts = scheduleString.split("/").filter((part) => part.trim());
-
-            if (parts.length === 3) {
-              const workHours = parts[0].split("#");
-              const pattern = parseInt(parts[1]);
-              const startDate = new Date(parts[2]);
-
-              for (let i = 0; i < daysCount; i++) {
-                const date = new Date(today);
-                date.setDate(today.getDate() + i);
-                const diffTime = date - startDate;
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                const cycleLength = pattern * 2;
-                const dayInCycle = ((diffDays % cycleLength) + cycleLength) % cycleLength;
-                const isWorkingDay = dayInCycle < pattern;
-
-                if (isWorkingDay) {
-                  scheduleData.push({
-                    date: new Date(date),
-                    isWorking: true,
-                    workingHours: {
-                      start: `${workHours[0]}:00`,
-                      end: `${workHours[1]}:00`,
-                    },
-                    displayText: `${workHours[0]}:00-${workHours[1]}:00`,
-                  });
-                } else {
-                  scheduleData.push({
-                    date: new Date(date),
-                    isWorking: false,
-                    workingHours: null,
-                    displayText: "Выходной",
-                  });
-                }
-              }
-            }
-          } else {
             for (let i = 0; i < daysCount; i++) {
               const date = new Date(today);
               date.setDate(today.getDate() + i);
+              const dayOfMonth = date.getDate();
               const dayOfWeek = date.getDay();
-              const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+              const isWeekendDay = weekendDays.includes(dayOfWeek);
 
-              scheduleData.push({
-                date: new Date(date),
-                isWorking: !isWeekend,
-                workingHours: !isWeekend ? { start: "8:00", end: "16:00" } : null,
-                displayText: !isWeekend ? "8:00-16:00" : "Выходной",
-              });
+              if (isWeekendDay) {
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: false,
+                  workingHours: null,
+                  displayText: "Выходной",
+                });
+              } else if (dayOfMonth % 2 === 1) {
+                // Нечетный день
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: true,
+                  workingHours: {
+                    start: `${oddHours[0]}:00`,
+                    end: `${oddHours[1]}:00`,
+                  },
+                  displayText: `${oddHours[0]}:00-${oddHours[1]}:00`,
+                });
+              } else {
+                // Четный день
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: true,
+                  workingHours: {
+                    start: `${evenHours[0]}:00`,
+                    end: `${evenHours[1]}:00`,
+                  },
+                  displayText: `${evenHours[0]}:00-${evenHours[1]}:00`,
+                });
+              }
             }
           }
-
-          return scheduleData;
-        }
-
-        function isWorkingDay(date) {
-          const dateString = date.toDateString();
-          const scheduleDay = specialistScheduleData.find(
-            (day) => day.date.toDateString() === dateString
+        } else if (specialist.receptionSchedule.includes("ROLLING_CHART")) {
+          // ROLLING_CHART - скользящий график
+          const scheduleString = specialist.receptionSchedule.replace(
+            "ROLLING_CHART",
+            ""
           );
-          return scheduleDay ? scheduleDay.isWorking : false;
-        }
+          const parts = scheduleString.split("/").filter((part) => part.trim());
 
-        function getWorkingHours(date) {
-          const dateString = date.toDateString();
-          const scheduleDay = specialistScheduleData.find(
-            (day) => day.date.toDateString() === dateString
-          );
-          return scheduleDay ? scheduleDay.workingHours : null;
-        }
+          if (parts.length === 3) {
+            const workHours = parts[0].split("#");
+            const pattern = parseInt(parts[1]); // количество рабочих/выходных дней
+            const startDate = new Date(parts[2]); // дата начала отсчета
 
-        function createNonWorkingTimeOverlay(date, workTime, specialistSchedule, cardsContainerHeight, container) {
-          const dateString = DateUtils.formatForSchedule(date);
-          const specialistWorkHours = getSpecialistWorkingHours(dateString, specialistSchedule);
+            for (let i = 0; i < daysCount; i++) {
+              const date = new Date(today);
+              date.setDate(today.getDate() + i);
 
-          if (!specialistWorkHours || !specialistWorkHours.isWorking) {
-            const overlay = DomUtils.createElement("div", "non-working-overlay");
-            overlay.style.top = "0";
-            overlay.style.height = "100%";
-            container.appendChild(overlay);
-            return;
+              // Расчет разницы в днях от начальной даты
+              const diffTime = date - startDate;
+              const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+              // Определение типа дня (рабочий/выходной)
+              const cycleLength = pattern * 2; // полный цикл: рабочие + выходные
+              const dayInCycle =
+                ((diffDays % cycleLength) + cycleLength) % cycleLength;
+              const isWorkingDay = dayInCycle < pattern;
+
+              if (isWorkingDay) {
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: true,
+                  workingHours: {
+                    start: `${workHours[0]}:00`,
+                    end: `${workHours[1]}:00`,
+                  },
+                  displayText: `${workHours[0]}:00-${workHours[1]}:00`,
+                });
+              } else {
+                scheduleData.push({
+                  date: new Date(date),
+                  isWorking: false,
+                  workingHours: null,
+                  displayText: "Выходной",
+                });
+              }
+            }
           }
+        } else {
+          // Неизвестный формат - стандартный график
+          for (let i = 0; i < daysCount; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            const dayOfWeek = date.getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
-          const workStartHour = workTime.start;
-          const workEndHour = workTime.end;
-          const specialistStartHour = parseHourString(specialistWorkHours.workingHours.start);
-          const specialistEndHour = parseHourString(specialistWorkHours.workingHours.end);
-          const totalWorkMinutes = (workEndHour - workStartHour) * 60;
-
-          if (specialistStartHour > workStartHour) {
-            const beforeStartOverlay = DomUtils.createElement("div", "non-working-overlay");
-            beforeStartOverlay.style.top = "0";
-            const beforeStartHeight = (((specialistStartHour - workStartHour) * 60) / totalWorkMinutes) * cardsContainerHeight;
-            beforeStartOverlay.style.height = `${beforeStartHeight}px`;
-            container.appendChild(beforeStartOverlay);
-          }
-
-          if (specialistEndHour < workEndHour) {
-            const afterEndOverlay = DomUtils.createElement("div", "non-working-overlay");
-            const afterEndTop = (((specialistEndHour - workStartHour) * 60) / totalWorkMinutes) * cardsContainerHeight;
-            afterEndOverlay.style.top = `${afterEndTop}px`;
-            const afterEndHeight = (((workEndHour - specialistEndHour) * 60) / totalWorkMinutes) * cardsContainerHeight + 16;
-            afterEndOverlay.style.height = `${afterEndHeight}px`;
-            container.appendChild(afterEndOverlay);
+            scheduleData.push({
+              date: new Date(date),
+              isWorking: !isWeekend,
+              workingHours: !isWeekend ? { start: "8:00", end: "16:00" } : null,
+              displayText: !isWeekend ? "8:00-16:00" : "Выходной",
+            });
           }
         }
 
-        function parseHourString(timeString) {
-          const [hours, minutes] = timeString.split(":").map(Number);
-          return hours + minutes / 60;
-        }
+        return scheduleData;
+      }
 
-        function getSpecialistWorkingHours(dateString, specialistSchedule) {
-          const targetDate = new Date(dateString);
-          return specialistSchedule.find(
-            (day) => day.date.toDateString() === targetDate.toDateString()
-          );
-        }
+      // Функция для проверки, является ли дата рабочим днем
+      function isWorkingDay(date) {
+        const dateString = date.toDateString();
+        const scheduleDay = specialistScheduleData.find(
+          (day) => day.date.toDateString() === dateString
+        );
+        return scheduleDay ? scheduleDay.isWorking : false;
+      }
 
-        function performClientSearch(searchTerm) {
-          const resultsContainer = elements.searchResults;
+      // Функция для получения рабочих часов на указанную дату
+      function getWorkingHours(date) {
+        const dateString = date.toDateString();
+        const scheduleDay = specialistScheduleData.find(
+          (day) => day.date.toDateString() === dateString
+        );
+        return scheduleDay ? scheduleDay.workingHours : null;
+      }
+
+      // Поиск клиента
+      document
+        .getElementById("searchClient")
+        .addEventListener("input", function (e) {
+          const searchTerm = e.target.value.toLowerCase();
+          const resultsContainer = document.getElementById("searchResults");
           resultsContainer.innerHTML = "";
 
           if (searchTerm.length > 2) {
@@ -2214,71 +2671,166 @@
             );
 
             filteredClients.forEach((client) => {
-              const resultItem = DomUtils.createElement("div");
+              const resultItem = document.createElement("div");
               resultItem.style.padding = "8px";
               resultItem.style.borderBottom = "1px solid #eee";
               resultItem.style.cursor = "pointer";
               resultItem.textContent = `${client.surname} ${client.name} ${client.patronymic}`;
 
-              resultItem.addEventListener("click", function() {
+              resultItem.addEventListener("click", function () {
                 currentSelectedClient = client;
-                elements.searchClient.value = `${client.surname} ${client.name} ${client.patronymic}`;
+                document.getElementById(
+                  "searchClient"
+                ).value = `${client.surname} ${client.name} ${client.patronymic}`;
                 resultsContainer.innerHTML = "";
               });
 
               resultsContainer.appendChild(resultItem);
             });
           }
+        });
+
+      // Добавляем функцию для создания блоков нерабочего времени специалиста
+      function createNonWorkingTimeOverlay(
+        date,
+        workTime,
+        specialistSchedule,
+        cardsContainerHeight,
+        container
+      ) {
+        // Получаем рабочие часы специалиста для этой даты
+        const dateString = formatDateForSchedule(date);
+        const specialistWorkHours = getSpecialistWorkingHours(
+          dateString,
+          specialistSchedule
+        );
+
+        // Если специалист не работает в этот день - закрашиваем весь столбец
+        if (!specialistWorkHours || !specialistWorkHours.isWorking) {
+          const overlay = document.createElement("div");
+          overlay.className = "non-working-overlay";
+          overlay.style.top = "0";
+          overlay.style.height = "100%"; // "101.9%" Костыль для выравнивания блока до начала рабочего времени;
+          container.appendChild(overlay);
+          return;
         }
 
-        // Инициализация событий
-        function initEventListeners() {
-          elements.searchClient.addEventListener("input", function(e) {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-              performClientSearch(e.target.value);
-            }, 300);
-          });
+        // Если специалист работает, но не полный день
+        const workStartHour = workTime.start;
+        const workEndHour = workTime.end;
+        const specialistStartHour = parseHourString(
+          specialistWorkHours.workingHours.start
+        );
+        const specialistEndHour = parseHourString(
+          specialistWorkHours.workingHours.end
+        );
 
-          elements.searchClient.addEventListener("keypress", function(e) {
-            if (e.key === "Enter") {
-              e.preventDefault();
-            }
-          });
+        const totalWorkMinutes = (workEndHour - workStartHour) * 60;
 
-          elements.appointmentDateTime.addEventListener("change", calculateEndTime);
-          elements.appointmentDateTime.addEventListener("input", function() {
-            setTimeout(() => {
-              calculateEndTime();
-            }, 100);
-          });
+        // Создаем блоки для времени до начала работы специалиста
+        if (specialistStartHour > workStartHour) {
+          const beforeStartOverlay = document.createElement("div");
+          beforeStartOverlay.className = "non-working-overlay";
+          beforeStartOverlay.style.top = "0";
+          const beforeStartHeight =
+            (((specialistStartHour - workStartHour) * 60) / totalWorkMinutes) *
+            cardsContainerHeight;
 
-          window.addEventListener("click", function(e) {
-            if (e.target === elements.addModal) closeAddModal();
-            if (e.target === elements.viewModal) closeViewModal();
-            if (e.target === elements.scheduleModal) closeScheduleModal();
-          });
+          beforeStartOverlay.style.height = `${beforeStartHeight}px`;
+          container.appendChild(beforeStartOverlay);
         }
 
-        // Публичные методы
-        return {
-          init() {
-            initEventListeners();
-            searchTgUserById(tgUserId);
-          },
+        // Создаем блоки для времени после окончания работы специалиста
+        if (specialistEndHour < workEndHour) {
+          const afterEndOverlay = document.createElement("div");
+          afterEndOverlay.className = "non-working-overlay";
+          const afterEndTop =
+            (((specialistEndHour - workStartHour) * 60) / totalWorkMinutes) *
+            cardsContainerHeight;
+          afterEndOverlay.style.top = `${afterEndTop}px`;
+          const afterEndHeight =
+            (((workEndHour - specialistEndHour) * 60) / totalWorkMinutes) *
+              cardsContainerHeight +
+            16; // cardsContainerHeight Костыль: +14 константа для выравнивания блока до начала рабочего времени;
 
-          closeAddModal,
-          closeViewModal,
-          closeScheduleModal,
-          generateCompactSchedule,
-          saveAppointment,
-          cancelAppointment
-        };
-      })();
+          afterEndOverlay.style.height = `${afterEndHeight}px`;
+          container.appendChild(afterEndOverlay);
+        }
+      }
 
+      // Вспомогательная функция для парсинга времени из строки "HH:MM"
+      function parseHourString(timeString) {
+        const [hours, minutes] = timeString.split(":").map(Number);
+        return hours + minutes / 60;
+      }
+
+      // Функция для получения рабочих часов специалиста на конкретную дату
+      function getSpecialistWorkingHours(dateString, specialistSchedule) {
+        const targetDate = new Date(dateString);
+        return specialistSchedule.find(
+          (day) => day.date.toDateString() === targetDate.toDateString()
+        );
+      }
+
+      // Функция для форматирования даты в строку для расписания
+      function formatDateForSchedule(dateString) {
+        const [day, month, year] = dateString.split(".");
+        // Преобразуем в формат, который понимает Date: "yyyy-mm-dd"
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      }
+
+      // Обработка нажатия Enter в поле поиска
+      document
+        .getElementById("searchClient")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+          }
+        });
+
+      // Обработчики для автоматического заполнения времени окончания
+      document
+        .getElementById("appointmentDateTime")
+        .addEventListener("change", calculateEndTime);
+
+      // Обработчик для ручного ввода времени
+      document
+        .getElementById("appointmentDateTime")
+        .addEventListener("input", function () {
+          // При ручном изменении даты/времени автоматически пересчитываем время окончания
+          setTimeout(() => {
+            calculateEndTime();
+          }, 100);
+        });
+
+      // Обработчик для ручного ввода времени окончания
+      document
+        .getElementById("appointmentEndTime")
+        .addEventListener("input", function () {
+          // При ручном изменении времени окончания ничего не делаем - оставляем как есть
+        });
+
+      // Закрытие модальных окон при клике вне их
+      window.addEventListener("click", function (e) {
+        const addModal = document.getElementById("addModal");
+        const viewModal = document.getElementById("viewModal");
+        const scheduleModal = document.getElementById("scheduleModal");
+
+        if (e.target === addModal) {
+          closeAddModal();
+        }
+        if (e.target === viewModal) {
+          closeViewModal();
+        }
+        if (e.target === scheduleModal) {
+          closeScheduleModal();
+        }
+      });
+      
+      
       // Инициализация при загрузке страницы
-      document.addEventListener("DOMContentLoaded", function() {
-        App.init();
+      document.addEventListener("DOMContentLoaded", function () {
+        searchTgUserById(tgUserId);
       });
     </script>
   </body>
