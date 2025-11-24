@@ -1159,7 +1159,28 @@
           throw error;
         }
       }
+      /*
+      // Функция для получения специалистов по ownerId
+      async function getSpecialistsByOwnerId(ownerId) {
+        try {
+          const response = await fetch(
+            `${API_BASE}/specialists/by-owner-id/${encodeURIComponent(ownerId)}`
+          );
 
+          if (!response.ok) {
+            if (response.status === 404) {
+              return [];
+            }
+            throw new Error("Failed to load specialists: " + response.status);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error("Error loading specialists by ownerId:", error);
+          throw error;
+        }
+      }
+*/
       // Функция для расчета времени окончания приема
       function calculateEndTime() {
         const dateTimeInput = document.getElementById(
@@ -1233,16 +1254,11 @@
               const tgAdministrator = await responseAdmin.json();
               currentUser = tgAdministrator;
 
-              const specialistsIdList = tgAdministrator.specialistIdList
-                .split("/")
-                .filter((id) => id.length > 1)
-                .map((id) => parseInt(id.trim()));
-
               try {
-                const specialists = await loadSpecialistsByIds(
-                  specialistsIdList
-                );
-
+                const specialists = [
+                  ...tgAdministrator.specialists,
+                  ...tgAdministrator.specialists_owners,
+                ];
                 // Логика для администратора
                 showAdminHeader();
                 createSpecialistButtons(specialists);
