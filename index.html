@@ -2015,6 +2015,8 @@
 
           // Создаем новую запись в таблице Appointment
           const appointmentData = {
+            timeZone: currentSpecialist.timeZone,
+            sendTime: currentSpecialist.sendTime,
             specialistId: currentSpecialist.id.toString(),
             ownerId: currentSpecialist.ownerId,
             clientId: currentSelectedClient.id,
