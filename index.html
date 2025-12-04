@@ -4,7 +4,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Система записи на прием</title>
+    <title>Datar miniapp</title>
     <style>
       * {
         margin: 0;
@@ -824,6 +824,27 @@
         }
       }
 
+      .input-container {
+        display: flex;
+        align-items: stretch;
+        gap: 10px;
+        padding-bottom: 10px;
+      }
+
+      .modal-button-new-client {
+        padding: 3px 3px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 30px;
+        font-weight: bold;
+        transition: all 0.3s;
+        min-width: 40px;
+        max-height: 46px;
+        background-color: transparent;
+        color: #6ac753;
+      }
+
       /* Toggle-переключатель */
       .toggle-container {
         display: flex;
@@ -925,11 +946,20 @@
             <span class="toggle-label">Добавить в лист ожидания</span>
           </div>
 
-          <input
-            type="text"
-            id="searchClient"
-            placeholder="Введите фамилию для поиска"
-          />
+          <div class="input-container">
+            <input
+              type="text"
+              id="searchClient"
+              placeholder="Введите фамилию для поиска"
+            />
+            <button
+              class="modal-button-new-client"
+              onclick="openCreateClientModal()"
+            >
+              ✚
+            </button>
+          </div>
+
           <div
             id="searchResults"
             style="max-height: 150px; overflow-y: auto; margin-bottom: 15px"
@@ -996,8 +1026,44 @@
       </div>
     </div>
 
+    <!-- Модальное окно добавления нового клиента -->
+    <div class="modal" id="createClientModal">
+      <div class="modal-content">
+        <div class="modal-add-vew-header">
+          <button class="modal-close-button" onclick="closeCreateClientModal()">
+            ✖
+          </button>
+          <h2>Новый клиент:</h2>
+        </div>
+        <div class="modal-inner-padding">
+          <input type="text" id="addSurname" placeholder="Введите фамилию" />
+          <input type="text" id="addName" placeholder="Введите имя" />
+          <input
+            type="text"
+            id="addPatronymic"
+            placeholder="Введите отчество"
+          />
+          <input
+            type="text"
+            id="addPhoneNumber"
+            placeholder="Телефонный номер или -"
+          />
+          <input
+            type="text"
+            id="addBirthdate"
+            placeholder="Дата рождения или -"
+          />
+          <div class="modal-buttons">
+            <button class="modal-button ok" onclick="saveClient()">
+              Сохранить
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
-   let tg = window.Telegram.WebApp;
+      let tg = window.Telegram.WebApp;
       let tgUserId = tg.initDataUnsafe.user.id;
       const API_BASE = "https://alimovdev.ru/api";
       let currentSpecialist = null;
@@ -1005,7 +1071,79 @@
       let currentClients = [];
       let currentSelectedClient = null;
       let currentAppointmentId = null;
+      let currentDate = null;
       let specialistScheduleData = []; // переменная для хранения данных расписания
+
+      //////////////////////////////////////////////////////////////////////////////////////
+      // Открытие модального окна добавления записи
+      function openCreateClientModal() {
+        document.getElementById("createClientModal").style.display = "block";
+        document.getElementById("addSurname").value = "";
+        document.getElementById("addName").value = "";
+        document.getElementById("addPatronymic").value = "";
+        document.getElementById("addPhoneNumber").value = "";
+        document.getElementById("addBirthdate").value = "";
+        // Фокус на поле поиска с небольшой задержкой для мобильных устройств
+        setTimeout(() => {
+          document.getElementById("addSurname").focus();
+        }, 100);
+      }
+
+      // Закрытие модального окна добавления записи
+      function closeCreateClientModal() {
+        document.getElementById("createClientModal").style.display = "none";
+      }
+
+      // Сохранение клиента в бд
+      async function saveClient() {
+        try {
+          const surname = document.getElementById("addSurname").value;
+          const name = document.getElementById("addName").value;
+          const patronymic = document.getElementById("addPatronymic").value;
+          const phoneNumber = document.getElementById("addPhoneNumber").value;
+          const birthdate = document.getElementById("addBirthdate").value;
+          //проверки
+          if (!surname) {
+            alert("Пожалуйста, введите фамилию");
+            return;
+          }
+
+          // Создаем новую запись Client
+          const clientData = {
+            surname: surname,
+            name: name,
+            patronymic: patronymic,
+            phoneNumber: phoneNumber,
+            birthdate: birthdate,
+            tgId: -1,
+            clientNotes: "",
+            ownerId: currentSpecialist.ownerId,
+            visitHistory: "",
+          };
+
+          const response = await fetch(`${API_BASE}/clients`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(clientData),
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              "Ошибка при сохранении клиента: " + response.status
+            );
+          }
+          closeCreateClientModal();
+          searchTgUserById(tgUserId);
+          openAddModal(currentDate, surname);
+          currentDate = null;
+        } catch (error) {
+          console.error("Error saving client:", error);
+          alert("Ошибка при сохранении клиента: " + error.message);
+        }
+      }
+      //////////////////////////////////////////////////////////////////////////////////////
 
       // Функция для форматирования ФИО в формат "Фамилия И. О."
       function formatFullName(surname, name, patronymic) {
@@ -1159,28 +1297,7 @@
           throw error;
         }
       }
-      /*
-      // Функция для получения специалистов по ownerId
-      async function getSpecialistsByOwnerId(ownerId) {
-        try {
-          const response = await fetch(
-            `${API_BASE}/specialists/by-owner-id/${encodeURIComponent(ownerId)}`
-          );
 
-          if (!response.ok) {
-            if (response.status === 404) {
-              return [];
-            }
-            throw new Error("Failed to load specialists: " + response.status);
-          }
-
-          return await response.json();
-        } catch (error) {
-          console.error("Error loading specialists by ownerId:", error);
-          throw error;
-        }
-      }
-*/
       // Функция для расчета времени окончания приема
       function calculateEndTime() {
         const dateTimeInput = document.getElementById(
@@ -1297,8 +1414,9 @@
         const header = document.getElementById("header");
         header.style.display = "block";
         header.className = "header specialist";
-      header.innerHTML = '<div class="specialist-title"><b>𝔻𝐚𝐭𝐚𝐫<b></div>';
+        header.innerHTML = '<div class="specialist-title">𝔻𝐚𝐭𝐚𝐫</div>';
       }
+
       // Показать шапку для администратора
       function showAdminHeader() {
         const header = document.getElementById("header");
@@ -1517,6 +1635,7 @@
             e.target.classList.contains("cards-container")
           ) {
             openAddModal(date);
+            currentDate = date;
           }
         };
 
@@ -1817,10 +1936,12 @@
       }
 
       // Открытие модального окна добавления записи
-      function openAddModal(columnDate) {
+      function openAddModal(columnDate, clientName) {
         document.getElementById("addModal").style.display = "block";
-        document.getElementById("searchClient").value = "";
+        document.getElementById("searchClient").value =
+          clientName == null ? "" : clientName;
         document.getElementById("searchResults").innerHTML = "";
+
         document.getElementById("appointmentNote").value = "";
 
         // Сбрасываем переключатель в выключенное состояние
