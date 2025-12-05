@@ -827,7 +827,6 @@
       .input-container {
         display: flex;
         align-items: stretch;
-        gap: 10px;
         padding-bottom: 10px;
       }
 
@@ -836,13 +835,13 @@
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 30px;
-        font-weight: bold;
+        font-size: 38px;
         transition: all 0.3s;
-        min-width: 40px;
+        min-width: 46px;
         max-height: 46px;
-        background-color: transparent;
-        color: #6ac753;
+        margin-left: 10px;
+        background-color: #6ac753;
+        color: white;
       }
 
       /* Toggle-переключатель */
@@ -904,6 +903,20 @@
         font-weight: 500;
       }
 
+      .input-client-name {
+        max-height: 46px;
+      }
+
+      .input-client-name::placeholder {
+        color: #999;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
+      }
+
       /* Calendar */
     </style>
   </head>
@@ -948,15 +961,16 @@
 
           <div class="input-container">
             <input
+              class="input-client-name"
               type="text"
               id="searchClient"
-              placeholder="Введите фамилию для поиска"
+              placeholder="Введите ФИО для поиска"
             />
             <button
               class="modal-button-new-client"
               onclick="openCreateClientModal()"
             >
-              ✚
+              +
             </button>
           </div>
 
@@ -1033,7 +1047,7 @@
           <button class="modal-close-button" onclick="closeCreateClientModal()">
             ✖
           </button>
-          <h2>Новый клиент:</h2>
+          <h2>Добавить нового клиента:</h2>
         </div>
         <div class="modal-inner-padding">
           <input type="text" id="addSurname" placeholder="Введите фамилию" />
@@ -1108,7 +1122,7 @@
             return;
           }
 
-          // Создаем новую запись Client
+          // новая запись Client
           const clientData = {
             surname: surname,
             name: name,
@@ -1134,8 +1148,8 @@
               "Ошибка при сохранении клиента: " + response.status
             );
           }
+          currentClients = await getClientsByOwnerId(currentSpecialist.ownerId);
           closeCreateClientModal();
-          searchTgUserById(tgUserId);
           openAddModal(currentDate, surname);
           currentDate = null;
         } catch (error) {
@@ -1382,9 +1396,10 @@
                 if (specialists.length > 0) {
                   currentSpecialist = specialists[0];
 
-                  // Загружаем клиентов по ownerId администратора
+                  // Загружаем клиентов по ownerId currentSpecialist
                   currentClients = await getClientsByOwnerId(
-                    tgAdministrator.ownerId
+                    //tgAdministrator.ownerId
+                    currentSpecialist.ownerId
                   );
                   await loadAndDisplayAppointments(specialists[0]);
                 }
@@ -1939,11 +1954,10 @@
       // Открытие модального окна добавления записи
       function openAddModal(columnDate, clientName) {
         document.getElementById("addModal").style.display = "block";
+        document.getElementById("searchResults").innerHTML = "";
+        document.getElementById("appointmentNote").value = "";
         document.getElementById("searchClient").value =
           clientName == null ? "" : clientName;
-        document.getElementById("searchResults").innerHTML = "";
-
-        document.getElementById("appointmentNote").value = "";
 
         // Сбрасываем переключатель в выключенное состояние
         document.getElementById("waitAppointmentToggle").checked = false;
