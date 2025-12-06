@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
   <head>
-     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Datar miniapp</title>
@@ -837,7 +837,7 @@
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 32px;
+        font-size: 33px;
         transition: all 0.3s;
         min-width: 46px;
         max-height: 46px;
@@ -1159,6 +1159,39 @@
           alert("Ошибка при сохранении клиента: " + error.message);
         }
       }
+
+      function showAppointmentNotification(textString, isAtention) {
+        // Создаем временное уведомление
+        const notification = document.createElement("div");
+        notification.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: ${isAtention ? "#4CAF50" : "#FF9800"};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        `;
+
+        notification.textContent = `Для добавления нового клиента нажмите ✚`;
+
+        document.body.appendChild(notification);
+
+        // Автоматически скрываем уведомление через 3 секунды
+        setTimeout(() => {
+          notification.style.opacity = "0";
+          notification.style.transform = "translateX(100px)";
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 300);
+        }, 3000);
+      }
       //////////////////////////////////////////////////////////////////////////////////////
 
       // Функция для форматирования ФИО в формат "Фамилия И. О."
@@ -1431,7 +1464,7 @@
         const header = document.getElementById("header");
         header.style.display = "block";
         header.className = "header specialist";
-        header.innerHTML = '<div class="specialist-title">𝔻𝐚𝐭𝐚𝐫</div>';
+        header.innerHTML = '<div class="specialist-title">️ㅤㅤ𝔻𝐚𝐭𝐚𝐫</div>';
       }
 
       // Показать шапку для администратора
@@ -1963,6 +1996,8 @@
 
         // Сбрасываем переключатель в выключенное состояние
         document.getElementById("waitAppointmentToggle").checked = false;
+
+        showAppointmentNotification("", true); ///////////////////////////////////////////////////////////////////////////////////////
 
         // Фокус на поле поиска с небольшой задержкой для мобильных устройств
         setTimeout(() => {
