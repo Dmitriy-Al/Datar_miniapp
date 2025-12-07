@@ -1981,16 +1981,15 @@
         const hasNote = appointmentData.appointmentNote !== "" ? "📌ㅤ" : "";
 
         if (height > 80 && appointmentData.appointmentNote !== "") {
-          const note =
-            appointmentData.appointmentNote.length > 25
-              ? //  ? `${appointmentData.appointmentNote.length.slice(0, 25)}...`
-                appointmentData.appointmentNote.substring(0, 30) + "..."
+         const note =
+            appointmentData.appointmentNote.length > 20
+              ? appointmentData.appointmentNote.substring(0, 20) + "..."
               : appointmentData.appointmentNote;
           card.innerHTML = `
                 <h3>${formattedName}</h3>
                 <p>${appointmentData.client.phoneNumber}</p>
                 <p>${startTimeStr} - ${endTimeStr}</p>
-                <i>📌 ${note}</i>
+               <i>📌ㅤ${note}</i>
             `;
         } else if (height > 50) {
           card.innerHTML = `
