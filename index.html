@@ -966,7 +966,7 @@
               class="input-client-name"
               type="text"
               id="searchClient"
-              placeholder="Введите ФИО для поиска"
+              placeholder="Введите ФИО для поиска клиента"
             />
             <button
               class="modal-button-new-client"
@@ -1118,10 +1118,102 @@
           const patronymic = document.getElementById("addPatronymic").value;
           const phoneNumber = document.getElementById("addPhoneNumber").value;
           const birthdate = document.getElementById("addBirthdate").value;
+          var messageText = "Новый клиент был добавлен";
+          var isNotMatch = true;
           //проверки
-          if (!surname) {
-            alert("Пожалуйста, введите фамилию");
+          if (!surname || surname.length < 2) {
+            alert("Фамилия должна содержать не менее двух символов");
             return;
+          }
+          if (!name || name.length < 2) {
+            alert("Имя должно содержать не менее двух символов");
+            return;
+          }
+          if (!patronymic || patronymic.length < 2) {
+            alert("Отчество должно содержать не менее двух символов");
+            return;
+          }
+          if (!phoneNumber) {
+            alert("Введите телефонный номер или символ '-'");
+            return;
+          }
+          if (
+            phoneNumber.length > 15 ||
+            (phoneNumber.length < 5 && phoneNumber != "-")
+          ) {
+            alert("Невалидный телефонный номер");
+            return;
+          }
+          // проверяются все невалидные нецифровые символы
+          if (!/^[0-9()+-]*$/.test(phoneNumber)) {
+            alert("Телефонный номер не может содержать символы кроме: + ( ) -");
+            return;
+          }
+
+          if (!birthdate) {
+            alert("Введите дату рождения в формате ДД.ММ.ГГГГ или символ '-'");
+            return;
+          }
+
+          if (birthdate != "-") {
+            const dateParts = birthdate.split(".");
+
+            if (dateParts.length !== 3) {
+              alert(
+                "Неверный формат даты, используйте ДД.ММ.ГГГГ, например: 12.12.1984"
+              );
+              return;
+            }
+
+            if (
+              dateParts[0].length !== 2 ||
+              dateParts[1].length !== 2 ||
+              dateParts[2].length !== 4
+            ) {
+              alert(
+                "Неверный формат даты, используйте ДД.ММ.ГГГГ, например: 12.12.1984"
+              );
+              return;
+            }
+
+            const day = parseInt(dateParts[0], 10);
+            const month = parseInt(dateParts[1], 10);
+            const year = parseInt(dateParts[2], 10);
+
+            if (isNaN(day) || isNaN(month) || isNaN(year)) {
+              alert("Дата должна содержать только цифры");
+              return;
+            }
+
+            if (month < 1 || month > 12) {
+              alert("Месяц должен быть от 1 до 12");
+              return;
+            }
+
+            if (day < 1 || day > 31) {
+              alert("День должен быть от 1 до 31");
+              return;
+            }
+          }
+
+          const matchClients = currentClients.filter(
+            (it) =>
+              it.surname === surname &&
+              it.name === name &&
+              it.patronymic === patronymic
+          );
+
+          if (matchClients.length > 0) {
+            messageText = "Созданы клиенты с идентичными ФИО";
+            isNotMatch = false;
+            const duplicate = matchClients.find(
+              (it) =>
+                it.phoneNumber === phoneNumber && it.birthdate === birthdate
+            );
+            if (duplicate) {
+              alert("Клиент с идентичными данными уже существует");
+              return;
+            }
           }
 
           // новая запись Client
@@ -1145,14 +1237,10 @@
             body: JSON.stringify(clientData),
           });
 
-          if (!response.ok) {
-            throw new Error(
-              "Ошибка при сохранении клиента: " + response.status
-            );
-          }
           currentClients = await getClientsByOwnerId(currentSpecialist.ownerId);
           closeCreateClientModal();
           openAddModal(currentDate, surname);
+          showNotification(messageText, isNotMatch);
           currentDate = null;
         } catch (error) {
           console.error("Error saving client:", error);
@@ -1160,24 +1248,24 @@
         }
       }
 
-      function showAppointmentNotification(textString, isAtention) {
-        // Создаем временное уведомление
+      function showNotification(textString, isAtention) {
+        // Временное уведомление
         const notification = document.createElement("div");
         notification.style.cssText = `
             position: fixed;
-            top: 100px;
+            top: 30px;
             right: 20px;
             background: ${isAtention ? "#4CAF50" : "#FF9800"};
             color: white;
             padding: 12px 20px;
-            border-radius: 8px;
+            border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 10000;
             font-size: 14px;
             transition: all 0.3s ease;
         `;
-
-        notification.textContent = `Для добавления нового клиента нажмите ✚`;
+        // border-radius: 8px;
+        notification.textContent = textString;
 
         document.body.appendChild(notification);
 
@@ -1190,7 +1278,7 @@
               notification.parentNode.removeChild(notification);
             }
           }, 300);
-        }, 3000);
+        }, 4000);
       }
       //////////////////////////////////////////////////////////////////////////////////////
 
@@ -1994,10 +2082,12 @@
         document.getElementById("searchClient").value =
           clientName == null ? "" : clientName;
 
+        if (!clientName) {
+          showNotification("Для добавления нового клиента нажмите ✚", true);
+        }
+
         // Сбрасываем переключатель в выключенное состояние
         document.getElementById("waitAppointmentToggle").checked = false;
-
-        showAppointmentNotification("", true); ///////////////////////////////////////////////////////////////////////////////////////
 
         // Фокус на поле поиска с небольшой задержкой для мобильных устройств
         setTimeout(() => {
@@ -2626,13 +2716,13 @@
             background: ${isWorking ? "#4CAF50" : "#FF9800"};
             color: white;
             padding: 12px 20px;
-            border-radius: 8px;
+            border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 10000;
             font-size: 14px;
             transition: all 0.3s ease;
         `;
-
+        // border-radius: 4px;
         const formattedDate = new Date(dateString).toLocaleDateString("ru-RU");
         notification.textContent = `Выбрана дата: ${formattedDate}${
           isWorking ? "" : " (выходной)"
