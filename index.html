@@ -115,6 +115,7 @@
         top: 60px; /* Высота заголовка */
         bottom: 0;
         width: 15px;
+        border-bottom-left-radius: 5px;
         background: linear-gradient(to bottom, #fff5e4, #fae4bd);
         border-right: 2px solid #3498db;
         display: flex;
@@ -260,9 +261,8 @@
       }
 
       .card i {
-        color: black;
+        color: rgb(73, 73, 73);
         font-size: 10px;
-        font-weight: bold;
       }
 
       .modal {
@@ -325,7 +325,7 @@
 
       .readonly-field {
         background-color: #f5f5f5;
-        color: #666;
+        color: #667;
         cursor: not-allowed;
       }
 
@@ -382,7 +382,7 @@
 
       .empty-column {
         text-align: center;
-        color: #666;
+        color: #667;
         font-style: italic;
         padding: 20px;
         font-size: 14px;
@@ -395,7 +395,7 @@
 
       .guest-message {
         text-align: center;
-        color: #666;
+        color: #667;
         font-size: 24px;
         margin-top: 100px;
         font-weight: bold;
@@ -700,13 +700,13 @@
 
         .time-scale {
           width: 15px;
-          top: 36px;
+          top: 35px;
         }
 
         .time-label {
           font-size: 8px;
           right: -20px;
-          margin-top: 10px;
+          margin-top: 13px;
         }
 
         .column h2 {
@@ -1306,7 +1306,7 @@
 
         // Рассчитываем высоту шкалы времени на основе рабочего времени
         const workDuration = endHour - startHour;
-        const scaleHeight = workDuration * 60 + 30; //60px в час + 30px на заголовок
+        const scaleHeight = workDuration * 60 + 30; //было 60px в час + 30px на заголовок
 
         // Устанавливаем высоту шкалы времени
         timeScale.style.height = `${scaleHeight}px`;
@@ -1729,7 +1729,7 @@
         const workDuration = workTime.end - workTime.start;
 
         const columnHeight = workDuration * 60 + 60;
-        const cardsContainerHeight = workDuration * 60;
+        const cardsContainerHeight = workDuration * 60 - 5;
 
         const column = document.createElement("div");
         column.className = "column";
@@ -1981,7 +1981,7 @@
         const hasNote = appointmentData.appointmentNote !== "" ? "📌ㅤ" : "";
 
         if (height > 80 && appointmentData.appointmentNote !== "") {
-         const note =
+          const note =
             appointmentData.appointmentNote.length > 20
               ? appointmentData.appointmentNote.substring(0, 20) + "..."
               : appointmentData.appointmentNote;
@@ -1989,7 +1989,7 @@
                 <h3>${formattedName}</h3>
                 <p>${appointmentData.client.phoneNumber}</p>
                 <p>${startTimeStr} - ${endTimeStr}</p>
-               <i>📌ㅤ${note}</i>
+                <i>📌ㅤ${note}</i>
             `;
         } else if (height > 50) {
           card.innerHTML = `
@@ -3001,7 +3001,7 @@
           const overlay = document.createElement("div");
           overlay.className = "non-working-overlay";
           overlay.style.top = "0";
-          overlay.style.height = "100%"; // "101.9%" Костыль для выравнивания блока до начала рабочего времени;
+          overlay.style.height = "100%"; // "100%" оригинал, "101.9%" Костыль для выравнивания блока до начала рабочего времени;
           container.appendChild(overlay);
           return;
         }
