@@ -222,7 +222,7 @@
         /* background-color: #ffd890;  */
         background: linear-gradient(to bottom, #ffcc6e, #ffd890);
         border-radius: 5px;
-        padding: 1px;
+        padding: 5px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -256,6 +256,12 @@
       .card p {
         color: black;
         font-size: 12px;
+        font-weight: bold;
+      }
+
+      .card i {
+        color: black;
+        font-size: 10px;
         font-weight: bold;
       }
 
@@ -1240,7 +1246,7 @@
           currentClients = await getClientsByOwnerId(currentSpecialist.ownerId);
           closeCreateClientModal();
           openAddModal(currentDate, surname);
-          showNotification(messageText, isNotMatch, 30, 5000);
+          showNotification(messageText, isNotMatch, 30, 4000);
           currentDate = null;
         } catch (error) {
           console.error("Error saving client:", error);
@@ -1600,7 +1606,7 @@
           specialistScheduleData = calculateSpecialistSchedule(specialist);
 
           const appointments = await getAppointmentsBySpecialistId(
-            specialist.id
+            specialist.id //////////////////////////////////////////////////////////////////// оптимизировать
           );
         } catch (error) {
           console.error("Error loading appointments:", error);
@@ -1609,7 +1615,7 @@
 
         try {
           const appointments = await getAppointmentsBySpecialistId(
-            specialist.id
+            specialist.id //////////////////////////////////////////////////////////////////// оптимизировать
           );
 
           // Загружаем данные клиентов для каждой записи
@@ -1679,6 +1685,7 @@
               dateTime: startTime,
               duration: duration,
               endTime: endTime,
+              appointmentNote: appointment.appointmentNote,
               appointmentString: appointment.appointmentDateTime,
               appointmentId: appointment.id,
               confirmAppointment: appointment.confirmAppointment,
@@ -1971,7 +1978,14 @@
           appointmentData.client.patronymic
         );
 
-        if (height > 50) {
+        if (height > 80 && appointmentData.appointmentNote !== "") {
+          card.innerHTML = `
+                <h3>${formattedName}</h3>
+                <p>${appointmentData.client.phoneNumber}</p>
+                <p>${startTimeStr} - ${endTimeStr}</p>
+                <i>Заметка: ${appointmentData.appointmentNote}</i>
+            `;
+        } else if (height > 50) {
           card.innerHTML = `
                 <h3>${formattedName}</h3>
                 <p>${appointmentData.client.phoneNumber}</p>
@@ -1984,10 +1998,17 @@
               <p>${startTimeStr} - ${endTimeStr}</p>
             `;
         } else {
-          card.style.background = "#ffd900";
+          card.style.outline = "1px solid #6e4800";
+          card.style.outline.offset = "1px";
+          card.style.background = "#ffc14d";
           card.style.fontSize = "7px";
           card.style.padding = "5px";
           card.innerHTML = `<p>${startTimeStr} - ${endTimeStr}</p>`;
+        }
+
+        if (appointmentData.appointmentNote !== "") {
+          card.style.outline = "1px solid #ff7300";
+          card.style.outline.offset = "1px";
         }
 
         //Ллогика отображения цветов карточек с учетом waitNearAppointment
@@ -2087,7 +2108,7 @@
             "Для добавления нового клиента нажмите клавишуㅤ✚",
             true,
             30,
-            5000
+            4000
           );
         }
 
@@ -2717,7 +2738,7 @@
         const messageText = `Выбрана дата: ${formattedDate}${
           isWorking ? "" : " (выходной)"
         }`;
-        showNotification(messageText, isWorking, 80, 3000);
+        showNotification(messageText, isWorking, 100, 3000);
       }
 
       // Вспомогательная функция для проверки, можно ли редактировать время
@@ -2939,7 +2960,7 @@
               resultItem.style.padding = "8px";
               resultItem.style.borderBottom = "1px solid #eee";
               resultItem.style.cursor = "pointer";
-              resultItem.textContent = `${client.surname} ${client.name} ${client.patronymic} ${client.phoneNumber} `;
+              resultItem.textContent = `${client.surname} ${client.name} ${client.patronymic} ‧ ${client.phoneNumber} `;
 
               resultItem.addEventListener("click", function () {
                 currentSelectedClient = client;
