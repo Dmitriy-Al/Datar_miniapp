@@ -1138,7 +1138,7 @@
             return;
           }
           if (
-            phoneNumber.length > 15 ||
+            phoneNumber.length > 17 ||
             (phoneNumber.length < 5 && phoneNumber != "-")
           ) {
             alert("Невалидный телефонный номер");
@@ -1240,7 +1240,7 @@
           currentClients = await getClientsByOwnerId(currentSpecialist.ownerId);
           closeCreateClientModal();
           openAddModal(currentDate, surname);
-          showNotification(messageText, isNotMatch);
+          showNotification(messageText, isNotMatch, 30, 5000);
           currentDate = null;
         } catch (error) {
           console.error("Error saving client:", error);
@@ -1248,16 +1248,16 @@
         }
       }
 
-            function showNotification(textString, isAtention) {
+      function showNotification(textString, isAtention, texHeight, timeDelay) {
         // Временное уведомление
         const notification = document.createElement("div");
         notification.style.cssText = `
             position: fixed;
-            top: 30px;
-            left: 20px;
+            top: ${texHeight !== "" ? texHeight : "30"}px;
+            right: -3px;
+            padding: 12px 20px;
             background: ${isAtention ? "#4CAF50" : "#FF9800"};
             color: white;
-            padding: 12px 20px;
             border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 10000;
@@ -1278,7 +1278,7 @@
               notification.parentNode.removeChild(notification);
             }
           }, 300);
-        }, 5000);
+        }, timeDelay);
       }
       //////////////////////////////////////////////////////////////////////////////////////
 
@@ -2083,7 +2083,12 @@
           clientName == null ? "" : clientName;
 
         if (!clientName) {
-          showNotification("Для добавления нового клиента нажмите клавишу ✚", true);
+          showNotification(
+            "Для добавления нового клиента нажмите клавишуㅤ✚",
+            true,
+            30,
+            5000
+          );
         }
 
         // Сбрасываем переключатель в выключенное состояние
@@ -2708,38 +2713,11 @@
       // Функция для показа уведомления о выборе даты
       function showDateSelectionNotification(dateString, isWorking) {
         // Создаем временное уведомление
-        const notification = document.createElement("div");
-        notification.style.cssText = `
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: ${isWorking ? "#4CAF50" : "#FF9800"};
-            color: white;
-            padding: 12px 20px;
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 10000;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        `;
-        // border-radius: 4px;
         const formattedDate = new Date(dateString).toLocaleDateString("ru-RU");
-        notification.textContent = `Выбрана дата: ${formattedDate}${
+        const messageText = `Выбрана дата: ${formattedDate}${
           isWorking ? "" : " (выходной)"
         }`;
-
-        document.body.appendChild(notification);
-
-        // Автоматически скрываем уведомление через 3 секунды
-        setTimeout(() => {
-          notification.style.opacity = "0";
-          notification.style.transform = "translateX(100px)";
-          setTimeout(() => {
-            if (notification.parentNode) {
-              notification.parentNode.removeChild(notification);
-            }
-          }, 300);
-        }, 3000);
+        showNotification(messageText, isWorking, 80, 3000);
       }
 
       // Вспомогательная функция для проверки, можно ли редактировать время
