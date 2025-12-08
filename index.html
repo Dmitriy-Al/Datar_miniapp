@@ -1265,7 +1265,7 @@
             background: ${
               isAtention
                 ? "linear-gradient(135deg, #99ff80, #53ff28)"
-                : "linear-gradient(135deg, #ffce83, #ffa825)"
+                : "linear-gradient(135deg, #ffce83, #ffba25)"
             };
             color: black;
             border-radius: 4px;
@@ -1275,13 +1275,10 @@
             font-size: 14px;
             transition: all 0.3s ease;
         `;
-        //#7fff5f         "#FF9800"
-        // border-radius: 8px; right: 20px;
         notification.textContent = textString;
-
         document.body.appendChild(notification);
 
-        // Автоматически скрываем уведомление через 3 секунды
+        // Автоматически скрываем уведомление через timeDelay секунд
         setTimeout(() => {
           notification.style.opacity = "0";
           notification.style.transform = "translateX(100px)";
@@ -1862,9 +1859,8 @@
         const container = document.getElementById("columnsContainer");
         const workTime = getWorkTime();
         const workDuration = workTime.end - workTime.start;
-
         const columnHeight = workDuration * 60 + 60;
-        const cardsContainerHeight = workDuration * 60;
+        const cardsContainerHeight = workDuration * 60 - 5; // -5 уменьшение высоты для подгонки;
 
         const column = document.createElement("div");
         column.className = "column";
@@ -1952,7 +1948,7 @@
         const card = document.createElement("div");
         card.className = "card";
 
-        const height = appointmentData.duration * 0.99; // const height = appointmentData.duration * 0.998;
+        const height = appointmentData.duration * 0.998 - 1; // const height = appointmentData.duration * 0.998;
         card.style.height = `${height}px`;
 
         const startTime = appointmentData.dateTime;
