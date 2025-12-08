@@ -1989,19 +1989,19 @@
                 <h3>${formattedName}</h3>
                 <p>${appointmentData.client.phoneNumber}</p>
                 <p>${startTimeStr} - ${endTimeStr}</p>
-                <i>📌ㅤ${note}</i>
+                <i><small>📌ㅤ</small>${note}</i>
             `;
         } else if (height > 50) {
           card.innerHTML = `
                 <h3>${formattedName}</h3>
                 <p>${appointmentData.client.phoneNumber}</p>
-                <p>${hasNote}${startTimeStr} - ${endTimeStr}</p>
+                <p><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</p>
             `;
         } else if (height > 30) {
           card.style.fontSize = "8px";
           card.innerHTML = `
               <p><small>${formattedName}</small></p>
-              <p>${hasNote}${startTimeStr} - ${endTimeStr}</p>
+              <p><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</p>
             `;
         } else {
           card.style.outline = "1px solid #6e4800";
@@ -2009,7 +2009,7 @@
           card.style.background = "#ffc14d";
           card.style.fontSize = "7px";
           card.style.padding = "5px";
-          card.innerHTML = `<p>${hasNote}${startTimeStr} - ${endTimeStr}</p>`;
+          card.innerHTML = `<p><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</p>`;
         }
 
         if (appointmentData.appointmentNote !== "") {
