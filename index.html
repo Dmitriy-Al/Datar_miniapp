@@ -2012,6 +2012,9 @@
           card.style.fontSize = "7px";
           card.style.padding = "5px";
           card.innerHTML = `<p><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</p>`;
+          if (height < 15) {
+            card.style.zIndex = "3";
+          }
         }
 
         if (appointmentData.appointmentNote !== "") {
@@ -2125,7 +2128,8 @@
 
         // Фокус на поле поиска с небольшой задержкой для мобильных устройств
         setTimeout(() => {
-          document.getElementById("searchClient").focus();
+          // document.getElementById("searchClient").focus();
+          document.getElementById("appointmentNote").focus();
         }, 100);
 
         // Если передана дата столбца, устанавливаем ее в поле ввода
