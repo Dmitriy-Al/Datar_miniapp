@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
   <head>
-    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta charset="UTF-8" />
+    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Datar miniapp</title>
     <style>
@@ -1085,7 +1085,7 @@
     </div>
 
     <script>
-      let tg = window.Telegram.WebApp;
+let tg = window.Telegram.WebApp;
       let tgUserId = tg.initDataUnsafe.user.id;
       const API_BASE = "https://alimovdev.ru/api";
       let currentSpecialist = null;
@@ -2128,8 +2128,7 @@
 
         // Фокус на поле поиска с небольшой задержкой для мобильных устройств
         setTimeout(() => {
-          // document.getElementById("searchClient").focus();
-          document.getElementById("appointmentNote").focus();
+          document.getElementById("searchClient").focus();
         }, 100);
 
         // Если передана дата столбца, устанавливаем ее в поле ввода
