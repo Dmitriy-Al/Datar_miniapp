@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
   <head>
-    <meta charset="UTF-8" />
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Datar miniapp</title>
     <style>
@@ -224,11 +224,15 @@
         background: linear-gradient(to bottom, #ffcc6e, #ffd890);
         border-radius: 5px;
         padding: 5px;
+        margin-right: 2px;
+        margin-left: 3px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         cursor: pointer;
+        outline: 1px solid #ceb88f;
+        outline-offset: 1px;
         transition: transform 0.2s, box-shadow 0.2s;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         text-align: center;
@@ -1058,12 +1062,16 @@
           <h2>Новый клиент:</h2>
         </div>
         <div class="modal-inner-padding">
-          <input type="text" id="addSurname" placeholder="Введите фамилию" />
-          <input type="text" id="addName" placeholder="Введите имя" />
+          <input
+            type="text"
+            id="addSurname"
+            placeholder="Введите фамилию или -"
+          />
+          <input type="text" id="addName" placeholder="Введите имя или -" />
           <input
             type="text"
             id="addPatronymic"
-            placeholder="Введите отчество"
+            placeholder="Введите отчество или -"
           />
           <input
             type="text"
@@ -1085,7 +1093,7 @@
     </div>
 
     <script>
-let tg = window.Telegram.WebApp;
+      let tg = window.Telegram.WebApp;
       let tgUserId = tg.initDataUnsafe.user.id;
       const API_BASE = "https://alimovdev.ru/api";
       let currentSpecialist = null;
@@ -1127,15 +1135,15 @@ let tg = window.Telegram.WebApp;
           var messageText = "Новый клиент был добавлен";
           var isNotMatch = true;
           //проверки
-          if (!surname || surname.length < 2) {
+          if (!surname || (patronymic !== "-" && surname.length < 2)) {
             alert("Фамилия должна содержать не менее двух символов");
             return;
           }
-          if (!name || name.length < 2) {
+          if (!name || (patronymic !== "-" && name.length < 2)) {
             alert("Имя должно содержать не менее двух символов");
             return;
           }
-          if (!patronymic || patronymic.length < 2) {
+          if (!patronymic || (patronymic !== "-" && patronymic.length < 2)) {
             alert("Отчество должно содержать не менее двух символов");
             return;
           }
@@ -1144,14 +1152,14 @@ let tg = window.Telegram.WebApp;
             return;
           }
           if (
-            phoneNumber.length > 17 ||
+            phoneNumber.length > 18 ||
             (phoneNumber.length < 5 && phoneNumber != "-")
           ) {
             alert("Невалидный телефонный номер");
             return;
           }
           // проверяются все невалидные нецифровые символы
-          if (!/^[0-9()+-]*$/.test(phoneNumber)) {
+          if (!/^[0-9()+ -]*$/.test(phoneNumber)) {
             alert("Телефонный номер не может содержать символы кроме: + ( ) -");
             return;
           }
