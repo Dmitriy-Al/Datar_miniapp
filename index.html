@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
   <head>
-    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Datar miniapp</title>
@@ -1093,9 +1092,9 @@
     </div>
 
     <script>
-      let tg = window.Telegram.WebApp;
-      let tgUserId = tg.initDataUnsafe.user.id;
-      const API_BASE = "https://alimovdev.ru/api";
+      // let tg = window.Telegram.WebApp;
+      let tgUserId = 2041024245; // tg.initDataUnsafe.user.id;  2041024245 1210909976
+      const API_BASE = "http://localhost:8080/api";
       let currentSpecialist = null;
       let currentUser = null; // Может быть Specialist или Administrator
       let currentClients = [];
@@ -1956,7 +1955,7 @@
         const card = document.createElement("div");
         card.className = "card";
 
-        const height = appointmentData.duration * 0.998 - 1; // const height = appointmentData.duration * 0.998;
+        const height = appointmentData.duration * 0.998 - 2; // const height = appointmentData.duration * 0.998 - 1;
         card.style.height = `${height}px`;
 
         const startTime = appointmentData.dateTime;
@@ -1969,7 +1968,7 @@
         const workDurationMinutes = containerHeight;
 
         const topPosition =
-          (totalMinutesFromStart / workDurationMinutes) * containerHeight + 1;
+          (totalMinutesFromStart / workDurationMinutes) * containerHeight + 2; //  + 1
         card.style.top = `${topPosition}px`;
 
         const startTimeStr = startTime.toLocaleTimeString("ru-RU", {
