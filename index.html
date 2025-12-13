@@ -290,7 +290,7 @@
 
       .modal-content {
         position: absolute;
-        top: 55%;
+        top: 60%;
         left: 50%;
         transform: translate(-50%, -50%);
         background-color: white;
@@ -532,7 +532,7 @@
 
       /* background: linear-gradient(135deg, #2689ca, #2c3e50); padding: 20px; */
       #scheduleModal .modal-header {
-        background: linear-gradient(135deg, #1f6ea3, #043555);
+        background: linear-gradient(135deg, #0a5485, #043555);
         color: white;
         padding: 15px;
         border-radius: 15px 15px 0 0;
@@ -541,7 +541,7 @@
       }
 
       .modal-add-vew-header {
-        background: linear-gradient(135deg, #1f6ea3, #043555);
+        background: linear-gradient(135deg, #0a5485, #043555);
         color: white;
         padding-top: 10px;
         padding-bottom: 1px;
@@ -1148,16 +1148,30 @@
           var messageText = "Новый клиент был добавлен";
           var isNotMatch = true;
           //проверки
-          if (!surname || (patronymic !== "-" && surname.length < 2)) {
-            alert("Фамилия должна содержать не менее двух символов");
+          if (
+            !surname ||
+            (patronymic !== "-" && surname.length < 2) ||
+            surname.length > 12
+          ) {
+            alert("Фамилия должна содержать не менее 2 символов и не более 12");
             return;
           }
-          if (!name || (patronymic !== "-" && name.length < 2)) {
-            alert("Имя должно содержать не менее двух символов");
+          if (
+            !name ||
+            (patronymic !== "-" && name.length < 2) ||
+            surname.length > 12
+          ) {
+            alert("Имя должно содержать не менее 2 символов и не более 12");
             return;
           }
-          if (!patronymic || (patronymic !== "-" && patronymic.length < 2)) {
-            alert("Отчество должно содержать не менее двух символов");
+          if (
+            !patronymic ||
+            (patronymic !== "-" && patronymic.length < 2) ||
+            surname.length > 12
+          ) {
+            alert(
+              "Отчество должно содержать не менее 2 символов и не более 12"
+            );
             return;
           }
           if (!phoneNumber) {
