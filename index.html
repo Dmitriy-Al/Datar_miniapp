@@ -251,23 +251,23 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
 
+      .card h4 {
+        margin-bottom: 8px;
+        color: black;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
       .card h3 {
         margin-bottom: 8px;
         color: black;
         font-size: 14px;
         font-weight: bold;
       }
-      /*  margin-bottom: 8px; */
-      .card h4 {
-        margin-bottom: 8px;
-        color: black;
-        font-size: 12px;
-        font-weight: bold;
-      }
 
       .card p {
         color: black;
-        font-size: 9px;
+        font-size: 12px;
         font-weight: bold;
       }
 
@@ -981,7 +981,7 @@
               />
               <span class="toggle-slider"></span>
             </label>
-            <span class="toggle-label">Добавить в лист ожидания</span>
+            <span class="toggle-label">Отметить карточку</span>
           </div>
 
           <div class="input-container">
@@ -2047,7 +2047,7 @@
         // "UNDEFINED" статус для неавторизованного пользователя
         if (confirmAppointmentStatus === "UNDEFINED" && isWaitNearAppointment) {
           card.style.background =
-            "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
+            "linear-gradient(to bottom, #fa9f89, #fdb4a2)";
         } else if (isWaitNearAppointment) {
           // Если запись в листе ожидания, но статус не UNDEFINED
           card.style.background =
