@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
   <head>
-    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta charset="UTF-8" />
+    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Datar miniapp</title>
     <style>
@@ -225,7 +225,7 @@
         border-radius: 5px;
         padding: 5px;
         margin-right: 2px;
-        margin-left: 3px;
+        margin-left: 2px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -258,9 +258,16 @@
         font-weight: bold;
       }
 
-      .card p {
+      .card h4 {
+        margin-bottom: 8px;
         color: black;
         font-size: 12px;
+        font-weight: bold;
+      }
+
+      .card p {
+        color: black;
+        font-size: 10px;
         font-weight: bold;
       }
 
@@ -1093,7 +1100,7 @@
     </div>
 
     <script>
-  let tg = window.Telegram.WebApp;
+      let tg = window.Telegram.WebApp;
       let tgUserId = tg.initDataUnsafe.user.id;
       const API_BASE = "https://alimovdev.ru/api";
       let currentSpecialist = null;
@@ -1956,7 +1963,7 @@
         const card = document.createElement("div");
         card.className = "card";
 
-        const height = appointmentData.duration * 0.998 - 2; // const height = appointmentData.duration * 0.998 - 1;
+        const height = appointmentData.duration * 0.998 - 3; // const height = appointmentData.duration * 0.998 - 1;
         card.style.height = `${height}px`;
 
         const startTime = appointmentData.dateTime;
@@ -1998,20 +2005,20 @@
           card.innerHTML = `
                 <h3>${formattedName}</h3>
                 <p>${appointmentData.client.phoneNumber}</p>
-                <p>${startTimeStr} - ${endTimeStr}</p>
+                <h4>${startTimeStr} - ${endTimeStr}</h4>
                 <i><small>📌ㅤ</small>${note}</i>
             `;
         } else if (height > 50) {
           card.innerHTML = `
                 <h3>${formattedName}</h3>
                 <p>${appointmentData.client.phoneNumber}</p>
-                <p><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</p>
+                <h4><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</h4>
             `;
         } else if (height > 30) {
           card.style.fontSize = "8px";
           card.innerHTML = `
               <p><small>${formattedName}</small></p>
-              <p><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</p>
+              <h4><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</h4>
             `;
         } else {
           card.style.outline = "1px solid #6e4800";
@@ -2019,7 +2026,7 @@
           card.style.background = "#ffc14d";
           card.style.fontSize = "7px";
           card.style.padding = "5px";
-          card.innerHTML = `<p><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</p>`;
+          card.innerHTML = `<h4><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</h4>`;
           if (height < 15) {
             card.style.zIndex = "3";
           }
