@@ -290,7 +290,7 @@
 
       .modal-content {
         position: absolute;
-        top: 50%;
+        top: 55%;
         left: 50%;
         transform: translate(-50%, -50%);
         background-color: white;
@@ -553,7 +553,7 @@
       .modal-inner-padding {
         margin-left: 25px;
         margin-right: 25px;
-        margin-top: 5px;
+        margin-top: 10px;
       }
 
       #scheduleModal .modal-header h2 {
@@ -967,11 +967,6 @@
           <h2>Записать</h2>
         </div>
         <div class="modal-inner-padding">
-          <textarea
-            id="appointmentNote"
-            placeholder="Добавить комментарий"
-          ></textarea>
-
           <div class="toggle-container">
             <label class="toggle-switch">
               <input
@@ -1012,6 +1007,12 @@
             <small>Время окончания приема</small>
             <input type="time" id="appointmentEndTime" class="time-input" />
           </div>
+
+          <textarea
+            id="appointmentNote"
+            placeholder="Добавить комментарий"
+          ></textarea>
+
           <div class="modal-buttons">
             <button
               class="modal-button schedule"
