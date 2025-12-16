@@ -171,7 +171,6 @@
       }
 
       .column-content {
-        margin-left: 15px;
         display: flex;
         flex-direction: column;
         flex-grow: 1;
@@ -185,15 +184,18 @@
 
       .column h2 {
         text-align: center;
+        background-color: #2c3e50;
+        border-radius: 5px;
         margin-bottom: 15px;
-        color: #333;
-        border-bottom: 2px solid #3b648d;
+        color: white;
+        border-bottom: 16px solid #f8f2d0;
         padding-bottom: 10px;
         font-size: 16px;
         height: 60px;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding-top: 10px;
         margin-bottom: 10px;
       }
 
@@ -225,7 +227,7 @@
         border-radius: 5px;
         padding: 3px;
         margin-right: 2px;
-        margin-left: 2px;
+        margin-left: 18px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -290,7 +292,7 @@
 
       .modal-content {
         position: absolute;
-        top: 50%;
+        top: 55%;
         left: 50%;
         transform: translate(-50%, -50%);
         background-color: white;
@@ -824,6 +826,10 @@
 
         .column {
           min-height: 900px;
+        }
+
+        .card {
+          margin-left: 20px;
         }
 
         .time-scale {
@@ -1597,7 +1603,7 @@
         const header = document.getElementById("header");
         header.style.display = "block";
         header.className = "header specialist";
-        header.innerHTML = '<div class="specialist-title">️ㅤㅤ𝔻𝐚𝐭𝐚𝐫</div>';
+        header.innerHTML = '<div class="specialist-title">️ㅤㅤ☰</div>';
       }
 
       // Показать шапку для администратора
