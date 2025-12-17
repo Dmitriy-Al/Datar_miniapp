@@ -182,6 +182,7 @@
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
       }
 
+      /*   border-bottom: 15px solid #ebebeb; */
       .column h2 {
         text-align: center;
         background-color: #2c3e50;
@@ -293,7 +294,7 @@
 
       .modal-content {
         position: absolute;
-        top: 55%;
+        top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         background-color: white;
@@ -1753,19 +1754,49 @@
           appointmentsByDate[dateKey].push(appointment);
         });
 
-        // Создаем столбцы для каждой даты
-        const dates = Object.keys(appointmentsByDate).sort(
-          (a, b) =>
-            new Date(a.split(".").reverse().join("-")) -
-            new Date(b.split(".").reverse().join("-"))
-        );
+        // Получаем 30 ближайших рабочих дней из расписания специалиста
+        const workingDays = getNextWorkingDays(30);
 
-        dates.forEach((date) => {
-          createColumn(date, appointmentsByDate[date]);
+        // Создаем столбцы для каждого рабочего дня
+        workingDays.forEach((dateStr) => {
+          const appointments = appointmentsByDate[dateStr] || [];
+          createColumn(dateStr, appointments);
         });
 
         // Добавляем пустой столбец для новой записи
         createEmptyColumn();
+      }
+
+      // Вспомогательная функция для получения ближайших рабочих дней
+      function getNextWorkingDays(count) {
+        const result = [];
+        const today = new Date();
+        let daysAdded = 0;
+        let currentDate = new Date(today);
+
+        while (daysAdded < count) {
+          // Проверяем, является ли текущая дата рабочим днем
+          const scheduleDay = getScheduleForDate(currentDate);
+
+          if (scheduleDay && scheduleDay.isWorking) {
+            const dateKey = currentDate.toLocaleDateString("ru-RU");
+            result.push(dateKey);
+            daysAdded++;
+          }
+
+          // Переходим к следующему дню
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        return result;
+      }
+
+      // Вспомогательная функция для получения расписания на конкретную дату
+      function getScheduleForDate(date) {
+        const dateString = date.toDateString();
+        return specialistScheduleData.find(
+          (day) => day.date.toDateString() === dateString
+        );
       }
 
       // Создание столбца с записями
