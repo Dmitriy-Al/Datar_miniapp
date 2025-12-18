@@ -224,8 +224,8 @@
       }
 
       .card {
-        /* background-color: #ffd890;  */
-        background: linear-gradient(to bottom, #ffcc6e, #ffd890);
+        /*   background: linear-gradient(to bottom, #ffcc6e, #ffd890);  */
+        background: linear-gradient(to bottom, #ffd485, #ffd890);
         border-radius: 5px;
         padding: 3px;
         margin-right: 2px;
@@ -449,7 +449,7 @@
 
       /* text-align: match-parent; font-size: 1.2em;    max-height: 50px;*/
       .month-title {
-        background: #2c3e50;
+        background: linear-gradient(135deg, #0a5485, #064975);
         color: white;
         padding: 5px 20px;
         font-weight: bold;
@@ -534,18 +534,18 @@
         -webkit-overflow-scrolling: touch; /* добавил */
       }
 
-      /* background: linear-gradient(135deg, #2689ca, #2c3e50); padding: 20px; */
+      /* background: linear-gradient(135deg, #374e64, #2c3e50); */
       #scheduleModal .modal-header {
-        background: linear-gradient(135deg, #374e64, #2c3e50);
+        background: #2c3e50;
         color: white;
         padding: 15px;
         border-radius: 15px 15px 0 0;
         text-align: center;
         position: relative;
       }
-
+      /* background: linear-gradient(135deg, #374e64, #2c3e50); */
       .modal-add-vew-header {
-        background: linear-gradient(135deg, #374e64, #2c3e50);
+        background: #2c3e50;
         color: white;
         padding-top: 10px;
         padding-bottom: 1px;
@@ -1754,49 +1754,19 @@
           appointmentsByDate[dateKey].push(appointment);
         });
 
-        // Получаем 30 ближайших рабочих дней из расписания специалиста
-        const workingDays = getNextWorkingDays(30);
+        // Создаем столбцы для каждой даты
+        const dates = Object.keys(appointmentsByDate).sort(
+          (a, b) =>
+            new Date(a.split(".").reverse().join("-")) -
+            new Date(b.split(".").reverse().join("-"))
+        );
 
-        // Создаем столбцы для каждого рабочего дня
-        workingDays.forEach((dateStr) => {
-          const appointments = appointmentsByDate[dateStr] || [];
-          createColumn(dateStr, appointments);
+        dates.forEach((date) => {
+          createColumn(date, appointmentsByDate[date]);
         });
 
         // Добавляем пустой столбец для новой записи
         createEmptyColumn();
-      }
-
-      // Вспомогательная функция для получения ближайших рабочих дней
-      function getNextWorkingDays(count) {
-        const result = [];
-        const today = new Date();
-        let daysAdded = 0;
-        let currentDate = new Date(today);
-
-        while (daysAdded < count) {
-          // Проверяем, является ли текущая дата рабочим днем
-          const scheduleDay = getScheduleForDate(currentDate);
-
-          if (scheduleDay && scheduleDay.isWorking) {
-            const dateKey = currentDate.toLocaleDateString("ru-RU");
-            result.push(dateKey);
-            daysAdded++;
-          }
-
-          // Переходим к следующему дню
-          currentDate.setDate(currentDate.getDate() + 1);
-        }
-
-        return result;
-      }
-
-      // Вспомогательная функция для получения расписания на конкретную дату
-      function getScheduleForDate(date) {
-        const dateString = date.toDateString();
-        return specialistScheduleData.find(
-          (day) => day.date.toDateString() === dateString
-        );
       }
 
       // Создание столбца с записями
@@ -3043,7 +3013,7 @@
               resultItem.style.padding = "8px";
               resultItem.style.borderBottom = "1px solid #eee";
               resultItem.style.cursor = "pointer";
-              resultItem.textContent = `${client.surname} ${client.name} ${client.patronymic} ‧ ${client.phoneNumber} `;
+              resultItem.textContent = `${client.surname} ${client.name} ${client.patronymic} ✆ ${client.phoneNumber} `;
 
               resultItem.addEventListener("click", function () {
                 currentSelectedClient = client;
