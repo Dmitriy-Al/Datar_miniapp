@@ -2732,11 +2732,11 @@
             }
           });
         });
-        openAddModal();
       }
 
       // Отдельная функция для обработки клика (десктоп)
       function handleDayClick(event) {
+        openAddModal(); //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         event.preventDefault();
         event.stopPropagation();
         selectDateFromCalendar(this);
@@ -2744,6 +2744,7 @@
 
       // Отдельная функция для обработки касания (мобильные устройства)
       function handleDayTouch(event) {
+        openAddModal(); //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         event.preventDefault();
         event.stopPropagation();
         selectDateFromCalendar(this);
