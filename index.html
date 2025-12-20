@@ -37,7 +37,7 @@
       }
 
       .header.specialist {
-        height: 30px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -55,6 +55,7 @@
         height: 100%;
         align-items: center;
         padding: 0 10px;
+        margin-right: 60px;
       }
 
       .key-button {
@@ -182,6 +183,7 @@
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
       }
 
+      /*   border-bottom: 15px solid #ebebeb; */
       .column h2 {
         text-align: center;
         background-color: #2c3e50;
@@ -695,10 +697,6 @@
           height: 40px;
         }
 
-        .header.specialist {
-          height: 25px;
-        }
-
         .header.specialist .specialist-title {
           font-size: 14px;
         }
@@ -723,7 +721,7 @@
           margin-top: 13px;
         }
 
-            .column h2 {
+        .column h2 {
           height: 40px;
           font-size: 14px;
         }
@@ -949,6 +947,23 @@
         display: block;
       }
 
+      /* position: absolute; */
+      .menu-button {
+        position: fixed;
+        right: 0px;
+        padding-right: 20px;
+        padding-left: 20px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        transition: all 0.3s;
+      }
+
       /* Calendar */
     </style>
   </head>
@@ -998,12 +1013,6 @@
               id="searchClient"
               placeholder="Введите ФИО для поиска клиента"
             />
-            <button
-              class="modal-button-new-client"
-              onclick="openCreateClientModal()"
-            >
-              +
-            </button>
           </div>
 
           <div
@@ -1021,14 +1030,11 @@
           </div>
 
           <div class="modal-buttons">
-            <button
-              class="modal-button schedule"
-              onclick="generateCompactSchedule()"
-            >
-              Расписание
+            <button class="modal-button ok" onclick="openCreateClientModal()">
+              Новый клиент
             </button>
             <button class="modal-button ok" onclick="saveAppointment()">
-              Записать
+              ㅤЗаписатьㅤ
             </button>
           </div>
         </div>
@@ -1604,7 +1610,16 @@
         const header = document.getElementById("header");
         header.style.display = "block";
         header.className = "header specialist";
-        header.innerHTML = '<div class="specialist-title">️ㅤㅤ☰</div>';
+        const menuContainer = document.getElementById("keysContainer");
+        const menuButton = document.createElement("button");
+        menuButton.className = "menu-button";
+        menuButton.textContent = `☰`;
+        menuButton.addEventListener("click", async function () {
+          openAddModal(null, null);
+          generateCompactSchedule();
+        });
+
+        menuContainer.appendChild(menuButton);
       }
 
       // Показать шапку для администратора
@@ -1643,6 +1658,15 @@
 
           keysContainer.appendChild(keyButton);
         });
+
+        const menuButton = document.createElement("button");
+        menuButton.className = "menu-button";
+        menuButton.textContent = `☰`;
+        menuButton.addEventListener("click", async function () {
+          openAddModal(null, null);
+          generateCompactSchedule();
+        });
+        keysContainer.appendChild(menuButton);
       }
 
       // Загрузка и отображение записей специалиста
@@ -2186,15 +2210,6 @@
         document.getElementById("appointmentNote").value = "";
         document.getElementById("searchClient").value =
           clientName == null ? "" : clientName;
-
-        if (!clientName) {
-          showNotification(
-            "Для добавления нового клиента нажмите клавишуㅤ✚",
-            true,
-            30,
-            4000
-          );
-        }
 
         // Сбрасываем переключатель в выключенное состояние
         document.getElementById("waitAppointmentToggle").checked = false;
