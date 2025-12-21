@@ -670,6 +670,7 @@
 
       /* Стили для компактного расписания с недельными строками */
       .weeks-container {
+        background-color: #708ca3;
         padding: 15px;
       }
 
@@ -684,7 +685,9 @@
       .compact-day-card {
         width: calc(14% - 4px);
         border: 1px solid #ddd;
-        border-radius: 8px;
+        background: #fff4f4;
+        border-color: #bbffed;
+        border-radius: 4px;
         padding: 3px;
         text-align: center;
         cursor: pointer;
@@ -696,7 +699,7 @@
       .compact-day-card.empty-day {
         cursor: default;
         background-color: transparent;
-        border: 1px solid #ddd;
+        border: 1px solid #758fa5;
       }
 
       .compact-day-card.weekend {
@@ -725,18 +728,10 @@
         color: #000000;
       }
 
-      /* .compact-day-card .work-time   
-      .work-time {
-        font-size: 0.8em;
-        font-weight: bold;
-        padding: 2px 4px;
-        border-radius: 8px;
-        background: #3498db;
-        color: white;
-        display: inline-block;
-        margin-top: 3px;
+      /* время для отсутствующих дней */
+      .compact-day-card .work-time {
+        background: transparent;
       }
- */
 
       .compact-day-card.weekend .work-time {
         background: #ffc14e;
@@ -745,12 +740,12 @@
       .day-appointments-container {
         position: relative;
         width: 100%;
-        background: #f9f9f9;
+        background: transparent;
         border-radius: 4px;
         overflow: hidden;
         flex-grow: 1;
         margin-top: 5px;
-        min-height: 100px;
+        min-height: 150px;
       }
 
       .day-appointment-marker {
@@ -919,7 +914,7 @@
         .compact-day-card {
           width: calc(14.28% - 2px);
           min-width: 40px;
-          padding: 1px;
+          padding: 4px;
           margin: 1px;
           min-height: 120px;
         }
@@ -932,8 +927,9 @@
           font-size: 0.5em;
         }
 
+        /* padding: 1px 2px; */
         .compact-day-card .work-time {
-          font-size: 0.5em;
+          font-size: 0.4em;
         }
 
         .day-appointments-container {
