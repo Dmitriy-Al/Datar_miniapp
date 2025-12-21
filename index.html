@@ -684,8 +684,9 @@
       /*  display: flex; */
       .compact-day-card {
         width: calc(14% - 4px);
-        border: 1px solid #ddd;
-        background: #fff4f4;
+        color: #ffffff;
+        border: 1px solid #2c3e50;
+        background: #2c3e50;
         border-color: #bbffed;
         border-radius: 4px;
         padding: 1px;
@@ -702,9 +703,8 @@
         border: 1px solid #758fa5;
       }
 
+      /*  display: flex;  background: #ffecc9; */
       .compact-day-card.weekend {
-        background: #ffecc9;
-        border-color: #ffa500;
         color: #ffa500;
       }
 
@@ -713,8 +713,8 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
 
+      /*   margin-bottom: 5px; */
       .compact-day-card .day-card-header {
-        margin-bottom: 5px;
         flex-shrink: 0;
       }
 
@@ -724,8 +724,8 @@
       }
 
       .compact-day-card .day-name {
-        font-size: 0.7em;
-        color: #000000;
+        font-size: 0.6em;
+        color: #ffffff;
       }
 
       /* время для отсутствующих дней */
@@ -737,7 +737,7 @@
         background: #ffc14e;
       }
 
-      /* столбец вмешающий карточки с записями */
+      /* столбец вмешающий карточки с записями background: #fffbe5;  */
       .day-appointments-container {
         position: relative;
         width: 100%;
@@ -770,6 +770,7 @@
         box-sizing: border-box;
         cursor: pointer;
         border: 1px solid rgba(0, 0, 0, 0.1);
+        color: #000000;
       }
 
       @media (max-width: 767px) {
