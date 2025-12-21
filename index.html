@@ -749,6 +749,10 @@
         min-height: 150px;
       }
 
+      .day-appointments-empty-container {
+        background: transparent;
+      }
+
       /* карточки с записями */
       .day-appointment-marker {
         position: absolute;
@@ -939,7 +943,7 @@
         }
 
         .day-appointment-marker {
-          font-size: 4px;
+          font-size: 6px;
           padding: 1px;
           left: 1px;
           right: 1px;
@@ -2817,7 +2821,7 @@
                             <div class="day-name"></div>
                             <div class="work-time"></div>
                         </div>
-                        <div class="day-appointments-container" style="height: 100px;">
+                        <div class=".day-appointments-empty-container" style="height: 100px;">
                         </div>
                     </div>`;
               } else {
@@ -2983,18 +2987,18 @@
                 marker.style.top = `${top}px`;
                 marker.style.height = `${height}px`;
                 marker.style.position = "absolute";
-                marker.style.left = "2px";
-                marker.style.right = "2px";
+                marker.style.left = "1px";
+                marker.style.right = "1px";
                 marker.style.background = markerColor;
                 marker.style.borderRadius = "2px";
-                marker.style.fontSize = "8px";
+                //    marker.style.fontSize = "5px";
                 marker.style.overflow = "hidden";
                 marker.style.display = "flex";
                 marker.style.flexDirection = "column";
                 marker.style.justifyContent = "center";
                 marker.style.alignItems = "center";
                 marker.style.textAlign = "center";
-                marker.style.padding = "2px";
+                marker.style.padding = "1px";
                 marker.style.boxSizing = "border-box";
                 marker.style.cursor = "pointer";
                 marker.title = `${startTimeStr} - ${endTimeStr}`;
@@ -3002,7 +3006,7 @@
                 // Текст: время начала и окончания
                 const startTimeFormatted = startTimeStr;
                 const endTimeFormatted = endTimeStr;
-                marker.innerHTML = `<div>${startTimeFormatted}</div><div>${endTimeFormatted}</div>`;
+                marker.innerHTML = `<div>${startTimeFormatted} - ${endTimeFormatted}</div>`;
 
                 // Добавляем обработчик клика на отметку
                 marker.addEventListener("click", function (e) {
