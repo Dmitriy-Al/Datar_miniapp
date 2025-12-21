@@ -741,7 +741,7 @@
       .day-appointments-container {
         position: relative;
         width: 100%;
-        background: #f8f2d0;
+        background: #fffbe5;
         border-radius: 4px;
         overflow: hidden;
         flex-grow: 1;
@@ -753,14 +753,13 @@
         background: transparent;
       }
 
-      /* карточки с записями */
+      /* карточки с записями font-size: 8px; */
       .day-appointment-marker {
         position: absolute;
         left: 2px;
         right: 2px;
-        background: linear-gradient(to bottom, #92ddfa, #ade8ff);
+        font-size: 5px;
         border-radius: 2px;
-        font-size: 8px;
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -943,7 +942,7 @@
         }
 
         .day-appointment-marker {
-          font-size: 6px;
+          font-size: 5px;
           padding: 1px;
           left: 1px;
           right: 1px;
@@ -2966,8 +2965,9 @@
                   ((endTime - startTime) / workDuration) * maxHeight;
 
                 // Определяем цвет отметки в зависимости от статуса записи
+                //"linear-gradient(to bottom, #92ddfa, #ade8ff)"; // По умолчанию
                 let markerColor =
-                  "linear-gradient(to bottom, #92ddfa, #ade8ff)"; // По умолчанию
+                  "linear-gradient(to bottom, #ffd17a, #f8ddab)";
                 if (appointment.waitNearAppointment) {
                   markerColor = "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
                 } else if (appointment.confirmAppointment === "CONFIRMED") {
