@@ -680,6 +680,7 @@
         margin-bottom: 10px;
       }
 
+      /*  display: flex; */
       .compact-day-card {
         width: calc(14% - 4px);
         border: 1px solid #ddd;
@@ -688,7 +689,6 @@
         text-align: center;
         cursor: pointer;
         transition: all 0.3s ease;
-        display: flex;
         flex-direction: column;
         min-height: 150px;
       }
@@ -716,16 +716,17 @@
       }
 
       .compact-day-card .day-number {
-        font-size: 1.4em;
+        font-size: 1em;
         font-weight: bold;
       }
 
       .compact-day-card .day-name {
-        font-size: 0.85em;
-        color: #7f8c8d;
+        font-size: 0.7em;
+        color: #000000;
       }
 
-      .compact-day-card .work-time {
+      /* .compact-day-card .work-time   
+      .work-time {
         font-size: 0.8em;
         font-weight: bold;
         padding: 2px 4px;
@@ -735,6 +736,7 @@
         display: inline-block;
         margin-top: 3px;
       }
+ */
 
       .compact-day-card.weekend .work-time {
         background: #ffc14e;
@@ -906,7 +908,7 @@
 
         /* Календарь с расписанием */
         .weeks-container {
-          padding: 10px;
+          padding: 5px;
         }
 
         .week-row {
@@ -2770,7 +2772,7 @@
 
           // Добавляем пустые дни в начало, если месяц начинается не с воскресенья
           const firstDay = days[0].date;
-          const firstDayOfWeek = firstDay.getDay(); // 0 - воскресенье
+          const firstDayOfWeek = firstDay.getDay(); // 0 - воскресенье >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
           for (let i = 0; i < firstDayOfWeek; i++) {
             currentWeek.push(null); // Пустой день для выравнивания
@@ -2845,9 +2847,8 @@
                   isWorking ? "" : "weekend"
                 }" data-date="${dateKey}">
                         <div class="day-card-header">
-                            <div class="day-number">${day}</div>
-                            <div class="day-name">${dayName}</div>
-                            <div class="work-time">${displayText}</div>
+                            <div class="day-number">${day} <small>${dayName}</small></div>
+                            <div class="day-name">${displayText}</div>
                         </div>
                         <div class="day-appointments-container" style="height: 100px;">
                             <!-- Здесь будут отметки о записях -->
