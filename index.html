@@ -688,7 +688,7 @@
         background: #fff4f4;
         border-color: #bbffed;
         border-radius: 4px;
-        padding: 3px;
+        padding: 1px;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -737,17 +737,19 @@
         background: #ffc14e;
       }
 
+      /* столбец вмешающий карточки с записями */
       .day-appointments-container {
         position: relative;
         width: 100%;
-        background: transparent;
+        background: #f8f2d0;
         border-radius: 4px;
         overflow: hidden;
         flex-grow: 1;
-        margin-top: 5px;
+        margin-top: -10px;
         min-height: 150px;
       }
 
+      /* карточки с записями */
       .day-appointment-marker {
         position: absolute;
         left: 2px;
@@ -914,7 +916,7 @@
         .compact-day-card {
           width: calc(14.28% - 2px);
           min-width: 40px;
-          padding: 4px;
+          padding: 1px;
           margin: 1px;
           min-height: 120px;
         }
@@ -929,7 +931,7 @@
 
         /* padding: 1px 2px; */
         .compact-day-card .work-time {
-          font-size: 0.5px;
+          font-size: 0.4em;
         }
 
         .day-appointments-container {
@@ -937,7 +939,10 @@
         }
 
         .day-appointment-marker {
-          font-size: 6px;
+          font-size: 4px;
+          padding: 1px;
+          left: 1px;
+          right: 1px;
           padding: 1px;
         }
       }
