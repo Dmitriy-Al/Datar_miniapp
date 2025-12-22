@@ -688,7 +688,6 @@
         color: #ffffff;
         border: 1px solid #2c3e50;
         background: #2c3e50;
-        border-color: #bbffed;
         border-radius: 4px;
         padding: 1px;
         text-align: center;
@@ -736,7 +735,7 @@
 
       /* время для мини столбцов */
       .card-work-time {
-        font-size: 4px;
+        font-size: 12px;
         color: #ffffff;
       }
 
@@ -749,7 +748,7 @@
         position: relative;
         width: 100%;
         background: #fffbe5;
-        border-radius: 4px;
+        border-radius: 3px;
         overflow: hidden;
         flex-grow: 1;
 
@@ -942,7 +941,9 @@
 
         /* padding: 1px 2px; font-size: 0.4em; */
         .compact-day-card .work-time {
-          font-size: 6px;
+          -webkit-text-size-adjust: none; /* Отключение авто-размера текста на iOS */
+          text-size-adjust: none;
+          font-size: 4px;
         }
 
         .day-appointments-container {
@@ -950,7 +951,7 @@
         }
 
         .day-appointment-marker {
-          font-size: 0.1em;
+          font-size: 5px;
           padding: 1px;
           left: 1px;
           right: 1px;
@@ -959,7 +960,9 @@
 
         /* время для мини столбцов */
         .card-work-time {
-          font-size: 0.1em;
+          -webkit-text-size-adjust: none; /* Отключение авто-размера текста на iOS */
+          text-size-adjust: none;
+          font-size: 7px;
         }
       }
 
