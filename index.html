@@ -1011,16 +1011,6 @@
           font-size: 0.7em;
           padding: 3px 6px;
         }
-
-        /* padding: 1px 2px; font-size: 0.4em; */
-        .compact-day-card .work-time {
-          font-size: 4px;
-        }
-
-        /* время для мини столбцов */
-        .card-work-time {
-          font-size: 7px;
-        }
       }
 
       .input-container {
@@ -2854,7 +2844,7 @@
                 // Определяем, рабочий ли день
                 const isWorking = dayData.isWorking;
                 const workingHours = dayData.workingHours;
-                const displayText = dayData.displayText;
+                const displayText = dayData.displayText.replaceAll(":00", "ч.");
 
                 // Форматируем дату для ключа (для поиска записей)
                 const dateKey = `${date
