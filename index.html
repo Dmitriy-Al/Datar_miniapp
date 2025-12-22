@@ -307,12 +307,12 @@
       }
 
       .modal h2 {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         color: white;
         text-align: center;
         padding-left: 50px;
         padding-right: 50px;
-        font-size: 22px;
+        font-size: 20px;
       }
 
       .modal input,
@@ -443,16 +443,16 @@
         -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
       }
 
+      /*  border-bottom: 1px solid #ecf0f1; */
       .month-section {
         margin-bottom: 0;
-        border-bottom: 1px solid #ecf0f1;
       }
 
       /* text-align: match-parent; font-size: 1.2em;    max-height: 50px;*/
       .month-title {
         background: linear-gradient(135deg, #2e709c, #5189af);
         color: white;
-        padding: 5px 20px;
+        padding: 1px 20px;
         font-weight: bold;
         font-size: 1em;
         position: sticky;
@@ -529,6 +529,7 @@
 
       /* Schedule Modal Specific Styles */
       #scheduleModal .modal-content {
+        top: 45%;
         max-width: 800px;
         max-height: 90vh;
         overflow-y: auto;
@@ -556,15 +557,16 @@
         position: relative;
       }
 
+      #scheduleModal .modal-header h2 {
+        margin: 0;
+        font-size: 18px;
+        color: white;
+      }
+
       .modal-inner-padding {
         margin-left: 25px;
         margin-right: 25px;
         margin-top: 10px;
-      }
-
-      #scheduleModal .modal-header h2 {
-        margin: 0;
-        color: white;
       }
 
       #scheduleModal .close-button {
@@ -875,7 +877,7 @@
         /* Calendar mobile */
         #scheduleModal .modal-content {
           width: 95%;
-          max-height: 85vh;
+          max-height: 100vh;
           margin: 5vh auto; /* добавил */
         }
 
@@ -916,7 +918,19 @@
           background: #ffebcc !important;
         }
 
+        #scheduleModal .modal-header {
+          padding: 10px;
+        }
+
+        #scheduleModal .modal-header h2 {
+          font-size: 15px;
+        }
+
         /* Календарь с расписанием */
+        .month-section {
+          height: 100%;
+        }
+
         .weeks-container {
           padding: 5px;
         }
@@ -967,6 +981,10 @@
         /* время для мини столбцов */
         .card-work-time {
           font-size: 7px;
+        }
+
+        .month-title {
+          font-size: 12px;
         }
       }
 
