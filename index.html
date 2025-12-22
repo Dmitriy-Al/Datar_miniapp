@@ -3003,7 +3003,7 @@
                 marker.style.right = "1px";
                 marker.style.background = markerColor;
                 marker.style.borderRadius = "1px";
-                marker.style.fontSize = "5px";
+                // marker.style.fontSize = "5px";
                 marker.style.overflow = "hidden";
                 marker.style.display = "flex";
                 marker.style.flexDirection = "column";
@@ -3018,7 +3018,12 @@
                 // Текст: время начала и окончания
                 const startTimeFormatted = startTimeStr;
                 const endTimeFormatted = endTimeStr;
-                marker.innerHTML = `<div>${startTimeFormatted} - ${endTimeFormatted}</div>`;
+
+                if (height > 30) {
+                  marker.innerHTML = `<div>${startTimeFormatted} - ${endTimeFormatted}</div>`;
+                } else {
+                  marker.innerHTML = `<div>${startTimeFormatted}`;
+                }
 
                 // Добавляем обработчик клика на отметку
                 marker.addEventListener("click", function (e) {
