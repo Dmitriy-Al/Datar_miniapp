@@ -2261,10 +2261,21 @@
 
         const hasNote = appointmentData.appointmentNote !== "" ? "📌ㅤ" : "";
 
-        if (height > 80 && appointmentData.appointmentNote !== "") {
+        if (height > 100 && appointmentData.appointmentNote !== "") {
+          const note =
+            appointmentData.appointmentNote.length > 25
+              ? appointmentData.appointmentNote.substring(0, 25) + "..."
+              : appointmentData.appointmentNote;
+          card.innerHTML = `
+                <h4>${formattedName}</h4>
+                <p>${appointmentData.client.phoneNumber}</p>
+                <h3>${startTimeStr} - ${endTimeStr}</h3>
+                <i><small>📌ㅤ</small>${note}</i>
+            `;
+        } else if (height > 80 && appointmentData.appointmentNote !== "") {
           const note =
             appointmentData.appointmentNote.length > 20
-              ? appointmentData.appointmentNote.substring(0, 20) + "..."
+              ? appointmentData.appointmentNote.substring(0, 15) + "..."
               : appointmentData.appointmentNote;
           card.innerHTML = `
                 <h4>${formattedName}</h4>
@@ -2299,10 +2310,11 @@
           }
         }
 
+        /*
         if (appointmentData.appointmentNote !== "") {
           card.style.outline = "1px solid #ff7300";
           card.style.outline.offset = "1px";
-        }
+        }*/
 
         //Ллогика отображения цветов карточек с учетом waitNearAppointment
         // "UNDEFINED" статус для неавторизованного пользователя
