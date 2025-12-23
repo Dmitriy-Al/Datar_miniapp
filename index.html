@@ -37,7 +37,7 @@
       }
 
       .header.specialist {
-        height: 30px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -55,6 +55,7 @@
         height: 100%;
         align-items: center;
         padding: 0 10px;
+        margin-right: 60px;
       }
 
       .key-button {
@@ -306,12 +307,12 @@
       }
 
       .modal h2 {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         color: white;
         text-align: center;
         padding-left: 50px;
         padding-right: 50px;
-        font-size: 22px;
+        font-size: 20px;
       }
 
       .modal input,
@@ -442,16 +443,16 @@
         -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
       }
 
+      /*  border-bottom: 1px solid #ecf0f1; */
       .month-section {
         margin-bottom: 0;
-        border-bottom: 1px solid #ecf0f1;
       }
 
       /* text-align: match-parent; font-size: 1.2em;    max-height: 50px;*/
       .month-title {
         background: linear-gradient(135deg, #2e709c, #5189af);
         color: white;
-        padding: 5px 20px;
+        padding: 1px 20px;
         font-weight: bold;
         font-size: 1em;
         position: sticky;
@@ -510,6 +511,7 @@
         color: #ffc14e;
       }
 
+      /* ??????????????????????????????????? */
       .work-time {
         font-size: 1em;
         font-weight: bold;
@@ -554,15 +556,16 @@
         position: relative;
       }
 
+      #scheduleModal .modal-header h2 {
+        margin: 0;
+        font-size: 18px;
+        color: white;
+      }
+
       .modal-inner-padding {
         margin-left: 25px;
         margin-right: 25px;
         margin-top: 10px;
-      }
-
-      #scheduleModal .modal-header h2 {
-        margin: 0;
-        color: white;
       }
 
       #scheduleModal .close-button {
@@ -667,6 +670,119 @@
         transition: all 0.3s ease;
       }
 
+      /* Стили для компактного расписания с недельными строками */
+      .weeks-container {
+        background-color: #708ca3;
+        padding: 15px;
+      }
+
+      .week-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      /*  display: flex; */
+      .compact-day-card {
+        width: calc(14% - 4px);
+        color: #ffffff;
+        border: 1px solid #2c3e50;
+        background: #2c3e50;
+        border-radius: 4px;
+        padding: 1px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-direction: column;
+        min-height: 150px;
+      }
+
+      .compact-day-card.empty-day {
+        cursor: default;
+        background-color: transparent;
+        border: 1px solid #758fa5;
+      }
+
+      /*  display: flex;  background: #ffecc9; */
+      .compact-day-card.weekend {
+        color: #ffa500;
+      }
+
+      .compact-day-card:hover:not(.empty-day) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      /*   margin-bottom: 5px; */
+      .compact-day-card .day-card-header {
+        flex-shrink: 0;
+      }
+
+      .compact-day-card .day-number {
+        font-size: 1em;
+        font-weight: bold;
+      }
+
+      .compact-day-card .day-name {
+        font-size: 0.6em;
+        color: #ffffff;
+      }
+
+      /* время для отсутствующих дней */
+      .compact-day-card .work-time {
+        background: transparent;
+      }
+
+      /* время для мини столбцов */
+      .card-work-time {
+        font-size: 12px;
+        color: #ffffff;
+      }
+
+      .compact-day-card.weekend .work-time {
+        background: #ffc14e;
+      }
+
+      /* столбец вмешающий карточки с записями background: #fffbe5; margin-top: -10px; */
+      .day-appointments-container {
+        position: relative;
+        width: 100%;
+        background: #fffbe5;
+        border-radius: 3px;
+        overflow: hidden;
+        flex-grow: 1;
+        min-height: 150px;
+      }
+
+      .day-appointments-empty-container {
+        background: transparent;
+      }
+
+      /* карточки с записями font-size: 8px; */
+      .day-appointment-marker {
+        position: absolute;
+        left: 2px;
+        right: 2px;
+        font-size: 10px;
+        border-radius: 2px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 2px;
+        box-sizing: border-box;
+        cursor: pointer;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: #000000;
+      }
+
+      .compact-day-number {
+        font-size: 1em;
+      }
+
       @media (max-width: 767px) {
         /* Улучшаем область скролла для мобильных устройств */
         .months-container {
@@ -694,10 +810,6 @@
 
         .header {
           height: 40px;
-        }
-
-        .header.specialist {
-          height: 25px;
         }
 
         .header.specialist .specialist-title {
@@ -764,7 +876,7 @@
         /* Calendar mobile */
         #scheduleModal .modal-content {
           width: 95%;
-          max-height: 85vh;
+          max-height: 100vh;
           margin: 5vh auto; /* добавил */
         }
 
@@ -803,6 +915,75 @@
 
         .day-card.weekend.selectable-day:active {
           background: #ffebcc !important;
+        }
+
+        #scheduleModal .modal-header {
+          padding: 10px;
+        }
+
+        #scheduleModal .modal-header h2 {
+          font-size: 15px;
+        }
+
+        /* Календарь с расписанием */
+        .month-section {
+          height: 100%;
+        }
+
+        .weeks-container {
+          padding: 5px;
+        }
+
+        .week-row {
+          flex-wrap: wrap;
+          justify-content: flex-start;
+        }
+
+        .compact-day-card {
+          width: calc(14.28% - 2px);
+          min-width: 40px;
+          padding: 1px;
+          margin: 1px;
+          min-height: 120px;
+        }
+
+        /* font-size: 0.7em; 
+        .compact-day-card .day-number {
+          font-size: 14px;
+        }*/
+
+        .compact-day-number {
+          font-size: 13px;
+        }
+
+        .compact-day-card .day-name {
+          font-size: 0.5em;
+        }
+
+        .day-appointments-container {
+          min-height: 80px;
+        }
+
+        .day-appointment-marker {
+          font-size: 5px;
+          padding: 1px;
+          left: 1px;
+          right: 1px;
+          padding: 1px;
+        }
+
+        /* padding: 1px 2px; font-size: 0.4em; */
+        .compact-day-card .work-time {
+          font-size: 4px;
+        }
+
+        /* время для мини столбцов */
+        .card-work-time {
+          font-size: 7px;
+        }
+
+        .month-title {
+          font-size: 12px;
         }
       }
 
@@ -950,6 +1131,23 @@
         display: block;
       }
 
+      /* position: absolute; */
+      .menu-button {
+        position: fixed;
+        right: 0px;
+        padding-right: 20px;
+        padding-left: 20px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        transition: all 0.3s;
+      }
+
       /* Calendar */
     </style>
   </head>
@@ -999,12 +1197,6 @@
               id="searchClient"
               placeholder="Введите ФИО для поиска клиента"
             />
-            <button
-              class="modal-button-new-client"
-              onclick="openCreateClientModal()"
-            >
-              +
-            </button>
           </div>
 
           <div
@@ -1022,11 +1214,8 @@
           </div>
 
           <div class="modal-buttons">
-            <button
-              class="modal-button schedule"
-              onclick="generateCompactSchedule()"
-            >
-              Расписание
+            <button class="modal-button ok" onclick="openCreateClientModal()">
+              Новый ✚
             </button>
             <button class="modal-button ok" onclick="saveAppointment()">
               Записать
@@ -1605,7 +1794,15 @@
         const header = document.getElementById("header");
         header.style.display = "block";
         header.className = "header specialist";
-        header.innerHTML = '<div class="specialist-title">️ㅤㅤ☰</div>';
+        const menuContainer = document.getElementById("keysContainer");
+        const menuButton = document.createElement("button");
+        menuButton.className = "menu-button";
+        menuButton.textContent = `☰`;
+        menuButton.addEventListener("click", async function () {
+          generateCompactSchedule();
+        });
+
+        menuContainer.appendChild(menuButton);
       }
 
       // Показать шапку для администратора
@@ -1644,6 +1841,14 @@
 
           keysContainer.appendChild(keyButton);
         });
+
+        const menuButton = document.createElement("button");
+        menuButton.className = "menu-button";
+        menuButton.textContent = `☰`;
+        menuButton.addEventListener("click", async function () {
+          generateCompactSchedule();
+        });
+        keysContainer.appendChild(menuButton);
       }
 
       // Загрузка и отображение записей специалиста
@@ -2188,15 +2393,6 @@
         document.getElementById("searchClient").value =
           clientName == null ? "" : clientName;
 
-        if (!clientName) {
-          showNotification(
-            "Для добавления нового клиента нажмите клавишуㅤ✚",
-            true,
-            30,
-            4000
-          );
-        }
-
         // Сбрасываем переключатель в выключенное состояние
         document.getElementById("waitAppointmentToggle").checked = false;
 
@@ -2526,7 +2722,7 @@
       }
 
       // Календарь с графиком приема специалиста
-      function generateCompactSchedule() {
+      async function generateCompactSchedule() {
         if (!currentSpecialist) {
           alert("Специалист не выбран");
           return;
@@ -2535,9 +2731,23 @@
         // Рассчитываем расписание
         specialistScheduleData = calculateSpecialistSchedule(currentSpecialist);
 
+        // Получаем записи для специалиста
+        const appointments = await getAppointmentsBySpecialistId(
+          currentSpecialist.id
+        );
+
+        // Группируем записи по датам
+        const appointmentsByDate = {};
+        appointments.forEach((appointment) => {
+          const datePart = appointment.appointmentDateTime.split(" - ")[0];
+          if (!appointmentsByDate[datePart]) {
+            appointmentsByDate[datePart] = [];
+          }
+          appointmentsByDate[datePart].push(appointment);
+        });
+
         openScheduleModal();
         const container = document.getElementById("monthsContainer");
-        const today = new Date();
         const header = document.getElementById("specialistName");
 
         // Фио специалиста в заголовке
@@ -2588,52 +2798,300 @@
           }
         );
 
+        // Для каждого месяца
         sortedMonths.forEach(([key, days]) => {
           const [year, month] = key.split("-").map(Number);
           const monthName = monthsNames[month];
 
-          let daysHtml = "";
+          // Разбиваем дни месяца на недели
+          const weeks = [];
+          let currentWeek = [];
 
+          // Сортируем дни по дате
+          days.sort((a, b) => a.date - b.date);
+
+          // Добавляем пустые дни в начало, если месяц начинается не с воскресенья
+          const firstDay = days[6].date;
+          const firstDayOfWeek = firstDay.getDay(); // 0 - воскресенье >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+          for (let i = 0; i < firstDayOfWeek; i++) {
+            currentWeek.push(null); // Пустой день для выравнивания
+          }
+
+          // Заполняем недели
           days.forEach((dayData) => {
-            const date = dayData.date;
-            const day = date.getDate();
-            const dayOfWeek = date.getDay();
-            const isToday = date.toDateString() === today.toDateString();
-            const isWeekend = !dayData.isWorking;
+            const dayOfWeek = dayData.date.getDay();
 
-            const dayClass = isWeekend ? "day-card weekend" : "day-card";
-            const todayClass = isToday ? "today" : "";
+            // Если неделя заполнена (7 дней) или это новый день недели после субботы
+            if (currentWeek.length === 7) {
+              weeks.push([...currentWeek]);
+              currentWeek = [];
+            }
 
-            // Добавляем data-атрибуты для выбора даты
-            const dateString = formatDateForInput(date);
-            const timeString = dayData.isWorking
-              ? ` с ${dayData.workingHours.start} до ${dayData.workingHours.end}`
-              : " - выходной";
-
-            daysHtml += `<div class="${dayClass} ${todayClass} selectable-day"
-                                data-date="${dateString}"
-                                data-is-working="${dayData.isWorking}"
-                                data-working-hours="${
-                                  dayData.isWorking
-                                    ? `${dayData.workingHours.start}-${dayData.workingHours.end}`
-                                    : ""
-                                }"
-                                title="Выбрать ${dateString}${timeString}">
-                            <div class="day-number">${day}</div>
-                            <div class="day-name">${daysOfWeek[dayOfWeek]}</div>
-                            <div class="work-time">${dayData.displayText}</div>
-                        </div>`;
+            currentWeek.push(dayData);
           });
 
-          html += `<div class="month-section">
+          // Заполняем последнюю неделю пустыми днями
+          while (currentWeek.length < 7) {
+            currentWeek.push(null);
+          }
+          if (currentWeek.length > 0) {
+            weeks.push(currentWeek);
+          }
+
+          let monthHtml = `<div class="month-section">
                         <div class="month-title">${monthName} ${year}</div>
-                        <div class="days-grid">${daysHtml}</div>
+                        <div class="weeks-container">`;
+
+          // Для каждой недели в месяце
+          weeks.forEach((week, weekIndex) => {
+            monthHtml += `<div class="week-row" id="week-${year}-${month}-${weekIndex}">`;
+
+            // Для каждого дня в неделе
+            week.forEach((dayData, dayIndex) => {
+              if (dayData === null) {
+                // Пустая карточка для выравнивания
+                monthHtml += `<div class="compact-day-card empty-day">
+                        <div class="day-card-header">
+                            <div class="day-number"></div>
+                            <div class="day-name"></div>
+                            <div class="work-time"></div>
+                        </div>
+                        <div class=".day-appointments-empty-container" style="height: 100px;">
+                        </div>
                     </div>`;
+              } else {
+                const date = dayData.date;
+                const day = date.getDate();
+                const dayOfWeek = date.getDay();
+                const dayName = daysOfWeek[dayOfWeek];
+
+                // Определяем, рабочий ли день
+                const isWorking = dayData.isWorking;
+                const workingHours = dayData.workingHours;
+                const displayText = dayData.displayText.replaceAll(":00", "ч.");
+
+                // Форматируем дату для ключа (для поиска записей)
+                const dateKey = `${date
+                  .getDate()
+                  .toString()
+                  .padStart(2, "0")}.${(date.getMonth() + 1)
+                  .toString()
+                  .padStart(2, "0")}.${date.getFullYear()}`;
+
+                // Получаем записи на эту дату
+                const dayAppointments = appointmentsByDate[dateKey] || [];
+
+                // Создаем карточку дня
+                monthHtml += `<div class="compact-day-card ${
+                  isWorking ? "" : "weekend"
+                }" data-date="${dateKey}">
+                        <div class="day-card-header">
+                          <div class="compact-day-number"><b>${day}</b> <i style="font-size: 8px; ">${dayName}</i></div>
+                            <div class="card-work-time">${displayText}</div>
+                        </div>
+                        <div class="day-appointments-container" style="height: 100px;">
+                            <!-- Здесь будут отметки о записях -->
+                        </div>
+                    </div>`;
+              }
+            });
+
+            monthHtml += `</div>`;
+          });
+
+          monthHtml += `</div></div>`;
+          html += monthHtml;
         });
 
         container.innerHTML = html;
-        // Добавляем обработчики событий для выбора даты
-        addDateSelectionHandlers();
+
+        // Теперь для каждой недели рассчитаем высоту контейнера для отметок
+        const weekRows = container.querySelectorAll(".week-row");
+        weekRows.forEach((weekRow) => {
+          const dayCards = weekRow.querySelectorAll(
+            ".compact-day-card:not(.empty-day)"
+          );
+          let maxHeight = 100; // базовая высота
+
+          // Сначала рассчитываем максимальную высоту для этой недели
+          dayCards.forEach((dayCard) => {
+            const dateKey = dayCard.getAttribute("data-date");
+            const dayAppointments = appointmentsByDate[dateKey] || [];
+            const containerHeight = 100; // базовая высота, но мы будем проверять, хватает ли
+
+            // Найдем рабочее время для этого дня из specialistScheduleData
+            const dayData = specialistScheduleData.find((d) => {
+              const dKey = `${d.date.getDate().toString().padStart(2, "0")}.${(
+                d.date.getMonth() + 1
+              )
+                .toString()
+                .padStart(2, "0")}.${d.date.getFullYear()}`;
+              return dKey === dateKey;
+            });
+
+            if (dayData && dayData.isWorking) {
+              const workStartHour = parseHourString(dayData.workingHours.start);
+              const workEndHour = parseHourString(dayData.workingHours.end);
+              const workDuration = workEndHour - workStartHour;
+
+              // Рассчитаем позиции для каждой записи и найдем максимальную нижнюю границу
+              dayAppointments.forEach((appointment) => {
+                // Парсим время записи
+                const timePart =
+                  appointment.appointmentDateTime.split(" - ")[1];
+                const [startTimeStr, endTimeStr] = timePart.split("/");
+                const startTime = parseHourString(startTimeStr);
+                const endTime = parseHourString(endTimeStr);
+
+                // Рассчитываем top и height в пикселях (при базовой высоте 100)
+                const top = ((startTime - workStartHour) / workDuration) * 100;
+                const height = ((endTime - startTime) / workDuration) * 100;
+
+                // Проверяем, не выходит ли отметка за пределы контейнера (100)
+                if (top + height > maxHeight) {
+                  maxHeight = top + height;
+                }
+              });
+            }
+          });
+
+          // Устанавливаем рассчитанную максимальную высоту для всех контейнеров в этой неделе
+          dayCards.forEach((dayCard) => {
+            const container = dayCard.querySelector(
+              ".day-appointments-container"
+            );
+            container.style.height = `${maxHeight}px`;
+          });
+
+          // Теперь добавляем отметки в контейнеры
+          dayCards.forEach((dayCard) => {
+            const dateKey = dayCard.getAttribute("data-date");
+            const dayAppointments = appointmentsByDate[dateKey] || [];
+            const container = dayCard.querySelector(
+              ".day-appointments-container"
+            );
+
+            // Найдем рабочее время для этого дня из specialistScheduleData
+            const dayData = specialistScheduleData.find((d) => {
+              const dKey = `${d.date.getDate().toString().padStart(2, "0")}.${(
+                d.date.getMonth() + 1
+              )
+                .toString()
+                .padStart(2, "0")}.${d.date.getFullYear()}`;
+              return dKey === dateKey;
+            });
+
+            if (dayData && dayData.isWorking) {
+              const workStartHour = parseHourString(dayData.workingHours.start);
+              const workEndHour = parseHourString(dayData.workingHours.end);
+              const workDuration = workEndHour - workStartHour;
+
+              dayAppointments.forEach((appointment) => {
+                // Парсим время записи
+                const timePart =
+                  appointment.appointmentDateTime.split(" - ")[1];
+                const [startTimeStr, endTimeStr] = timePart.split("/");
+                const startTime = parseHourString(startTimeStr);
+                const endTime = parseHourString(endTimeStr);
+
+                // Рассчитываем top и height в пикселях
+                const top =
+                  ((startTime - workStartHour) / workDuration) * maxHeight;
+                const height =
+                  ((endTime - startTime) / workDuration) * maxHeight;
+
+                // Определяем цвет отметки в зависимости от статуса записи
+                //"linear-gradient(to bottom, #92ddfa, #ade8ff)"; // По умолчанию
+                let markerColor =
+                  "linear-gradient(to bottom, #ffd17a, #f8ddab)";
+                if (appointment.waitNearAppointment) {
+                  markerColor = "linear-gradient(to bottom, #ffa2a2, #f8b3b3)";
+                } else if (appointment.confirmAppointment === "CONFIRMED") {
+                  markerColor = "linear-gradient(to bottom, #9af798, #b6f5b5)";
+                } else if (appointment.confirmAppointment === "EXPECTANT") {
+                  markerColor = "linear-gradient(to bottom, #92ddfa, #ade8ff)";
+                } else if (
+                  appointment.confirmAppointment === "UNDEFINED" &&
+                  appointment.waitNearAppointment
+                ) {
+                  markerColor = "linear-gradient(to bottom, #fa9f89, #fdb4a2)";
+                }
+
+                // Создаем элемент отметки
+                const marker = document.createElement("div");
+                marker.className = "day-appointment-marker";
+                marker.style.top = `${top}px`;
+                marker.style.height = `${height}px`;
+                marker.style.position = "absolute";
+                marker.style.left = "1px";
+                marker.style.right = "1px";
+                marker.style.background = markerColor;
+                marker.style.borderRadius = "1px";
+                marker.style.overflow = "hidden";
+                marker.style.display = "flex";
+                marker.style.flexDirection = "column";
+                marker.style.justifyContent = "center";
+                marker.style.alignItems = "center";
+                marker.style.textAlign = "center";
+                marker.style.padding = "1px";
+                marker.style.boxSizing = "border-box";
+                marker.style.cursor = "pointer";
+                //    marker.title = `${startTimeStr} - ${endTimeStr}`;
+
+                // Текст: время начала и окончания
+                const startTimeFormatted = startTimeStr;
+                const endTimeFormatted = endTimeStr;
+
+                if (height > 25) {
+                  marker.innerHTML = `<div>${startTimeFormatted} - ${endTimeFormatted}</div>`;
+                } else {
+                  marker.innerHTML = `<div>${startTimeFormatted}...`;
+                }
+
+                // Добавляем обработчик клика на отметку
+                marker.addEventListener("click", function (e) {
+                  e.stopPropagation();
+                  // функциональность при клике на отметку
+                  const dateKey = dayCard.getAttribute("data-date");
+                  closeScheduleModal();
+                  const column = document.querySelector(
+                    `[data-column-date="${dateKey}"]`
+                  );
+                  if (column) {
+                    column.scrollIntoView({ behavior: "smooth" });
+                  }
+                  console.log("Клик по записи:", appointment);
+                });
+
+                container.appendChild(marker);
+              });
+            }
+          });
+        });
+
+        // Добавляем обработчики клика на карточки дней
+        container
+          .querySelectorAll(".compact-day-card:not(.empty-day)")
+          .forEach((dayCard) => {
+            dayCard.addEventListener("click", function () {
+              const dateKey = this.getAttribute("data-date");
+              closeScheduleModal();
+              // Находим столбец с этой датой и скроллим к нему
+              const column = document.querySelector(
+                `[data-column-date="${dateKey}"]`
+              );
+              if (column) {
+                column.scrollIntoView({ behavior: "smooth" });
+              }
+            });
+          });
+      }
+
+      // Функция для парсинга времени из строки "HH:MM" в десятичное число часов
+      function parseHourString(timeString) {
+        const [hours, minutes] = timeString.split(":").map(Number);
+        return hours + minutes / 60;
       }
 
       // Функция для форматирования даты в формат для input[type="datetime-local"]
