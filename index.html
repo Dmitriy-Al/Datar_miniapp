@@ -2288,11 +2288,14 @@
           card.style.outline = "1px solid #6e4800";
           card.style.outline.offset = "1px";
           card.style.background = "#ffc14d";
-          card.style.fontSize = "7px";
+          card.style.fontSize = "8px";
           card.style.padding = "5px";
           card.innerHTML = `<h3><small>${hasNote}</small>${startTimeStr} - ${endTimeStr}</h3>`;
           if (height < 15) {
             card.style.zIndex = "3";
+            card.innerHTML = `
+              <h3><small>${hasNote}${startTimeStr} - ${endTimeStr}</small><h3>
+            `;
           }
         }
 
