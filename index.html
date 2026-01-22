@@ -3656,6 +3656,7 @@
         const addModal = document.getElementById("addModal");
         const viewModal = document.getElementById("viewModal");
         const scheduleModal = document.getElementById("scheduleModal");
+        const createClientModal = document.getElementById("createClientModal");
 
         if (e.target === addModal) {
           closeAddModal();
@@ -3665,6 +3666,9 @@
         }
         if (e.target === scheduleModal) {
           closeScheduleModal();
+        }
+        if (e.target === createClientModal) {
+          closeCreateClientModal();
         }
       });
 
